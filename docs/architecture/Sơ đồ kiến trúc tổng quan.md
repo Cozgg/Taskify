@@ -1,5 +1,6 @@
+```mermaid
 C4Context
-    title Sơ đồ Ngữ cảnh - Trello Management
+    title Sơ đồ Kiến trúc tổng quan - Trello Management
     
     Person(member, "Thành viên Team", "Quản lý thẻ, danh sách và cập nhật tiến độ công việc.")
     Person(manager, "Quản lý dự án", "Theo dõi trạng thái board và quản lý thành viên.")
@@ -16,3 +17,4 @@ C4Context
     Rel(trello_system, auth_service, "Xác thực danh tính qua", "API/OAuth2")
     Rel(trello_system, local_storage, "Lưu và tải tệp tin tại", "File System API")
     Rel(trello_system, notification, "Gửi thông báo cập nhật qua", "SMTP/API")
+```
