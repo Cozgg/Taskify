@@ -13,7 +13,7 @@
 | Thành viên | MSSV | Công việc | Link Commit/PR |
 |------------|------|-----------|----------------|
 | Phạm Anh Quyền | 2351010180 | Quyết định mẫu kiến trúc áp dụng, ADR-001, ADR-002 | []() |
-| Nguyễn Hữu Công | 2351010025 | Vẽ sơ đồ kiến trúc tổng quan, ADR-003 | []() |
+| Nguyễn Hữu Công | 2351010025 | Vẽ sơ đồ kiến trúc tổng quan, ADR-003 | [e20afa86f790c5c47628ac2efaf69e8755ba5016](https://github.com/phamquyendev03/Taskify/blob/e20afa86f790c5c47628ac2efaf69e8755ba5016/docs/adrs/ADR-003-message-queue.md) [e20afa86f790c5c47628ac2efaf69e8755ba5016](https://github.com/phamquyendev03/Taskify/blob/e20afa86f790c5c47628ac2efaf69e8755ba5016/docs/architecture/S%C6%A1%20%C4%91%E1%BB%93%20ki%E1%BA%BFn%20tr%C3%BAc%20t%E1%BB%95ng%20quan.md)|
 | Huỳnh Thế Cảnh | 2351010022 | Vẽ sơ đồ C4 (Context, Container, Component) | []() |
 ---
 ## 2. Tiến độ tổng thể
