@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence           http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+  <persistence-unit name="com.paq_Taskify_jar_1.0-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>com.paq.pojo.User</class>
+    <class>com.paq.pojo.Board</class>
+    <class>com.paq.pojo.Card</class>
+    <class>com.paq.pojo.Comment</class>
+    <class>com.paq.pojo.List</class>
+    <class>com.paq.pojo.Thamgia</class>
+    <class>com.paq.pojo.Activity</class>
+    <class>com.paq.pojo.Workspace</class>
+    <class>com.paq.pojo.Attachment</class>
+    <class>com.paq.pojo.Label</class>
+    <class>com.paq.pojo.ChecklistItem</class>
+    <class>com.paq.pojo.CardUser</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/taskifydb?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
+      <property name="javax.persistence.jdbc.user" value="root"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="123456"/>
+    </properties>
+  </persistence-unit>
+</persistence>
