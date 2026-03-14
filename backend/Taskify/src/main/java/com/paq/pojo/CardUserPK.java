@@ -4,10 +4,11 @@
  */
 package com.paq.pojo;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import java.io.Serializable;
 
 /**
  *
@@ -75,5 +76,5 @@ public class CardUserPK implements Serializable {
     public String toString() {
         return "com.paq.pojo.CardUserPK[ cardId=" + cardId + ", userId=" + userId + " ]";
     }
-    
+
 }
