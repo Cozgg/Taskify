@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.paq.pojo;
+package com.ccq.pojo;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -14,23 +14,23 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
-@Table(name = "list")
+@Table(name = "checklist_item")
 @NamedQueries({
-    @NamedQuery(name = "List.findAll", query = "SELECT l FROM List l"),
-    @NamedQuery(name = "List.findById", query = "SELECT l FROM List l WHERE l.id = :id"),
-    @NamedQuery(name = "List.findByName", query = "SELECT l FROM List l WHERE l.name = :name"),
-    @NamedQuery(name = "List.findByPosition", query = "SELECT l FROM List l WHERE l.position = :position")})
-public class List implements Serializable {
+    @NamedQuery(name = "ChecklistItem.findAll", query = "SELECT c FROM ChecklistItem c"),
+    @NamedQuery(name = "ChecklistItem.findById", query = "SELECT c FROM ChecklistItem c WHERE c.id = :id"),
+    @NamedQuery(name = "ChecklistItem.findByName", query = "SELECT c FROM ChecklistItem c WHERE c.name = :name"),
+    @NamedQuery(name = "ChecklistItem.findByIsChecked", query = "SELECT c FROM ChecklistItem c WHERE c.isChecked = :isChecked"),
+    @NamedQuery(name = "ChecklistItem.findByPosition", query = "SELECT c FROM ChecklistItem c WHERE c.position = :position")})
+public class ChecklistItem implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -38,27 +38,22 @@ public class List implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
+    @Size(max = 255)
     @Column(name = "name")
     private String name;
+    @Column(name = "is_checked")
+    private Boolean isChecked;
     @Column(name = "position")
     private Integer position;
-    @JoinColumn(name = "board_id", referencedColumnName = "id")
+    @JoinColumn(name = "card_id", referencedColumnName = "id")
     @ManyToOne
-    private Board boardId;
-    @OneToMany(mappedBy = "listId")
-    private Set<Card> cardSet;
+    private Card cardId;
 
-    public List() {
+    public ChecklistItem() {
     }
 
-    public List(Integer id) {
+    public ChecklistItem(Integer id) {
         this.id = id;
-    }
-
-    public List(Integer id, String name) {
-        this.id = id;
-        this.name = name;
     }
 
     public Integer getId() {
@@ -77,6 +72,14 @@ public class List implements Serializable {
         this.name = name;
     }
 
+    public Boolean getIsChecked() {
+        return isChecked;
+    }
+
+    public void setIsChecked(Boolean isChecked) {
+        this.isChecked = isChecked;
+    }
+
     public Integer getPosition() {
         return position;
     }
@@ -85,20 +88,12 @@ public class List implements Serializable {
         this.position = position;
     }
 
-    public Board getBoardId() {
-        return boardId;
+    public Card getCardId() {
+        return cardId;
     }
 
-    public void setBoardId(Board boardId) {
-        this.boardId = boardId;
-    }
-
-    public Set<Card> getCardSet() {
-        return cardSet;
-    }
-
-    public void setCardSet(Set<Card> cardSet) {
-        this.cardSet = cardSet;
+    public void setCardId(Card cardId) {
+        this.cardId = cardId;
     }
 
     @Override
@@ -111,10 +106,10 @@ public class List implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof List)) {
+        if (!(object instanceof ChecklistItem)) {
             return false;
         }
-        List other = (List) object;
+        ChecklistItem other = (ChecklistItem) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -123,7 +118,7 @@ public class List implements Serializable {
 
     @Override
     public String toString() {
-        return "com.paq.pojo.List[ id=" + id + " ]";
+        return "com.ccq.pojo.ChecklistItem[ id=" + id + " ]";
     }
     
 }

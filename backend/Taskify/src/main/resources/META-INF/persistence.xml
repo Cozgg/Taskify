@@ -1,34 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
-             version="3.0">
-
-    <persistence-unit name="com.paq_Taskify_jar_1.0-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
-        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        
-        <class>com.paq.pojo.User</class>
-        <class>com.paq.pojo.Activity</class>
-        <class>com.paq.pojo.Attachment</class>
-        <class>com.paq.pojo.Board</class>
-        <class>com.paq.pojo.Card</class>
-        <class>com.paq.pojo.CardUser</class>
-        <class>com.paq.pojo.ChecklistItem</class>
-        <class>com.paq.pojo.Comment</class>
-        <class>com.paq.pojo.Label</class>
-        <class>com.paq.pojo.List</class>
-        <class>com.paq.pojo.Thamgia</class>
-        <class>com.paq.pojo.Workspace</class>
-
-        <properties>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/taskifydb?sslMode=VERIFY_IDENTITY"/>
-            <property name="jakarta.persistence.jdbc.user" value="KzkioyDhK672Q4L.root"/>
-            <property name="jakarta.persistence.jdbc.password" value="syvAIsuw1MVOoB5O"/>
-            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-            
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
-            <property name="hibernate.show_sql" value="true"/>
-        </properties>
-    </persistence-unit>
+<persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+  <!-- Define Persistence Unit -->
+  <persistence-unit name="my_persistence_unit">
+    <class>com.ccq.pojo.Attachment</class>
+    <class>com.ccq.pojo.Card</class>
+    <class>com.ccq.pojo.Board</class>
+    <class>com.ccq.pojo.Workspace</class>
+    <class>com.ccq.pojo.Thamgia</class>
+    <class>com.ccq.pojo.ChecklistItem</class>
+    <class>com.ccq.pojo.Activity</class>
+    <class>com.ccq.pojo.Label</class>
+    <class>com.ccq.pojo.User</class>
+    <class>com.ccq.pojo.Comment</class>
+    <class>com.ccq.pojo.List</class>
+  </persistence-unit>
 </persistence>

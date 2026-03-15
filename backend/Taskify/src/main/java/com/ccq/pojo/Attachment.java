@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.paq.pojo;
+package com.ccq.pojo;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -17,12 +17,13 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "attachment")
@@ -43,8 +44,10 @@ public class Attachment implements Serializable {
     @Column(name = "update_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateDate;
+    @Size(max = 255)
     @Column(name = "filename")
     private String filename;
+    @Size(max = 255)
     @Column(name = "url")
     private String url;
     @JoinColumn(name = "card_id", referencedColumnName = "id")
@@ -120,7 +123,7 @@ public class Attachment implements Serializable {
 
     @Override
     public String toString() {
-        return "com.paq.pojo.Attachment[ id=" + id + " ]";
+        return "com.ccq.pojo.Attachment[ id=" + id + " ]";
     }
     
 }

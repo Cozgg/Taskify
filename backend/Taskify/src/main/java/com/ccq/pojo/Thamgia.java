@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.paq.pojo;
+package com.ccq.pojo;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -11,27 +11,25 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
-@Table(name = "comment")
+@Table(name = "thamgia")
 @NamedQueries({
-    @NamedQuery(name = "Comment.findAll", query = "SELECT c FROM Comment c"),
-    @NamedQuery(name = "Comment.findById", query = "SELECT c FROM Comment c WHERE c.id = :id"),
-    @NamedQuery(name = "Comment.findByCreatedDate", query = "SELECT c FROM Comment c WHERE c.createdDate = :createdDate")})
-public class Comment implements Serializable {
+    @NamedQuery(name = "Thamgia.findAll", query = "SELECT t FROM Thamgia t"),
+    @NamedQuery(name = "Thamgia.findById", query = "SELECT t FROM Thamgia t WHERE t.id = :id"),
+    @NamedQuery(name = "Thamgia.findByVaiTro", query = "SELECT t FROM Thamgia t WHERE t.vaiTro = :vaiTro"),
+    @NamedQuery(name = "Thamgia.findByWorkspaceIdFk", query = "SELECT t FROM Thamgia t WHERE t.workspaceIdFk = :workspaceIdFk")})
+public class Thamgia implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -39,30 +37,23 @@ public class Comment implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @Lob
-    @Column(name = "comment")
-    private String comment;
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
-    @JoinColumn(name = "card_id", referencedColumnName = "id")
-    @ManyToOne
-    private Card cardId;
+    @Size(max = 50)
+    @Column(name = "vaiTro")
+    private String vaiTro;
+    @Column(name = "workspace_id_fk")
+    private Integer workspaceIdFk;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
     private User userId;
+    @JoinColumn(name = "workspace_id", referencedColumnName = "id")
+    @ManyToOne
+    private Workspace workspaceId;
 
-    public Comment() {
+    public Thamgia() {
     }
 
-    public Comment(Integer id) {
+    public Thamgia(Integer id) {
         this.id = id;
-    }
-
-    public Comment(Integer id, String comment) {
-        this.id = id;
-        this.comment = comment;
     }
 
     public Integer getId() {
@@ -73,28 +64,20 @@ public class Comment implements Serializable {
         this.id = id;
     }
 
-    public String getComment() {
-        return comment;
+    public String getVaiTro() {
+        return vaiTro;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setVaiTro(String vaiTro) {
+        this.vaiTro = vaiTro;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
+    public Integer getWorkspaceIdFk() {
+        return workspaceIdFk;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Card getCardId() {
-        return cardId;
-    }
-
-    public void setCardId(Card cardId) {
-        this.cardId = cardId;
+    public void setWorkspaceIdFk(Integer workspaceIdFk) {
+        this.workspaceIdFk = workspaceIdFk;
     }
 
     public User getUserId() {
@@ -103,6 +86,14 @@ public class Comment implements Serializable {
 
     public void setUserId(User userId) {
         this.userId = userId;
+    }
+
+    public Workspace getWorkspaceId() {
+        return workspaceId;
+    }
+
+    public void setWorkspaceId(Workspace workspaceId) {
+        this.workspaceId = workspaceId;
     }
 
     @Override
@@ -115,10 +106,10 @@ public class Comment implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Comment)) {
+        if (!(object instanceof Thamgia)) {
             return false;
         }
-        Comment other = (Comment) object;
+        Thamgia other = (Thamgia) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -127,7 +118,7 @@ public class Comment implements Serializable {
 
     @Override
     public String toString() {
-        return "com.paq.pojo.Comment[ id=" + id + " ]";
+        return "com.ccq.pojo.Thamgia[ id=" + id + " ]";
     }
     
 }

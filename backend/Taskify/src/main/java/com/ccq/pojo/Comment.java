@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.paq.pojo;
+package com.ccq.pojo;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -11,26 +11,29 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.Date;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
-@Table(name = "label")
+@Table(name = "comment")
 @NamedQueries({
-    @NamedQuery(name = "Label.findAll", query = "SELECT l FROM Label l"),
-    @NamedQuery(name = "Label.findById", query = "SELECT l FROM Label l WHERE l.id = :id"),
-    @NamedQuery(name = "Label.findByName", query = "SELECT l FROM Label l WHERE l.name = :name"),
-    @NamedQuery(name = "Label.findByColour", query = "SELECT l FROM Label l WHERE l.colour = :colour")})
-public class Label implements Serializable {
+    @NamedQuery(name = "Comment.findAll", query = "SELECT c FROM Comment c"),
+    @NamedQuery(name = "Comment.findById", query = "SELECT c FROM Comment c WHERE c.id = :id"),
+    @NamedQuery(name = "Comment.findByCreatedDate", query = "SELECT c FROM Comment c WHERE c.createdDate = :createdDate")})
+public class Comment implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -38,24 +41,32 @@ public class Label implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Column(name = "name")
-    private String name;
-    @Column(name = "colour")
-    private Integer colour;
-    @ManyToMany(mappedBy = "labelSet")
-    private Set<Card> cardSet;
-    @JoinColumn(name = "board_id", referencedColumnName = "id")
-    @ManyToOne
-    private Board boardId;
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Size(min = 1, max = 65535)
+    @Column(name = "comment")
+    private String comment;
+    @Column(name = "created_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
     @JoinColumn(name = "card_id", referencedColumnName = "id")
     @ManyToOne
     private Card cardId;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
+    private User userId;
 
-    public Label() {
+    public Comment() {
     }
 
-    public Label(Integer id) {
+    public Comment(Integer id) {
         this.id = id;
+    }
+
+    public Comment(Integer id, String comment) {
+        this.id = id;
+        this.comment = comment;
     }
 
     public Integer getId() {
@@ -66,36 +77,20 @@ public class Label implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getComment() {
+        return comment;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
-    public Integer getColour() {
-        return colour;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setColour(Integer colour) {
-        this.colour = colour;
-    }
-
-    public Set<Card> getCardSet() {
-        return cardSet;
-    }
-
-    public void setCardSet(Set<Card> cardSet) {
-        this.cardSet = cardSet;
-    }
-
-    public Board getBoardId() {
-        return boardId;
-    }
-
-    public void setBoardId(Board boardId) {
-        this.boardId = boardId;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
     public Card getCardId() {
@@ -104,6 +99,14 @@ public class Label implements Serializable {
 
     public void setCardId(Card cardId) {
         this.cardId = cardId;
+    }
+
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
     }
 
     @Override
@@ -116,10 +119,10 @@ public class Label implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Label)) {
+        if (!(object instanceof Comment)) {
             return false;
         }
-        Label other = (Label) object;
+        Comment other = (Comment) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -128,7 +131,7 @@ public class Label implements Serializable {
 
     @Override
     public String toString() {
-        return "com.paq.pojo.Label[ id=" + id + " ]";
+        return "com.ccq.pojo.Comment[ id=" + id + " ]";
     }
     
 }

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.paq.pojo;
+package com.ccq.pojo;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -18,13 +18,15 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "board")
@@ -43,6 +45,8 @@ public class Board implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
     @Column(name = "name")
     private String name;
     @Column(name = "created_date")
@@ -50,8 +54,6 @@ public class Board implements Serializable {
     private Date createdDate;
     @Column(name = "is_public")
     private Boolean isPublic;
-    @OneToMany(mappedBy = "boardId")
-    private Set<Label> labelSet;
     @OneToMany(mappedBy = "boardId")
     private Set<List> listSet;
     @JoinColumn(name = "workspace_id", referencedColumnName = "id")
@@ -102,14 +104,6 @@ public class Board implements Serializable {
         this.isPublic = isPublic;
     }
 
-    public Set<Label> getLabelSet() {
-        return labelSet;
-    }
-
-    public void setLabelSet(Set<Label> labelSet) {
-        this.labelSet = labelSet;
-    }
-
     public Set<List> getListSet() {
         return listSet;
     }
@@ -148,7 +142,7 @@ public class Board implements Serializable {
 
     @Override
     public String toString() {
-        return "com.paq.pojo.Board[ id=" + id + " ]";
+        return "com.ccq.pojo.Board[ id=" + id + " ]";
     }
     
 }

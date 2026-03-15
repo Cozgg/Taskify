@@ -2,10 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.paq.pojo;
+package com.ccq.pojo;
 
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,13 +16,15 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "user")
@@ -44,16 +45,25 @@ public class User implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "username")
     private String username;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
     @Column(name = "password")
     private String password;
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
     @Column(name = "email")
     private String email;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
+    @Size(max = 255)
     @Column(name = "avatar")
     private String avatar;
     @OneToMany(mappedBy = "ownerId")
@@ -62,10 +72,8 @@ public class User implements Serializable {
     private Set<Activity> activitySet;
     @OneToMany(mappedBy = "userId")
     private Set<Comment> commentSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(mappedBy = "userId")
     private Set<Thamgia> thamgiaSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private Set<CardUser> cardUserSet;
 
     public User() {
     }
@@ -74,10 +82,11 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String username, String password) {
+    public User(Integer id, String username, String password, String email) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.email = email;
     }
 
     public Integer getId() {
@@ -160,14 +169,6 @@ public class User implements Serializable {
         this.thamgiaSet = thamgiaSet;
     }
 
-    public Set<CardUser> getCardUserSet() {
-        return cardUserSet;
-    }
-
-    public void setCardUserSet(Set<CardUser> cardUserSet) {
-        this.cardUserSet = cardUserSet;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -190,7 +191,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "com.paq.pojo.User[ id=" + id + " ]";
+        return "com.ccq.pojo.User[ id=" + id + " ]";
     }
     
 }

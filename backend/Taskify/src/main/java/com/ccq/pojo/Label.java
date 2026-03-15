@@ -2,35 +2,34 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.paq.pojo;
+package com.ccq.pojo;
 
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
-@Table(name = "workspace")
+@Table(name = "label")
 @NamedQueries({
-    @NamedQuery(name = "Workspace.findAll", query = "SELECT w FROM Workspace w"),
-    @NamedQuery(name = "Workspace.findById", query = "SELECT w FROM Workspace w WHERE w.id = :id"),
-    @NamedQuery(name = "Workspace.findByName", query = "SELECT w FROM Workspace w WHERE w.name = :name")})
-public class Workspace implements Serializable {
+    @NamedQuery(name = "Label.findAll", query = "SELECT l FROM Label l"),
+    @NamedQuery(name = "Label.findById", query = "SELECT l FROM Label l WHERE l.id = :id"),
+    @NamedQuery(name = "Label.findByName", query = "SELECT l FROM Label l WHERE l.name = :name"),
+    @NamedQuery(name = "Label.findByColour", query = "SELECT l FROM Label l WHERE l.colour = :colour")})
+public class Label implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -38,27 +37,19 @@ public class Workspace implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
+    @Size(max = 50)
     @Column(name = "name")
     private String name;
-    @JoinColumn(name = "owner_id", referencedColumnName = "id")
-    @ManyToOne
-    private User ownerId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "workspace")
-    private Set<Thamgia> thamgiaSet;
-    @OneToMany(mappedBy = "workspaceId")
-    private Set<Board> boardSet;
+    @Column(name = "colour")
+    private Integer colour;
+    @ManyToMany(mappedBy = "labelSet")
+    private Set<Card> cardSet;
 
-    public Workspace() {
+    public Label() {
     }
 
-    public Workspace(Integer id) {
+    public Label(Integer id) {
         this.id = id;
-    }
-
-    public Workspace(Integer id, String name) {
-        this.id = id;
-        this.name = name;
     }
 
     public Integer getId() {
@@ -77,28 +68,20 @@ public class Workspace implements Serializable {
         this.name = name;
     }
 
-    public User getOwnerId() {
-        return ownerId;
+    public Integer getColour() {
+        return colour;
     }
 
-    public void setOwnerId(User ownerId) {
-        this.ownerId = ownerId;
+    public void setColour(Integer colour) {
+        this.colour = colour;
     }
 
-    public Set<Thamgia> getThamgiaSet() {
-        return thamgiaSet;
+    public Set<Card> getCardSet() {
+        return cardSet;
     }
 
-    public void setThamgiaSet(Set<Thamgia> thamgiaSet) {
-        this.thamgiaSet = thamgiaSet;
-    }
-
-    public Set<Board> getBoardSet() {
-        return boardSet;
-    }
-
-    public void setBoardSet(Set<Board> boardSet) {
-        this.boardSet = boardSet;
+    public void setCardSet(Set<Card> cardSet) {
+        this.cardSet = cardSet;
     }
 
     @Override
@@ -111,10 +94,10 @@ public class Workspace implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Workspace)) {
+        if (!(object instanceof Label)) {
             return false;
         }
-        Workspace other = (Workspace) object;
+        Label other = (Label) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -123,7 +106,7 @@ public class Workspace implements Serializable {
 
     @Override
     public String toString() {
-        return "com.paq.pojo.Workspace[ id=" + id + " ]";
+        return "com.ccq.pojo.Label[ id=" + id + " ]";
     }
     
 }

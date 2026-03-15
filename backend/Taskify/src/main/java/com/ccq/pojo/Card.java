@@ -2,10 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.paq.pojo;
+package com.ccq.pojo;
 
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,13 +21,15 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "card")
@@ -50,9 +51,12 @@ public class Card implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
     @Column(name = "name")
     private String name;
     @Lob
+    @Size(max = 65535)
     @Column(name = "description")
     private String description;
     @Column(name = "created_date")
@@ -81,13 +85,9 @@ public class Card implements Serializable {
     private Set<Attachment> attachmentSet;
     @OneToMany(mappedBy = "cardId")
     private Set<Comment> commentSet;
-    @OneToMany(mappedBy = "cardId")
-    private Set<Label> labelSet1;
     @JoinColumn(name = "list_id", referencedColumnName = "id")
     @ManyToOne
     private List listId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "card")
-    private Set<CardUser> cardUserSet;
 
     public Card() {
     }
@@ -205,28 +205,12 @@ public class Card implements Serializable {
         this.commentSet = commentSet;
     }
 
-    public Set<Label> getLabelSet1() {
-        return labelSet1;
-    }
-
-    public void setLabelSet1(Set<Label> labelSet1) {
-        this.labelSet1 = labelSet1;
-    }
-
     public List getListId() {
         return listId;
     }
 
     public void setListId(List listId) {
         this.listId = listId;
-    }
-
-    public Set<CardUser> getCardUserSet() {
-        return cardUserSet;
-    }
-
-    public void setCardUserSet(Set<CardUser> cardUserSet) {
-        this.cardUserSet = cardUserSet;
     }
 
     @Override
@@ -251,7 +235,7 @@ public class Card implements Serializable {
 
     @Override
     public String toString() {
-        return "com.paq.pojo.Card[ id=" + id + " ]";
+        return "com.ccq.pojo.Card[ id=" + id + " ]";
     }
     
 }
