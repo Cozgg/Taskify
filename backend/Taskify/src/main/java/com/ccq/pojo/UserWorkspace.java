@@ -7,6 +7,8 @@ package com.ccq.pojo;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,13 +25,13 @@ import java.io.Serializable;
  * @author Admin
  */
 @Entity
-@Table(name = "thamgia")
+@Table(name = "user_workspace")
 @NamedQueries({
-    @NamedQuery(name = "Thamgia.findAll", query = "SELECT t FROM Thamgia t"),
-    @NamedQuery(name = "Thamgia.findById", query = "SELECT t FROM Thamgia t WHERE t.id = :id"),
-    @NamedQuery(name = "Thamgia.findByVaiTro", query = "SELECT t FROM Thamgia t WHERE t.vaiTro = :vaiTro"),
-    @NamedQuery(name = "Thamgia.findByWorkspaceIdFk", query = "SELECT t FROM Thamgia t WHERE t.workspaceIdFk = :workspaceIdFk")})
-public class Thamgia implements Serializable {
+    @NamedQuery(name = "UserWorkspace.findAll", query = "SELECT u FROM UserWorkspace u"),
+    @NamedQuery(name = "UserWorkspace.findById", query = "SELECT u FROM UserWorkspace u WHERE u.id = :id"),
+    @NamedQuery(name = "UserWorkspace.findByRoleWorkspace", query = "SELECT u FROM UserWorkspace u WHERE u.roleWorkspace = :roleWorkspace"),
+    @NamedQuery(name = "UserWorkspace.findByWorkspaceIdFk", query = "SELECT u FROM UserWorkspace u WHERE u.workspaceIdFk = :workspaceIdFk")})
+public class UserWorkspace implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -37,9 +39,10 @@ public class Thamgia implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Size(max = 50)
-    @Column(name = "vaiTro")
-    private String vaiTro;
+    @Size(max = 10)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role_workspace")
+    private RoleWorkspace roleWorkspace;
     @Column(name = "workspace_id_fk")
     private Integer workspaceIdFk;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -49,10 +52,10 @@ public class Thamgia implements Serializable {
     @ManyToOne
     private Workspace workspaceId;
 
-    public Thamgia() {
+    public UserWorkspace() {
     }
 
-    public Thamgia(Integer id) {
+    public UserWorkspace(Integer id) {
         this.id = id;
     }
 
@@ -64,12 +67,12 @@ public class Thamgia implements Serializable {
         this.id = id;
     }
 
-    public String getVaiTro() {
-        return vaiTro;
+    public RoleWorkspace getRoleWorkspace() {
+        return roleWorkspace;
     }
 
-    public void setVaiTro(String vaiTro) {
-        this.vaiTro = vaiTro;
+    public void setRoleWorkspace(RoleWorkspace roleWorkspace) {
+        this.roleWorkspace = roleWorkspace;
     }
 
     public Integer getWorkspaceIdFk() {
@@ -106,10 +109,10 @@ public class Thamgia implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Thamgia)) {
+        if (!(object instanceof UserWorkspace)) {
             return false;
         }
-        Thamgia other = (Thamgia) object;
+        UserWorkspace other = (UserWorkspace) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -118,7 +121,7 @@ public class Thamgia implements Serializable {
 
     @Override
     public String toString() {
-        return "com.ccq.pojo.Thamgia[ id=" + id + " ]";
+        return "com.ccq.pojo.UserWorkspace[ id=" + id + " ]";
     }
     
 }

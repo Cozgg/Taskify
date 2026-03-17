@@ -48,9 +48,9 @@ public class Workspace implements Serializable {
     @ManyToOne
     private User ownerId;
     @OneToMany(mappedBy = "workspaceId")
-    private Set<Thamgia> thamgiaSet;
-    @OneToMany(mappedBy = "workspaceId")
     private Set<Board> boardSet;
+    @OneToMany(mappedBy = "workspaceId")
+    private Set<UserWorkspace> userWorkspaceSet;
 
     public Workspace() {
     }
@@ -88,20 +88,20 @@ public class Workspace implements Serializable {
         this.ownerId = ownerId;
     }
 
-    public Set<Thamgia> getThamgiaSet() {
-        return thamgiaSet;
-    }
-
-    public void setThamgiaSet(Set<Thamgia> thamgiaSet) {
-        this.thamgiaSet = thamgiaSet;
-    }
-
     public Set<Board> getBoardSet() {
         return boardSet;
     }
 
     public void setBoardSet(Set<Board> boardSet) {
         this.boardSet = boardSet;
+    }
+
+    public Set<UserWorkspace> getUserWorkspaceSet() {
+        return userWorkspaceSet;
+    }
+
+    public void setUserWorkspaceSet(Set<UserWorkspace> userWorkspaceSet) {
+        this.userWorkspaceSet = userWorkspaceSet;
     }
 
     @Override

@@ -2,14 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.ccq.repository;
-
-import com.ccq.pojo.Card;
+package com.ccq.service;
 
 /**
  *
  * @author Admin
  */
-public interface CardRepository {
-    Card findCardById(int cardId);
+public interface ActivityService {
+    void assignUserForCard(int userId, int cardId);
 }

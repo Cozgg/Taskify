@@ -4,12 +4,12 @@
  */
 package com.ccq.repository;
 
-import com.ccq.pojo.Card;
+import com.ccq.pojo.Workspace;
 
 /**
  *
  * @author Admin
  */
-public interface CardRepository {
-    Card findCardById(int cardId);
+public interface WorkspaceRepository {
+    Workspace findWorkspaceById(int workspaceId);
 }
