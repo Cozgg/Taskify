@@ -39,7 +39,7 @@ public class UserWorkspaceServiceImpl implements UserWorkspaceService{
         if(u == null){
             throw new ResponseStatusException(HttpStatusCode.valueOf(404), "User not found");
         }
-        Workspace w = this.workspaceRepo.findWorkspaceById(workspaceId);
+        Workspace w = this.workspaceRepo.getWorkspaceById(workspaceId);
         if(w == null){
             throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Workspace not found");
         }

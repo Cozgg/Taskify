@@ -19,7 +19,7 @@
 ||| - API Cấu trúc (Board & Column) | []() |
 ||| - API Task (CRUD công việc) | []() |
 ||| - Logic cốt lõi (Xử lý kéo thả/di chuyển Task) |
-| Huỳnh Thế Cảnh | 2351010022 | - API Thành viên (Mời user, Gán người làm task) | []() |
+| Huỳnh Thế Cảnh | 2351010022 | - API Thành viên (Mời user, Gán người làm task) | [4648072f4b51380ff57178c26253f89c57519c00](https://github.com/phamquyendev03/Taskify/commit/4648072f4b51380ff57178c26253f89c57519c00) |
 ||| - API Tương tác (Comment, Nhãn màu (Labels)) | []() |
 ||| - API Thống kê (Báo cáo tiến độ & Trạng thái dự án) | []() |
 ---
