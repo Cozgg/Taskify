@@ -21,8 +21,8 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     private WorkspaceRepository workspaceRepo;
     
     @Override
-    public Workspace getById(int id) {
-        return this.workspaceRepo.getById(id);
+    public Workspace getWorkspaceById(int id) {
+        return this.workspaceRepo.getWorkspaceById(id);
     }
 
     @Override

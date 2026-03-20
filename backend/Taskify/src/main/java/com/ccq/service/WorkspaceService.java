@@ -4,10 +4,17 @@
  */
 package com.ccq.service;
 
+import com.ccq.pojo.Workspace;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author nguye
  */
 public interface WorkspaceService {
-    
+    void addOrUpdate(Workspace w);
+    void delete(int id);
+    List<Workspace> getWorkSpace(Map<String, String> params);
+    Workspace getWorkspaceById(int workspaceId);
 }

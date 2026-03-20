@@ -3,8 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.ccq.repository.impl;
-
-import com.ccq.configs.HibernateConfigs;
 import com.ccq.pojo.Workspace;
 import com.ccq.repository.WorkspaceRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -23,10 +21,6 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- *
- * @author nguye
- */
 @Repository
 @PropertySource("classpath:configs.properties")
 @Transactional
@@ -39,7 +33,7 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     private LocalSessionFactoryBean factory;
 
     @Override
-    public Workspace getById(int id) {
+    public Workspace getWorkspaceById(int id) {
         Session s = this.factory.getObject().getCurrentSession();
         return s.get(Workspace.class, id);
     }
@@ -57,7 +51,7 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     @Override
     public void delete(int id) {
         Session s = this.factory.getObject().getCurrentSession();
-        Workspace w = this.getById(id);
+        Workspace w = this.getWorkspaceById(id);
         if (w != null) {
             s.remove(w);
         }
@@ -96,5 +90,4 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
         
         return query.getResultList();
     }
-
 }

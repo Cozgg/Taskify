@@ -14,9 +14,9 @@ import java.util.Map;
  */
 
 public interface WorkspaceRepository {
-    Workspace getById(int id);
     void addOrUpdate(Workspace w);
     void delete(int id);
     List<Workspace> getWorkSpace(Map<String, String> params);
+    Workspace getWorkspaceById(int workspaceId);
 }
 

@@ -73,7 +73,7 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "userId")
     private Set<Comment> commentSet;
     @OneToMany(mappedBy = "userId")
-    private Set<Thamgia> thamgiaSet;
+    private Set<UserWorkspace> userWorkspaceSet;
 
     public User() {
     }
@@ -161,12 +161,12 @@ public class User implements Serializable {
         this.commentSet = commentSet;
     }
 
-    public Set<Thamgia> getThamgiaSet() {
-        return thamgiaSet;
+    public Set<UserWorkspace> getUserWorkspaceSet() {
+        return userWorkspaceSet;
     }
 
-    public void setThamgiaSet(Set<Thamgia> thamgiaSet) {
-        this.thamgiaSet = thamgiaSet;
+    public void setUserWorkspaceSet(Set<UserWorkspace> userWorkspaceSet) {
+        this.userWorkspaceSet = userWorkspaceSet;
     }
 
     @Override

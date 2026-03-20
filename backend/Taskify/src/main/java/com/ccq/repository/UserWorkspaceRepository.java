@@ -4,12 +4,13 @@
  */
 package com.ccq.repository;
 
-import com.ccq.pojo.Card;
+import com.ccq.pojo.UserWorkspace;
 
 /**
  *
  * @author Admin
  */
-public interface CardRepository {
-    Card findCardById(int cardId);
+public interface UserWorkspaceRepository {
+    void saveInviteUser(UserWorkspace uw);
+    boolean isUserInWorkspace(int userId, int workspaceId);
 }

@@ -4,8 +4,8 @@
  */
 package com.ccq.repository.impl;
 
-import com.ccq.pojo.Card;
-import com.ccq.repository.CardRepository;
+import com.ccq.pojo.Comment;
+import com.ccq.repository.CommentRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -18,16 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional
-public class CardRepositoryImpl implements CardRepository {
-
+public class CommentRepositoryImpl implements CommentRepository{
+    
     @Autowired
     private LocalSessionFactoryBean factory;
 
     @Override
-    public Card findCardById(int cardId) {
+    public void addComment(Comment c) {
         Session s = this.factory.getObject().getCurrentSession();
-        return s.get(Card.class, cardId);
+        s.persist(c);
     }
-
-
+    
+    
 }

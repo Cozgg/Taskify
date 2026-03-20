@@ -4,12 +4,13 @@
  */
 package com.ccq.repository;
 
-import com.ccq.pojo.Card;
+import com.ccq.pojo.Activity;
 
 /**
  *
  * @author Admin
  */
-public interface CardRepository {
-    Card findCardById(int cardId);
+public interface ActivityRepository {
+    void assignUserForCard(Activity ac);
+    boolean isUserInCard(int userId, int cardId);
 }

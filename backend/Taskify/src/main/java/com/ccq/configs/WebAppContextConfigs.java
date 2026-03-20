@@ -6,7 +6,9 @@ package com.ccq.configs;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -14,11 +16,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author Admin
  */
 @Configuration
-@ComponentScan(basePackages = {
-    "com.ccq.controller",
-    "com.ccq.repository",
-    "com.ccq.service"
-})
+@EnableWebMvc
+@EnableTransactionManagement
+@ComponentScan(
+        basePackages={
+            "com.ccq.controller",
+            "com.ccq.repository",
+            "com.ccq.service"
+        }
+)
 public class WebAppContextConfigs implements WebMvcConfigurer{
 
     @Override

@@ -4,6 +4,8 @@
  */
 package com.ccq.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,14 +47,17 @@ public class Comment implements Serializable {
     @NotNull
     @Lob
     @Size(min = 1, max = 65535)
+    @JsonProperty("comment")
     @Column(name = "comment")
     private String comment;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "card_id", referencedColumnName = "id")
     @ManyToOne
     private Card cardId;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
     private User userId;
