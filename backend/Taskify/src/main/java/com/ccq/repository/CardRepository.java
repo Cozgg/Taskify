@@ -17,4 +17,5 @@ public interface CardRepository {
     void addOrUpdate(Card c);
     void delete(int id);
     List<Card> getCard(Map<String, String> params);
+    Card findCardById(int cardId);
 }

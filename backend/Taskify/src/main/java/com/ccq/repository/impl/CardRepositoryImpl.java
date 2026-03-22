@@ -19,6 +19,9 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import com.ccq.repository.CardRepository;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,5 +98,10 @@ public class CardRepositoryImpl implements CardRepository{
         
         return query.getResultList();
     }
-    
+
+    @Override
+    public Card findCardById(int cardId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        return s.get(Card.class, cardId);
+    }
 }

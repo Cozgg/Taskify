@@ -13,8 +13,8 @@ import java.util.Map;
  * @author nguye
  */
 public interface WorkspaceService {
-    Workspace getById(int id);
     void addOrUpdate(Workspace w);
     void delete(int id);
     List<Workspace> getWorkSpace(Map<String, String> params);
+    Workspace getWorkspaceById(int workspaceId);
 }
