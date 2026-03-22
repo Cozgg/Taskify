@@ -4,6 +4,9 @@
  */
 package com.ccq.repository;
 
+import java.util.List;
+import java.util.Map;
+
 import com.ccq.pojo.Board;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +16,14 @@ import java.util.Map;
  * @author nguye
  */
 public interface BoardRepository {
+
     Board getById(int id);
+
     void addOrUpdate(Board b);
+
     void delete(int id);
-    List<Board> getBoards(Map<String, String> params);
+
+     List<Board> getBoards(Map<String, String> params);
+
+    Long count();
 }

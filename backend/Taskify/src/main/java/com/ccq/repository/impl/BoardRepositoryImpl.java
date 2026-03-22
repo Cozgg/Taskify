@@ -4,15 +4,10 @@
  */
 package com.ccq.repository.impl;
 
-import com.ccq.pojo.Board;
-import com.ccq.repository.BoardRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +17,13 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ccq.pojo.Board;
+import com.ccq.repository.BoardRepository;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 /**
  *
@@ -30,15 +32,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @PropertySource("classpath:configs.properties")
 @Transactional
-public class BoardRepositoryImpl implements BoardRepository{
+public class BoardRepositoryImpl implements BoardRepository {
 
     @Autowired
     private Environment env;
 
     @Autowired
     private LocalSessionFactoryBean factory;
-    
-     @Override
+
+    @Override
     public Board getById(int id) {
         Session s = this.factory.getObject().getCurrentSession();
         return s.get(Board.class, id);
