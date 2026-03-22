@@ -16,8 +16,8 @@
 ||| - API Xác thực (Register, Login (JWT), Profile) | []() |
 ||| - API Quản lý (Workspace & Project) | []() |
 | Nguyễn Hữu Công | 2351010025 | - Thiết kế Database (MySQL) | []() |
-||| - API Cấu trúc (Board & Column) | []() |
-||| - API Task (CRUD công việc) | []() |
+||| - API Cấu trúc (Board & Column) | [2b14972c55ab4b6c2a1a8900db326e437f6bd113](https://github.com/phamquyendev03/Taskify/blob/2b14972c55ab4b6c2a1a8900db326e437f6bd113/backend/Taskify/src/main/java/com/ccq/controller/ListController.java) |
+||| - API Task (CRUD công việc) | [2b14972c55ab4b6c2a1a8900db326e437f6bd113](https://github.com/phamquyendev03/Taskify/blob/2b14972c55ab4b6c2a1a8900db326e437f6bd113/backend/Taskify/src/main/java/com/ccq/controller/CardController.java) |
 ||| - Logic cốt lõi (Xử lý kéo thả/di chuyển Task) |
 | Huỳnh Thế Cảnh | 2351010022 | - API Thành viên (Mời user, Gán người làm task) | [4648072f4b51380ff57178c26253f89c57519c00](https://github.com/phamquyendev03/Taskify/commit/4648072f4b51380ff57178c26253f89c57519c00) |
 ||| - API Tương tác (Comment, Nhãn màu (Labels)) | []() |
