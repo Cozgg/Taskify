@@ -5,9 +5,12 @@
 package com.ccq.service.impl;
 
 import com.ccq.pojo.Board;
+import com.ccq.pojo.Workspace;
 import com.ccq.repository.BoardRepository;
+import com.ccq.repository.WorkspaceRepository;
 import com.ccq.service.BoardService;
-
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,8 @@ public class BoardServiceImpl implements BoardService{
 
     @Autowired
     private BoardRepository boardRepo;
+    @Autowired 
+    private WorkspaceRepository wsRepo;
     
     @Override
     public Board getById(int id) {
@@ -34,6 +39,23 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public void delete(int id) {
         this.boardRepo.delete(id);
+    }
+
+    @Override
+    public List<Board> getBoards(Map<String, String> params) {
+        return this.boardRepo.getBoards(params);
+    }
+
+    @Override
+    public void createBoardInWorkspace(int workspaceId, Board board) {
+        Workspace ws = this.wsRepo.getById(workspaceId);
+        if (ws == null) {
+            throw new RuntimeException("Không tìm thấy Workspace" + workspaceId);
+        }
+        
+        board.setWorkspaceId(ws);
+        
+        this.boardRepo.addOrUpdate(board);
     }
     
 }

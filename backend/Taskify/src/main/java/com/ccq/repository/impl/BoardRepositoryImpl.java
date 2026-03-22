@@ -72,42 +72,42 @@ public class BoardRepositoryImpl implements BoardRepository {
         CriteriaQuery<Board> q = b.createQuery(Board.class);
         Root<Board> root = q.from(Board.class);
         q.select(root);
-
-        List<Predicate> predicates = new ArrayList<>();
-        if (params != null) {
+        
+        if(params != null){
+            List<Predicate> predicates = new ArrayList<>();
+            String workspaceId = params.get("workspaceId");
+            if(workspaceId != null && !workspaceId.isEmpty()){
+                predicates.add(b.equal(root.get("workspaceId").get("id"), Integer.parseInt(workspaceId)));
+            }
+            
             String kw = params.get("kw");
-            if (kw != null && !kw.isEmpty()) {
+            if(kw != null && !kw.isEmpty()){
                 predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw)));
             }
-
-            String workspaceId = params.get("workspaceId");
-            if (workspaceId != null && !workspaceId.isEmpty()) {
-                predicates.add(b.equal(root.get("workspace").get("id"), Integer.parseInt(workspaceId)));
+            
+            if(!predicates.isEmpty()){
+                q.where(predicates.toArray(new Predicate[0]));
             }
+            
         }
+        
+        q.orderBy(b.asc(root.get("id")));
 
-        if (!predicates.isEmpty()) {
-            q.where(predicates.toArray(Predicate[]::new));
-        }
-
-        q.orderBy(b.desc(root.get("id")));
         Query<Board> query = s.createQuery(q);
 
         if (params != null) {
-            int pageSize = Integer.parseInt(this.env.getProperty("board.page_size", "10"));
-            int page = Integer.parseInt(params.getOrDefault("page", "1"));
-            query.setMaxResults(pageSize);
-            query.setFirstResult((page - 1) * pageSize);
+            String pageStr = params.get("page");
+            if (pageStr != null && !pageStr.isEmpty()) {
+                int pageSize = this.env.getProperty("workspace.page_size", Integer.class);
+                int page = Integer.parseInt(pageStr);
+                int start = (page - 1) * pageSize;
+                
+                query.setMaxResults(pageSize);
+                query.setFirstResult(start);
+            }
         }
-
+        
         return query.getResultList();
     }
-
-    @Override
-    public Long count() {
-        Session s = this.factory.getObject().getCurrentSession();
-        Query<Long> q = s.createQuery("SELECT COUNT(*) FROM Board", Long.class);
-        return q.getSingleResult();
-    }
-
+    
 }
