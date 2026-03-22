@@ -10,11 +10,13 @@ import com.ccq.service.WorkspaceService;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author nguye
  */
+@Service
 public class WorkspaceServiceImpl implements WorkspaceService{
 
     @Autowired

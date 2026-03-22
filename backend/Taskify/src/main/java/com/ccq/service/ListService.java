@@ -16,4 +16,5 @@ public interface ListService {
     void addOrUpdate(List l);
     void delete(int id);
     java.util.List<List> getList(Map<String, String> params);
+    void createListInBoard(int boardId, com.ccq.pojo.List list);
 }

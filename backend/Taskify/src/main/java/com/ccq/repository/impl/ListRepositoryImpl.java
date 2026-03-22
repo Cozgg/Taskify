@@ -73,28 +73,36 @@ public class ListRepositoryImpl implements ListRepository{
         if (params != null) {
             java.util.List<Predicate> predicates = new ArrayList<>();
 
+            String boardId = params.get("boardId");
+            if (boardId != null && !boardId.isEmpty()) {
+                predicates.add(b.equal(root.get("boardId").get("id"), Integer.parseInt(boardId)));
+            }
             String kw = params.get("kw");
-            predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw)));
+            if (kw != null && !kw.isEmpty()) {
+                predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw)));
+            }
 
             if (!predicates.isEmpty()) {
                 q.where(predicates.toArray(new Predicate[0]));
             }
         }
-        
-        q.orderBy(b.desc(root.get("id")));
+        q.orderBy(b.asc(root.get("position")));
+
         Query<List> query = s.createQuery(q);
+
         if (params != null) {
+            String pageStr = params.get("page");
+            if (pageStr != null && !pageStr.isEmpty()) {
                 int pageSize = this.env.getProperty("workspace.page_size", Integer.class);
-                int page = Integer.parseInt(params.getOrDefault("page", "1"));
+                int page = Integer.parseInt(pageStr);
                 int start = (page - 1) * pageSize;
                 
                 query.setMaxResults(pageSize);
                 query.setFirstResult(start);
-                
             }
+        }
         
         return query.getResultList();
-    
     }
     
 }

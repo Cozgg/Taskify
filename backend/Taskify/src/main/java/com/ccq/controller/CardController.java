@@ -12,76 +12,70 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  *
  * @author nguye
  */
-@RestController
-@RequestMapping("/api/v1")
+@Controller 
 public class CardController {
 
     @Autowired
     private CardService cardService;
 
-    // 1. Lấy danh sách thẻ (có tìm kiếm và phân trang)
-    @GetMapping("/cards")
-    public ResponseEntity<List<Card>> getCards(@RequestParam Map<String, String> params) {
+    @GetMapping("/lists/{listId}/cards")
+    public ResponseEntity<?> getCards(@PathVariable("listId") int listId, @RequestParam Map<String, String> params){
+        params.put("listId", String.valueOf(listId));
         List<Card> cards = this.cardService.getCard(params);
         return new ResponseEntity<>(cards, HttpStatus.OK);
     }
-
-    // 2. Lấy chi tiết 1 thẻ
-    @GetMapping("/cards/{cardId}")
-    public ResponseEntity<?> getCardById(@PathVariable int cardId) {
-        Card card = this.cardService.getById(cardId);
-        if (card != null) {
-            return new ResponseEntity<>(card, HttpStatus.OK);
-        }
-        return new ResponseEntity<>("Không tìm thấy thẻ", HttpStatus.NOT_FOUND);
-    }
-
-    // 3. Tạo thẻ mới
-//    @PostMapping("/lists/{listId}/cards")
-//    public ResponseEntity<?> createCard(@PathVariable int listId, @RequestBody Card card) {
-//        try {
-//            // Lưu ý: Trong Service, bạn cần lấy List bằng listId và gán vào Card trước khi lưu
-//            this.cardService.addOrUpdate(listId, card); 
-//            return new ResponseEntity<>(card, HttpStatus.CREATED); // 201 Created
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//    }
-
-    // 4. Cập nhật thẻ
-    @PutMapping("/cards/{cardId}")
-    public ResponseEntity<?> updateCard(@PathVariable int cardId, @RequestBody Card card) {
+    
+    @PostMapping("/lists/{listId}/cards")
+    public ResponseEntity<?> createCard(
+            @PathVariable("listId") int listId, 
+            @RequestBody Card c) {
         try {
-            card.setId(cardId); // Đảm bảo ID không bị thay đổi sai lệch
-            this.cardService.addOrUpdate(card);
-            return new ResponseEntity<>(card, HttpStatus.OK);
+            this.cardService.createCardInList(listId, c);
+            return new ResponseEntity<>(c, HttpStatus.CREATED); 
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Lỗi tạo thẻ " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    
+    @PutMapping("/cards/{cardId}") 
+    public ResponseEntity<?> updateCard(@PathVariable("cardId") int cardId, @RequestBody Card c) {
+        try {
+            c.setId(cardId); 
+            this.cardService.addOrUpdate(c);
+            return new ResponseEntity<>(c, HttpStatus.OK); 
+        } catch (Exception e) {
+            return new ResponseEntity<>("Lỗi cập nhật thẻ " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    // 5. Xóa thẻ
-    @DeleteMapping("/cards/{cardId}")
-    public ResponseEntity<?> deleteCard(@PathVariable int cardId) {
+    @DeleteMapping("/cards/{cardId}") 
+    public ResponseEntity<?> deleteCard(@PathVariable("cardId") int cardId) {
         try {
-            this.cardService.delete(cardId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content (Xóa thành công)
+            this.cardService.delete(cardId); 
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Lỗi xóa thẻ " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PatchMapping("/cards/{cardId}/move")
+    public ResponseEntity<?> moveCard(
+            @PathVariable("cardId") int cardId, 
+            @RequestBody Map<String, Integer> payload) { 
+        try {
+            int newListId = payload.get("newListId");
+            int newPosition = payload.get("newPosition");
+            
+            this.cardService.moveCard(cardId, newListId, newPosition);
+            return ResponseEntity.ok("Đã di chuyển thẻ thành công");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Lỗi kéo thả: " + e.getMessage());
         }
     }
 }

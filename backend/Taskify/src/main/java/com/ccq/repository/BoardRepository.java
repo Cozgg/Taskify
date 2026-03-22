@@ -5,6 +5,8 @@
 package com.ccq.repository;
 
 import com.ccq.pojo.Board;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -14,5 +16,5 @@ public interface BoardRepository {
     Board getById(int id);
     void addOrUpdate(Board b);
     void delete(int id);
-    
+    List<Board> getBoards(Map<String, String> params);
 }
