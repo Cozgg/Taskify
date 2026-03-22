@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.ccq.pojo.Board;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -23,7 +21,7 @@ public interface BoardRepository {
 
     void delete(int id);
 
-     List<Board> getBoards(Map<String, String> params);
+    List<Board> getBoards(Map<String, String> params);
 
     Long count();
 }
