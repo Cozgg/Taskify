@@ -4,22 +4,35 @@
  */
 package com.ccq.service.impl;
 
-import com.ccq.pojo.Workspace;
-import com.ccq.repository.WorkspaceRepository;
-import com.ccq.service.WorkspaceService;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ccq.pojo.Board;
+import com.ccq.pojo.User;
+import com.ccq.pojo.Workspace;
+import com.ccq.repository.BoardRepository;
+import com.ccq.repository.UserRepository;
+import com.ccq.repository.WorkspaceRepository;
+import com.ccq.service.WorkspaceService;
 
 /**
  *
- * @author nguye
+ * @author quyendz
  */
-public class WorkspaceServiceImpl implements WorkspaceService{
+@Service
+public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Autowired
     private WorkspaceRepository workspaceRepo;
-    
+
+    @Autowired
+    private BoardRepository boardRepo;
+
+    @Autowired UserRepository userRepo;
+
     @Override
     public Workspace getWorkspaceById(int id) {
         return this.workspaceRepo.getWorkspaceById(id);
@@ -36,8 +49,27 @@ public class WorkspaceServiceImpl implements WorkspaceService{
     }
 
     @Override
-    public List<Workspace> getWorkSpace(Map<String, String> params) {
-        return this.workspaceRepo.getWorkSpace(params);
+    public List<Workspace> getWorkspaces(Map<String, String> params) {
+        return this.workspaceRepo.getWorkspaces(params);
     }
-    
+
+    @Override
+    public List<Board> getBoardsByWorkspaceId(int wsId) {
+        return this.workspaceRepo.getBoardsByWorkspaceId(wsId);
+    }
+
+    @Override
+    public List<User> getMembersByWorkspaceId(int workspaceId) {
+        return this.workspaceRepo.getMembersByWorkspaceId(workspaceId);
+    }
+
+    @Override
+    public Long countUserInWorkspace(int workspaceId) {
+        return this.userRepo.count();
+    }
+
+    @Override
+    public Long countBoardInWorkspace(int workspaceId) {
+        return this.boardRepo.count();
+    }
 }

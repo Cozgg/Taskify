@@ -3,20 +3,31 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.ccq.repository;
-import com.ccq.pojo.Workspace;
+
 import java.util.List;
 import java.util.Map;
 
+import com.ccq.pojo.Board;
+import com.ccq.pojo.User;
+import com.ccq.pojo.Workspace;
 
 /**
  *
  * @author nguye
  */
-
 public interface WorkspaceRepository {
-    void addOrUpdate(Workspace w);
-    void delete(int id);
-    List<Workspace> getWorkSpace(Map<String, String> params);
-    Workspace getWorkspaceById(int workspaceId);
-}
 
+    void addOrUpdate(Workspace w);
+
+    void delete(int id);
+
+    List<Workspace> getWorkspaces(Map<String, String> params);
+
+    Workspace getWorkspaceById(int workspaceId);
+
+    List<User> getMembersByWorkspaceId(int workspaceId);
+
+    List<Board> getBoardsByWorkspaceId(int wsId);
+
+    Long count();
+}

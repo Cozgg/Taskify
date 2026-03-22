@@ -4,9 +4,12 @@
  */
 package com.ccq.repository.impl;
 
-import com.ccq.pojo.Board;
-import com.ccq.repository.BoardRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -14,6 +17,13 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ccq.pojo.Board;
+import com.ccq.repository.BoardRepository;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 /**
  *
@@ -22,15 +32,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @PropertySource("classpath:configs.properties")
 @Transactional
-public class BoardRepositoryImpl implements BoardRepository{
+public class BoardRepositoryImpl implements BoardRepository {
 
     @Autowired
     private Environment env;
 
     @Autowired
     private LocalSessionFactoryBean factory;
-    
-     @Override
+
+    @Override
     public Board getById(int id) {
         Session s = this.factory.getObject().getCurrentSession();
         return s.get(Board.class, id);
@@ -54,4 +64,50 @@ public class BoardRepositoryImpl implements BoardRepository{
             s.remove(w);
         }
     }
+
+    @Override
+    public List<Board> getBoards(Map<String, String> params) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<Board> q = b.createQuery(Board.class);
+        Root<Board> root = q.from(Board.class);
+        q.select(root);
+
+        List<Predicate> predicates = new ArrayList<>();
+        if (params != null) {
+            String kw = params.get("kw");
+            if (kw != null && !kw.isEmpty()) {
+                predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw)));
+            }
+
+            String workspaceId = params.get("workspaceId");
+            if (workspaceId != null && !workspaceId.isEmpty()) {
+                predicates.add(b.equal(root.get("workspace").get("id"), Integer.parseInt(workspaceId)));
+            }
+        }
+
+        if (!predicates.isEmpty()) {
+            q.where(predicates.toArray(Predicate[]::new));
+        }
+
+        q.orderBy(b.desc(root.get("id")));
+        Query<Board> query = s.createQuery(q);
+
+        if (params != null) {
+            int pageSize = Integer.parseInt(this.env.getProperty("board.page_size", "10"));
+            int page = Integer.parseInt(params.getOrDefault("page", "1"));
+            query.setMaxResults(pageSize);
+            query.setFirstResult((page - 1) * pageSize);
+        }
+
+        return query.getResultList();
+    }
+
+    @Override
+    public Long count() {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query<Long> q = s.createQuery("SELECT COUNT(*) FROM Board", Long.class);
+        return q.getSingleResult();
+    }
+
 }

@@ -7,12 +7,15 @@ package com.ccq.service.impl;
 import com.ccq.pojo.Board;
 import com.ccq.repository.BoardRepository;
 import com.ccq.service.BoardService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author nguye
  */
+@Service
 public class BoardServiceImpl implements BoardService{
 
     @Autowired

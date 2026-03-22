@@ -4,10 +4,13 @@
  */
 package com.ccq.service.impl;
 
+import org.springframework.stereotype.Service;
+
 /**
  *
  * @author Admin
  */
+@Service
 public class CardServiceImpl {
     
 }
