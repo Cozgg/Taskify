@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ccq.pojo.Comment;
 import com.ccq.service.CommentService;
@@ -19,7 +20,7 @@ import com.ccq.service.CommentService;
  *
  * @author Admin
  */
-@Controller
+@RestController
 public class CommentController {
     @Autowired
     private CommentService commSer;

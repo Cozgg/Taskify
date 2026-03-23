@@ -23,7 +23,8 @@ public class DispacherServletInit extends AbstractAnnotationConfigDispatcherServ
     @Override
     protected Class<?>[] getServletConfigClasses() {
         return new Class[]{
-            WebAppContextConfigs.class
+            WebAppContextConfigs.class,
+            OpenApiConfig.class
         };
     }
 
