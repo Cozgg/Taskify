@@ -14,7 +14,7 @@
 |------------|------|-----------|----------------|
 | Phạm Anh Quyền | 2351010180 | - Thiết kế Database (MySQL) & Setup Server| [f0bd47deeab3c6bb8c85ce96bfd06f980669ad49](https://github.com/phamquyendev03/Taskify/commit/f0bd47deeab3c6bb8c85ce96bfd06f980669ad49) |
 ||| - API Xác thực (Register, Login (JWT), Profile) | []() |
-||| - API Quản lý (Workspace & Project) | []() |
+||| - API Quản lý (Workspace & Project) | [7720c33c8d3caa57f7bf4b68ee0eadc181a5d70e](https://github.com/phamquyendev03/Taskify/commit/7720c33c8d3caa57f7bf4b68ee0eadc181a5d70e) |
 ||| - API admin | [1299c53df73daf84987108a3c2226e3bc52c8f61](https://github.com/phamquyendev03/Taskify/commit/f5a4d55a8bc0985b275990ef46fb9968572cc88b) |
 | Nguyễn Hữu Công | 2351010025 | - Thiết kế Database (MySQL) | [d72508b4ccb96331bcb4f14ca11fdfc7c7dc691d](https://github.com/phamquyendev03/Taskify/blob/d72508b4ccb96331bcb4f14ca11fdfc7c7dc691d/docs/architecture/Database.md) |
 ||| - API Cấu trúc (Board & Column) | [2b14972c55ab4b6c2a1a8900db326e437f6bd113](https://github.com/phamquyendev03/Taskify/blob/2b14972c55ab4b6c2a1a8900db326e437f6bd113/backend/Taskify/src/main/java/com/ccq/controller/ListController.java) |
