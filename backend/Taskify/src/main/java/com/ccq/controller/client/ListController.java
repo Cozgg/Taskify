@@ -28,7 +28,7 @@ public class ListController {
     @Autowired
     private ListService listSer;
     
-    @GetMapping("/board/{boardId}/lists")
+    @GetMapping("/boards/{boardId}/lists")
     public ResponseEntity<?> getLists(@PathVariable("boardId") int boardId, @RequestParam Map<String, String> params){
         params.put("boardId", String.valueOf(boardId));
         List<com.ccq.pojo.List> lists = this.listSer.getList(params);

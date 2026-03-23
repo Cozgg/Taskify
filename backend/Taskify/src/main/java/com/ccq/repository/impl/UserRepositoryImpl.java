@@ -81,27 +81,33 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<User> getUsersByWorkspace(int workspaceId, Map<String, String> params) {
+    public List<User> getUsers(Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = s.getCriteriaBuilder();
         CriteriaQuery<User> q = b.createQuery(User.class);
+        Root<User> root = q.from(User.class);
+        q.select(root);
 
-        Root<UserWorkspace> root = q.from(UserWorkspace.class);
-        q.select(root.get("userId"));
+        if (params != null) {
+            List<Predicate> predicates = new ArrayList<>();
 
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(b.equal(root.get("workspaceId").get("id"), workspaceId));
-
-        if (params != null && params.get("kw") != null) {
             String kw = params.get("kw");
-            predicates.add(b.like(root.get("userId").get("username"), String.format("%%%s%%", kw)));
+            if (kw != null && !kw.isEmpty()) {
+                Predicate byUsername = b.like(root.get("username"), "%" + kw + "%");
+                Predicate byEmail = b.like(root.get("email"), "%" + kw + "%");
+                predicates.add(b.or(byUsername, byEmail));
+            }
+
+            if (!predicates.isEmpty()) {
+                q.where(predicates.toArray(new Predicate[0]));
+            }
         }
 
-        q.where(predicates.toArray(Predicate[]::new));
+        q.orderBy(b.desc(root.get("id")));
         Query<User> query = s.createQuery(q);
 
-        int page = Integer.parseInt(params.getOrDefault("page", "1"));
         int pageSize = Integer.parseInt(this.env.getProperty("user.page_size", "10"));
+        int page = params != null ? Integer.parseInt(params.getOrDefault("page", "1")) : 1;
         query.setFirstResult((page - 1) * pageSize);
         query.setMaxResults(pageSize);
 

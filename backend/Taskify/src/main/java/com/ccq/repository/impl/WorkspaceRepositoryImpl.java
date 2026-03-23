@@ -64,6 +64,15 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
 
     @Override
+    public Workspace getWorkspaceByOwnerId(int ownerId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query<Workspace> q = s.createQuery(
+                "FROM Workspace w WHERE w.ownerId.id = :ownerId", Workspace.class);
+        q.setParameter("ownerId", ownerId);
+        return q.uniqueResult();
+    }
+
+    @Override
     public List<Workspace> getWorkspaces(Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = s.getCriteriaBuilder();
@@ -75,7 +84,9 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
             List<Predicate> predicates = new ArrayList<>();
 
             String kw = params.get("kw");
-            predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw)));
+            if (kw != null && !kw.isBlank()) {
+                predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw)));
+            }
 
             if (!predicates.isEmpty()) {
                 q.where(predicates.toArray(new Predicate[0]));

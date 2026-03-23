@@ -25,6 +25,8 @@ public interface WorkspaceRepository {
 
     Workspace getWorkspaceById(int workspaceId);
 
+    Workspace getWorkspaceByOwnerId(int ownerId);
+
     List<User> getMembersByWorkspaceId(int workspaceId);
 
     List<Board> getBoardsByWorkspaceId(int wsId);

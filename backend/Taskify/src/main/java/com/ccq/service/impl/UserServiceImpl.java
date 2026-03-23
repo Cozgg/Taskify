@@ -25,8 +25,8 @@ public class UserServiceImpl implements UserService {
     private BoardRepository boardRepo;
 
     @Override
-    public List<User> getUsersByWorkspace(int workspaceId, Map<String, String> params) {
-        return this.userRepo.getUsersByWorkspace(workspaceId, params);
+    public List<User> getUsers(Map<String, String> params) {
+        return this.userRepo.getUsers(params);
     }
 
     @Override

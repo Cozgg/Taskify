@@ -15,11 +15,11 @@ import com.ccq.pojo.User;
  */
 public interface UserRepository {
 
+    List<User> getUsers(Map<String, String> params);
+
     User findUserById(int id);
 
     User findUserByEmail(String email);
-
-    List<User> getUsersByWorkspace(int workspaceId, Map<String, String> params);
 
     boolean existEmail(String email);
 

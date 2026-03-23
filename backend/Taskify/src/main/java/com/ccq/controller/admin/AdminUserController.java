@@ -16,32 +16,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ccq.pojo.User;
-import com.ccq.pojo.Workspace;
 import com.ccq.service.UserService;
-import com.ccq.service.WorkspaceService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/admin/users")
-public class UserController {
+public class AdminUserController {
 
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private WorkspaceService workspaceService;
-
-    @GetMapping("/workspaces")
-    public ResponseEntity<List<Workspace>> getWorkspaceCards(@RequestParam Map<String, String> params) {
-        List<Workspace> workspaces = this.workspaceService.getWorkspaces(params);
-        return new ResponseEntity<>(workspaces, HttpStatus.OK);
-    }
-
-    @GetMapping("/workspaces/{id}/users")
-    public ResponseEntity<List<User>> getUsersByWorkspace(
-            @PathVariable("id") int workspaceId,
-            @RequestParam Map<String, String> params) {
-
-        List<User> users = this.userService.getUsersByWorkspace(workspaceId, params);
+    @GetMapping
+    public ResponseEntity<List<User>> getUsers(@RequestParam Map<String, String> params) {
+        List<User> users = this.userService.getUsers(params);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
@@ -55,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> addOrUpdateUser(@RequestBody User user) {
+    public ResponseEntity<Void> addOrUpdateUser(@Valid @RequestBody User user) {
         this.userService.addOrUpdateUser(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -66,15 +54,6 @@ public class UserController {
         if (user != null) {
             this.userService.deleteUser(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<User> getUserByEmail(@RequestParam("email") String email) {
-        User user = this.userService.getUserByEmail(email); //
-        if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

@@ -12,11 +12,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 @EnableTransactionManagement
 @ComponentScan(
-        basePackages={
+        basePackages = {
             "com.ccq.controller",
             "com.ccq.repository",
             "com.ccq.service",
-            "org.springdoc" 
+            "org.springdoc"
         }
 )
 public class WebAppContextConfigs implements WebMvcConfigurer {
@@ -26,6 +26,7 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
         configurer.enable();
     }
 
+    // http://localhost:8080/swagger-ui/index.html
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/swagger-ui/**")

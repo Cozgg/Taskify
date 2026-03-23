@@ -21,6 +21,10 @@ public interface WorkspaceService {
 
     void delete(int id);
 
+    Workspace getWorkspaceByOwnerId(int ownerId);
+
+    boolean hasWorkspace(int ownerId);
+
     Workspace getWorkspaceById(int workspaceId);
 
     List<Workspace> getWorkspaces(Map<String, String> params);
