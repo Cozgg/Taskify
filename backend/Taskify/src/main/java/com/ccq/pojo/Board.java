@@ -20,16 +20,19 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
 /**
  *
- * @author Admin
+ * @author paqvi
  */
 @Entity
 @Table(name = "board")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Board.findAll", query = "SELECT b FROM Board b"),
     @NamedQuery(name = "Board.findById", query = "SELECT b FROM Board b WHERE b.id = :id"),
@@ -46,7 +49,7 @@ public class Board implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 255)
     @Column(name = "name")
     private String name;
     @Column(name = "created_date")
@@ -104,6 +107,7 @@ public class Board implements Serializable {
         this.isPublic = isPublic;
     }
 
+    @XmlTransient
     public Set<List> getListSet() {
         return listSet;
     }

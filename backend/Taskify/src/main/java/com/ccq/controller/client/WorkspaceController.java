@@ -82,18 +82,6 @@ public class WorkspaceController {
         }
     }
 
-    @PostMapping("/workspace")
-    public ResponseEntity<?> createWorkspace(@Valid @RequestBody Workspace workspace) {
-        try {
-            workspace.setId(null); // Đảm bảo luôn INSERT
-            this.workspaceService.addOrUpdate(workspace);
-            return new ResponseEntity<>(workspace, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
     @PutMapping("/workspace/{id}")
     public ResponseEntity<?> updateWorkspace(
             @PathVariable("id") int id,

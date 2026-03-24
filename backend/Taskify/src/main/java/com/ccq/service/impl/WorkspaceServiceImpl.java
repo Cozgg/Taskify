@@ -72,7 +72,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             }
             var auth = SecurityContextHolder.getContext().getAuthentication();
             boolean isAdmin = auth.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));// chinh role lại
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")); // chinh role lại
             if (!isAdmin) {
                 User currentUser = this.userRepo.getUserByUsername(auth.getName());
                 if (currentUser == null || !existing.getOwnerId().getId().equals(currentUser.getId())) {

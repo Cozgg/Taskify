@@ -16,14 +16,16 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
  *
- * @author Admin
+ * @author paqvi
  */
 @Entity
 @Table(name = "checklist_item")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "ChecklistItem.findAll", query = "SELECT c FROM ChecklistItem c"),
     @NamedQuery(name = "ChecklistItem.findById", query = "SELECT c FROM ChecklistItem c WHERE c.id = :id"),

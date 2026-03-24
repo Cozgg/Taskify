@@ -3,11 +3,13 @@ package com.ccq.configs;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfig {
+
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
@@ -18,5 +20,12 @@ public class OpenApiConfig {
                         .contact(new Contact()
                                 .name("Phạm Anh Quyền")
                                 .email("paqvippro@gmail.com")));
+    }
+
+    @Bean
+    public SwaggerUiConfigProperties swaggerUiConfigProperties() {
+        SwaggerUiConfigProperties props = new SwaggerUiConfigProperties();
+        props.setDisableSwaggerDefaultUrl(true);
+        return props;
     }
 }

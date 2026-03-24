@@ -15,8 +15,7 @@ public class DispacherServletInit extends AbstractAnnotationConfigDispatcherServ
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return new Class[]{
-            HibernateConfigs.class,
-            ThymeleafConfigs.class
+            HibernateConfigs.class
         };
     }
 
@@ -24,7 +23,8 @@ public class DispacherServletInit extends AbstractAnnotationConfigDispatcherServ
     protected Class<?>[] getServletConfigClasses() {
         return new Class[]{
             WebAppContextConfigs.class,
-            OpenApiConfig.class
+            OpenApiConfig.class,
+            ThymeleafConfigs.class
         };
     }
 

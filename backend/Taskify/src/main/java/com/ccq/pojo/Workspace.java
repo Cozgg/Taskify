@@ -18,15 +18,18 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Set;
 
 /**
  *
- * @author Admin
+ * @author paqvi
  */
 @Entity
 @Table(name = "workspace")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Workspace.findAll", query = "SELECT w FROM Workspace w"),
     @NamedQuery(name = "Workspace.findById", query = "SELECT w FROM Workspace w WHERE w.id = :id"),
@@ -41,7 +44,7 @@ public class Workspace implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 255)
     @Column(name = "name")
     private String name;
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
@@ -88,6 +91,7 @@ public class Workspace implements Serializable {
         this.ownerId = ownerId;
     }
 
+    @XmlTransient
     public Set<Board> getBoardSet() {
         return boardSet;
     }
@@ -96,6 +100,7 @@ public class Workspace implements Serializable {
         this.boardSet = boardSet;
     }
 
+    @XmlTransient
     public Set<UserWorkspace> getUserWorkspaceSet() {
         return userWorkspaceSet;
     }

@@ -16,22 +16,28 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Set;
 
 /**
  *
- * @author Admin
+ * @author paqvi
  */
 @Entity
 @Table(name = "list")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "List.findAll", query = "SELECT l FROM List l"),
     @NamedQuery(name = "List.findById", query = "SELECT l FROM List l WHERE l.id = :id"),
     @NamedQuery(name = "List.findByName", query = "SELECT l FROM List l WHERE l.name = :name"),
-    @NamedQuery(name = "List.findByPosition", query = "SELECT l FROM List l WHERE l.position = :position")})
+    @NamedQuery(name = "List.findByPosition", query = "SELECT l FROM List l WHERE l.position = :position"),
+    @NamedQuery(name = "List.findByStatus", query = "SELECT l FROM List l WHERE l.status = :status")})
 public class List implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,11 +48,14 @@ public class List implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 255)
     @Column(name = "name")
     private String name;
     @Column(name = "position")
     private Integer position;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private ListStatus status;
     @JoinColumn(name = "board_id", referencedColumnName = "id")
     @ManyToOne
     private Board boardId;
@@ -89,6 +98,14 @@ public class List implements Serializable {
         this.position = position;
     }
 
+    public ListStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ListStatus status) {
+        this.status = status;
+    }
+
     public Board getBoardId() {
         return boardId;
     }
@@ -97,6 +114,7 @@ public class List implements Serializable {
         this.boardId = boardId;
     }
 
+    @XmlTransient
     public Set<Card> getCardSet() {
         return cardSet;
     }
