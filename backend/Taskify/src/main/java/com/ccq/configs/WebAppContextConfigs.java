@@ -17,6 +17,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
             "com.ccq.controller",
             "com.ccq.repository",
             "com.ccq.service",
+            "com.ccq.utils",
+            "com.ccq.configs",
             "org.springdoc"
         }
 )
@@ -31,7 +33,11 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/swagger-ui/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/");
+                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/")
+                .resourceChain(false);
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/")
+                .resourceChain(false);
         registry.addResourceHandler("/v3/api-docs/**")
                 .addResourceLocations("classpath:/META-INF/resources/");
     }

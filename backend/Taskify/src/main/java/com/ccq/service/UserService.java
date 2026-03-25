@@ -23,5 +23,9 @@ public interface UserService {
 
     Long countBoards();
 
+    User getUserByUsername(String username);
+
+    boolean existsByUsername(String username);
+
     Long countWorkspaces();
 }

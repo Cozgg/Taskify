@@ -65,6 +65,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserByUsername(String username) {
+        return this.userRepo.getUserByUsername(username);
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return this.userRepo.getUserByUsername(username) != null;
+    }
+
+    @Override
     public Long countWorkspaces() {
         return this.workspaceRepo.count();
     }
