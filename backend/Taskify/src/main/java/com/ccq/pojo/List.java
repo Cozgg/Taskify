@@ -31,7 +31,8 @@ import java.util.Set;
     @NamedQuery(name = "List.findAll", query = "SELECT l FROM List l"),
     @NamedQuery(name = "List.findById", query = "SELECT l FROM List l WHERE l.id = :id"),
     @NamedQuery(name = "List.findByName", query = "SELECT l FROM List l WHERE l.name = :name"),
-    @NamedQuery(name = "List.findByPosition", query = "SELECT l FROM List l WHERE l.position = :position")})
+    @NamedQuery(name = "List.findByPosition", query = "SELECT l FROM List l WHERE l.position = :position"),
+    @NamedQuery(name = "List.findByStatus", query = "SELECT l FROM List l WHERE l.status = :status")})
 public class List implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,11 +43,14 @@ public class List implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 255)
     @Column(name = "name")
     private String name;
     @Column(name = "position")
     private Integer position;
+    @Size(max = 11)
+    @Column(name = "status")
+    private String status;
     @JoinColumn(name = "board_id", referencedColumnName = "id")
     @ManyToOne
     private Board boardId;
@@ -87,6 +91,14 @@ public class List implements Serializable {
 
     public void setPosition(Integer position) {
         this.position = position;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Board getBoardId() {

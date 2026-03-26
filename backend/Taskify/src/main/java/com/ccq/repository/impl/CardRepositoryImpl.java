@@ -29,5 +29,10 @@ public class CardRepositoryImpl implements CardRepository {
         return s.get(Card.class, cardId);
     }
 
+    @Override
+    public void updateCardLabel(int cardId, int labelId) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 
 }

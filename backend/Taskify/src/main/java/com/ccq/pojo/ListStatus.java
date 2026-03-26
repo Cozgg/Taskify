@@ -8,6 +8,6 @@ package com.ccq.pojo;
  *
  * @author Admin
  */
-public enum RoleWorkspace {
-    THANH_VIEN, QUAN_TRI_VIEN, QUAN_LY
+public enum ListStatus {
+    TO_DO, IN_PROGRESS, DONE
 }

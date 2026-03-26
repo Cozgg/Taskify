@@ -7,8 +7,6 @@ package com.ccq.pojo;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,8 +27,7 @@ import java.io.Serializable;
 @NamedQueries({
     @NamedQuery(name = "UserWorkspace.findAll", query = "SELECT u FROM UserWorkspace u"),
     @NamedQuery(name = "UserWorkspace.findById", query = "SELECT u FROM UserWorkspace u WHERE u.id = :id"),
-    @NamedQuery(name = "UserWorkspace.findByRoleWorkspace", query = "SELECT u FROM UserWorkspace u WHERE u.roleWorkspace = :roleWorkspace"),
-    @NamedQuery(name = "UserWorkspace.findByWorkspaceIdFk", query = "SELECT u FROM UserWorkspace u WHERE u.workspaceIdFk = :workspaceIdFk")})
+    @NamedQuery(name = "UserWorkspace.findByRoleWorkspace", query = "SELECT u FROM UserWorkspace u WHERE u.roleWorkspace = :roleWorkspace")})
 public class UserWorkspace implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,11 +37,8 @@ public class UserWorkspace implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Size(max = 10)
-    @Enumerated(EnumType.STRING)
     @Column(name = "role_workspace")
     private RoleWorkspace roleWorkspace;
-    @Column(name = "workspace_id_fk")
-    private Integer workspaceIdFk;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
     private User userId;
@@ -73,14 +67,6 @@ public class UserWorkspace implements Serializable {
 
     public void setRoleWorkspace(RoleWorkspace roleWorkspace) {
         this.roleWorkspace = roleWorkspace;
-    }
-
-    public Integer getWorkspaceIdFk() {
-        return workspaceIdFk;
-    }
-
-    public void setWorkspaceIdFk(Integer workspaceIdFk) {
-        this.workspaceIdFk = workspaceIdFk;
     }
 
     public User getUserId() {

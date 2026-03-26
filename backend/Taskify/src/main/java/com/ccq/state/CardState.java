@@ -2,15 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.ccq.repository;
+package com.ccq.state;
 
 import com.ccq.pojo.Card;
+import com.ccq.pojo.ListStatus;
 
 /**
  *
  * @author Admin
  */
-public interface CardRepository {
-    Card findCardById(int cardId);
-    void updateCardLabel(int cardId, int labelId);
+public interface CardState {
+    void applyBehavior(Card card); 
+    ListStatus getStatus();
 }

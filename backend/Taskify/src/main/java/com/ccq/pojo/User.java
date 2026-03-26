@@ -5,6 +5,7 @@
 package com.ccq.pojo;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -46,7 +47,7 @@ public class User implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 255)
     @Column(name = "username")
     private String username;
     @Basic(optional = false)
@@ -57,7 +58,7 @@ public class User implements Serializable {
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 255)
     @Column(name = "email")
     private String email;
     @Column(name = "created_date")
@@ -74,6 +75,8 @@ public class User implements Serializable {
     private Set<Comment> commentSet;
     @OneToMany(mappedBy = "userId")
     private Set<UserWorkspace> userWorkspaceSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Set<CardUser> cardUserSet;
 
     public User() {
     }
@@ -167,6 +170,14 @@ public class User implements Serializable {
 
     public void setUserWorkspaceSet(Set<UserWorkspace> userWorkspaceSet) {
         this.userWorkspaceSet = userWorkspaceSet;
+    }
+
+    public Set<CardUser> getCardUserSet() {
+        return cardUserSet;
+    }
+
+    public void setCardUserSet(Set<CardUser> cardUserSet) {
+        this.cardUserSet = cardUserSet;
     }
 
     @Override

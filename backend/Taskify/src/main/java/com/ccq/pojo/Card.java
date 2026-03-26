@@ -4,16 +4,15 @@
  */
 package com.ccq.pojo;
 
+import com.ccq.state.CardState;
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -21,6 +20,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
@@ -37,6 +37,7 @@ import java.util.Set;
     @NamedQuery(name = "Card.findAll", query = "SELECT c FROM Card c"),
     @NamedQuery(name = "Card.findById", query = "SELECT c FROM Card c WHERE c.id = :id"),
     @NamedQuery(name = "Card.findByName", query = "SELECT c FROM Card c WHERE c.name = :name"),
+    @NamedQuery(name = "Card.findByDescription", query = "SELECT c FROM Card c WHERE c.description = :description"),
     @NamedQuery(name = "Card.findByCreatedDate", query = "SELECT c FROM Card c WHERE c.createdDate = :createdDate"),
     @NamedQuery(name = "Card.findByIsActive", query = "SELECT c FROM Card c WHERE c.isActive = :isActive"),
     @NamedQuery(name = "Card.findByDueDate", query = "SELECT c FROM Card c WHERE c.dueDate = :dueDate"),
@@ -55,8 +56,7 @@ public class Card implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "name")
     private String name;
-    @Lob
-    @Size(max = 65535)
+    @Size(max = 255)
     @Column(name = "description")
     private String description;
     @Column(name = "created_date")
@@ -72,11 +72,6 @@ public class Card implements Serializable {
     private Date reminderDate;
     @Column(name = "position")
     private Integer position;
-    @JoinTable(name = "card_label", joinColumns = {
-        @JoinColumn(name = "card_id", referencedColumnName = "id")}, inverseJoinColumns = {
-        @JoinColumn(name = "label_id", referencedColumnName = "id")})
-    @ManyToMany
-    private Set<Label> labelSet;
     @OneToMany(mappedBy = "cardId")
     private Set<ChecklistItem> checklistItemSet;
     @OneToMany(mappedBy = "cardId")
@@ -88,6 +83,19 @@ public class Card implements Serializable {
     @JoinColumn(name = "list_id", referencedColumnName = "id")
     @ManyToOne
     private List listId;
+    @Transient
+    private CardState state;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "card")
+    private Set<CardUser> cardUserSet;
+    
+    public void changeState(CardState state, List list){
+        this.state = state;
+        this.listId = list;
+        
+        if(this.state != null){
+            this.state.applyBehavior(this);
+        }
+    }
 
     public Card() {
     }
@@ -165,14 +173,6 @@ public class Card implements Serializable {
         this.position = position;
     }
 
-    public Set<Label> getLabelSet() {
-        return labelSet;
-    }
-
-    public void setLabelSet(Set<Label> labelSet) {
-        this.labelSet = labelSet;
-    }
-
     public Set<ChecklistItem> getChecklistItemSet() {
         return checklistItemSet;
     }
@@ -211,6 +211,14 @@ public class Card implements Serializable {
 
     public void setListId(List listId) {
         this.listId = listId;
+    }
+
+    public Set<CardUser> getCardUserSet() {
+        return cardUserSet;
+    }
+
+    public void setCardUserSet(Set<CardUser> cardUserSet) {
+        this.cardUserSet = cardUserSet;
     }
 
     @Override

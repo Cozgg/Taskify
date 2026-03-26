@@ -24,5 +24,6 @@
     <class>com.ccq.configs.Label</class>
     <class>com.ccq.configs.List</class>
     <class>com.ccq.configs.Card</class>
+    <class>com.ccq.pojo.CardUser</class>
   </persistence-unit>
 </persistence>
