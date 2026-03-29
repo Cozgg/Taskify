@@ -33,7 +33,7 @@ public class ActivityServiceImpl implements ActivityService{
     private CardRepository cardRepo;
     
     @Override
-    public void assignUserForCard(int userId, int cardId) {
+    public Activity assignUserForCard(int userId, int cardId) {
         User u = this.userRepo.findUserById(userId);
         if(u == null){
             throw new ResponseStatusException(HttpStatusCode.valueOf(404), "User not found");
@@ -53,6 +53,7 @@ public class ActivityServiceImpl implements ActivityService{
         ac.setActivity(1);
         ac.setCreatedDate(new Date());
         this.actiRepo.assignUserForCard(ac);
+        return ac;
     }
     
 }

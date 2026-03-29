@@ -34,7 +34,7 @@ public class UserWorkspaceServiceImpl implements UserWorkspaceService{
     private WorkspaceRepository workspaceRepo;
     
     @Override
-    public void inviteUser(int userId, int workspaceId) {
+    public String inviteUser(int userId, int workspaceId) {
         User u = this.userRepo.findUserById(userId);
         if(u == null){
             throw new ResponseStatusException(HttpStatusCode.valueOf(404), "User not found");
@@ -51,8 +51,9 @@ public class UserWorkspaceServiceImpl implements UserWorkspaceService{
         UserWorkspace uw = new UserWorkspace();
         uw.setUserId(u);
         uw.setWorkspaceId(w);
-        uw.setRoleWorkspace(RoleWorkspace.THANH_VIEN);
+        uw.setRoleWorkspace(String.valueOf(RoleWorkspace.THANH_VIEN));
         this.userWorkRepo.saveInviteUser(uw);
+        return "Mời thành viên thành công";
     }
     
 }

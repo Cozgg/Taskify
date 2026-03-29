@@ -71,10 +71,11 @@ public class CardController {
         try {
             int newListId = payload.get("newListId");
             int newPosition = payload.get("newPosition");
-            
+
             this.cardService.moveCard(cardId, newListId, newPosition);
             Card updateCard = this.cardService.getById(cardId);
             return ResponseEntity.ok(updateCard);
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

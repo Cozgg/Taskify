@@ -5,6 +5,7 @@
 package com.ccq.controller.client;
 
 import com.ccq.pojo.User;
+import com.ccq.pojo.Boardlist;
 import com.ccq.service.ListService;
 import com.ccq.service.UserService;
 import com.ccq.utils.JwtUtil;
@@ -40,14 +41,14 @@ public class ListController {
     @GetMapping("/boards/{boardId}")
     public ResponseEntity<?> getLists(@PathVariable("boardId") int boardId, @RequestParam Map<String, String> params){
         params.put("boardId", String.valueOf(boardId));
-        List<com.ccq.pojo.List> lists = this.listSer.getList(params);
+        List<Boardlist> lists = this.listSer.getList(params);
         return new ResponseEntity<>(lists, HttpStatus.OK);
     }
     
     @PostMapping("/boards/{boardId}")
     public ResponseEntity<?> createList(
             @PathVariable("boardId") int boardId, 
-            @RequestBody com.ccq.pojo.List list) {
+            @RequestBody Boardlist list) {
         
         try {
             this.listSer.createListInBoard(boardId, list);
@@ -59,7 +60,7 @@ public class ListController {
     @PutMapping("/{listId}")
     public ResponseEntity<?> updateList(
             @PathVariable("listId") int listId, 
-            @RequestBody com.ccq.pojo.List list) {
+            @RequestBody Boardlist list) {
         
         try {
             list.setId(listId); 

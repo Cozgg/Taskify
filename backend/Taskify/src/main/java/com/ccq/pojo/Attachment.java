@@ -24,7 +24,7 @@ import java.util.Date;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "attachment")

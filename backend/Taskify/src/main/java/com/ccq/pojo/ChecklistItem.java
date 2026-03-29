@@ -21,7 +21,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "checklist_item")

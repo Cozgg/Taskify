@@ -4,7 +4,7 @@
  */
 package com.ccq.repository.impl;
 
-import com.ccq.pojo.List;
+import com.ccq.pojo.Boardlist;
 import com.ccq.repository.ListRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -37,13 +37,13 @@ public class ListRepositoryImpl implements ListRepository{
     @Autowired
     private LocalSessionFactoryBean factory;
     @Override
-    public List getById(int id) {
+    public Boardlist getById(int id) {
         Session s = this.factory.getObject().getCurrentSession();
-        return s.get(List.class, id);
+        return s.get(Boardlist.class, id);
     }
 
     @Override
-    public void addOrUpdate(List l) {
+    public void addOrUpdate(Boardlist l) {
         Session s = this.factory.getObject().getCurrentSession();
         if (l.getId() != null) {
             s.merge(l);
@@ -56,18 +56,18 @@ public class ListRepositoryImpl implements ListRepository{
     @Override
     public void delete(int id) {
         Session s = this.factory.getObject().getCurrentSession();
-        List l = this.getById(id);
+        Boardlist l = this.getById(id);
         if(s != null){
             s.remove(l);
         }
     }
 
     @Override
-    public java.util.List<List> getList(Map<String, String> params) {
+    public java.util.List<Boardlist> getList(Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = s.getCriteriaBuilder();
-        CriteriaQuery<List> q = b.createQuery(List.class);
-        Root<List> root = q.from(List.class);
+        CriteriaQuery<Boardlist> q = b.createQuery(Boardlist.class);
+        Root<Boardlist> root = q.from(Boardlist.class);
         q.select(root);
 
         if (params != null) {
@@ -88,7 +88,7 @@ public class ListRepositoryImpl implements ListRepository{
         }
         q.orderBy(b.asc(root.get("position")));
 
-        Query<List> query = s.createQuery(q);
+        Query<Boardlist> query = s.createQuery(q);
 
         if (params != null) {
             String pageStr = params.get("page");

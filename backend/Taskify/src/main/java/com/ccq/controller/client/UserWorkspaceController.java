@@ -18,13 +18,17 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class UserWorkspaceController {
+
     @Autowired
     private UserWorkspaceService userWorkSer;
-    
-    
+
     @PostMapping("/user-workspaces")
-    public ResponseEntity inviteUser(@RequestParam("userId") int userId, @RequestParam("workspaceId") int workspaceId){
-        this.userWorkSer.inviteUser(userId, workspaceId);
-        return new ResponseEntity(HttpStatus.CREATED);
+    public ResponseEntity<?> inviteUser(@RequestParam("userId") int userId, @RequestParam("workspaceId") int workspaceId) {
+        try {
+            String msg = this.userWorkSer.inviteUser(userId, workspaceId);
+            return new ResponseEntity<>(msg, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Lỗi mời user", HttpStatus.BAD_REQUEST);
+        }
     }
 }
