@@ -59,8 +59,8 @@ public class BoardController {
             @PathVariable("workspaceId") int workspaceId,
             @RequestBody Board board) {
         try {
-            this.boardService.createBoardInWorkspace(workspaceId, board);
-            return new ResponseEntity<>(board, HttpStatus.CREATED); // 201
+        this.boardService.createBoardInWorkspace(workspaceId, board);
+        return new ResponseEntity<>(board, HttpStatus.CREATED); // 201
         } catch (Exception e) {
             return new ResponseEntity<>("Lỗi tạo bảng: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -82,8 +82,8 @@ public class BoardController {
     @DeleteMapping("/boards/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable("boardId") int boardId) {
         try {
-            this.boardService.delete(boardId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        this.boardService.delete(boardId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>("Lỗi xóa bảng: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }

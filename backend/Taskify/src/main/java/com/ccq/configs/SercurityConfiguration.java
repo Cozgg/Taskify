@@ -39,7 +39,9 @@ public class SercurityConfiguration {
                     new AntPathRequestMatcher("/swagger-resources/**"),
                     new AntPathRequestMatcher("/webjars/**")
                 ).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/register")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/refresh-token")).permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

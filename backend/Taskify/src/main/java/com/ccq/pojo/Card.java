@@ -23,6 +23,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -46,12 +47,6 @@ import java.util.Set;
     @NamedQuery(name = "Card.findByPosition", query = "SELECT c FROM Card c WHERE c.position = :position")})
 public class Card implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -60,6 +55,13 @@ public class Card implements Serializable {
     @Size(max = 255)
     @Column(name = "description")
     private String description;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
@@ -73,18 +75,23 @@ public class Card implements Serializable {
     private Date reminderDate;
     @Column(name = "position")
     private Integer position;
+    @JsonIgnore
     @OneToMany(mappedBy = "cardId")
     private Set<ChecklistItem> checklistItemSet;
+    @JsonIgnore
     @OneToMany(mappedBy = "cardId")
     private Set<Activity> activitySet;
+    @JsonIgnore
     @OneToMany(mappedBy = "cardId")
     private Set<Attachment> attachmentSet;
+    @JsonIgnore
     @OneToMany(mappedBy = "cardId")
     private Set<Comment> commentSet;
     @JoinColumn(name = "list_id", referencedColumnName = "id")
     @ManyToOne
     private List listId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "card")
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cardId")
     private Set<CardUser> cardUserSet;
 
     public Card() {
@@ -107,21 +114,6 @@ public class Card implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public Date getCreatedDate() {
         return createdDate;
@@ -164,6 +156,7 @@ public class Card implements Serializable {
     }
 
     @XmlTransient
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public Set<ChecklistItem> getChecklistItemSet() {
         return checklistItemSet;
     }
@@ -173,6 +166,7 @@ public class Card implements Serializable {
     }
 
     @XmlTransient
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public Set<Activity> getActivitySet() {
         return activitySet;
     }
@@ -182,6 +176,7 @@ public class Card implements Serializable {
     }
 
     @XmlTransient
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public Set<Attachment> getAttachmentSet() {
         return attachmentSet;
     }
@@ -191,6 +186,7 @@ public class Card implements Serializable {
     }
 
     @XmlTransient
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public Set<Comment> getCommentSet() {
         return commentSet;
     }
@@ -208,6 +204,7 @@ public class Card implements Serializable {
     }
 
     @XmlTransient
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public Set<CardUser> getCardUserSet() {
         return cardUserSet;
     }
@@ -239,6 +236,22 @@ public class Card implements Serializable {
     @Override
     public String toString() {
         return "com.ccq.pojo.Card[ id=" + id + " ]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
     
 }

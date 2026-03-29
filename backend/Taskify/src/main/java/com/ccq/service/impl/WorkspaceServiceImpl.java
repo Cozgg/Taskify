@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Service;
 
 import com.ccq.pojo.Board;
@@ -13,6 +13,7 @@ import com.ccq.pojo.Workspace;
 import com.ccq.repository.BoardRepository;
 import com.ccq.repository.UserRepository;
 import com.ccq.repository.WorkspaceRepository;
+import com.ccq.service.PermissionService;
 import com.ccq.service.WorkspaceService;
 
 @Service
@@ -26,6 +27,9 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Autowired
     private UserRepository userRepo;
+
+    @Autowired
+    private PermissionService permissionService;
 
     @Override
     public Workspace getWorkspaceById(int id) {
@@ -70,15 +74,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             if (existing == null) {
                 throw new IllegalArgumentException("Không tìm thấy workspace với ID: " + w.getId());
             }
-            var auth = SecurityContextHolder.getContext().getAuthentication();
-            boolean isAdmin = auth.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")); // chinh role lại
-            if (!isAdmin) {
-                User currentUser = this.userRepo.getUserByUsername(auth.getName());
-                if (currentUser == null || !existing.getOwnerId().getId().equals(currentUser.getId())) {
-                    throw new SecurityException("Bạn không có quyền chỉnh sửa workspace này");
-                }
-            }
+            // Chỉ ADMIN hoặc owner workspace mới được chỉnh sửa
+            permissionService.requireDeleteWorkspacePermission(w.getId());
         }
         this.workspaceRepo.addOrUpdate(w);
     }
@@ -93,15 +90,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             throw new IllegalArgumentException("Không tìm thấy workspace với ID: " + id);
         }
         
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAdmin = auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));// chỉnh role lại
-        if (!isAdmin) {
-            User currentUser = this.userRepo.getUserByUsername(auth.getName());
-            if (currentUser == null || !existing.getOwnerId().getId().equals(currentUser.getId())) {
-                throw new SecurityException("Bạn không có quyền xóa workspace này");
-            }
-        }
+        // Chỉ ADMIN hoặc owner workspace mới được xóa
+        permissionService.requireDeleteWorkspacePermission(id);
 
         this.workspaceRepo.delete(id);
     }

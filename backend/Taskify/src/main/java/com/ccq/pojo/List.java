@@ -22,6 +22,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -40,25 +41,29 @@ import java.util.Set;
     @NamedQuery(name = "List.findByStatus", query = "SELECT l FROM List l WHERE l.status = :status")})
 public class List implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "name")
+    private String name;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 11)
+    @Column(name = "status")
+    private String status;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "name")
-    private String name;
     @Column(name = "position")
     private Integer position;
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private ListStatus status;
     @JoinColumn(name = "board_id", referencedColumnName = "id")
     @ManyToOne
     private Board boardId;
+    @JsonIgnore
     @OneToMany(mappedBy = "listId")
     private Set<Card> cardSet;
 
@@ -82,13 +87,6 @@ public class List implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Integer getPosition() {
         return position;
@@ -98,13 +96,6 @@ public class List implements Serializable {
         this.position = position;
     }
 
-    public ListStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ListStatus status) {
-        this.status = status;
-    }
 
     public Board getBoardId() {
         return boardId;
@@ -115,6 +106,7 @@ public class List implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public Set<Card> getCardSet() {
         return cardSet;
     }
@@ -146,6 +138,22 @@ public class List implements Serializable {
     @Override
     public String toString() {
         return "com.ccq.pojo.List[ id=" + id + " ]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
     
 }

@@ -35,8 +35,8 @@ public class CardController {
             @PathVariable("listId") int listId, 
             @RequestBody Card c) {
         try {
-            this.cardService.createCardInList(listId, c);
-            return new ResponseEntity<>(c, HttpStatus.CREATED); 
+        this.cardService.createCardInList(listId, c);
+        return new ResponseEntity<>(c, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Lỗi tạo thẻ " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -56,8 +56,8 @@ public class CardController {
     @DeleteMapping("/cards/{cardId}") 
     public ResponseEntity<?> deleteCard(@PathVariable("cardId") int cardId) {
         try {
-            this.cardService.delete(cardId); 
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        this.cardService.delete(cardId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>("Lỗi xóa thẻ " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -68,11 +68,11 @@ public class CardController {
             @PathVariable("cardId") int cardId, 
             @RequestBody Map<String, Integer> payload) { 
         try {
-            int newListId = payload.get("newListId");
-            int newPosition = payload.get("newPosition");
-            
-            this.cardService.moveCard(cardId, newListId, newPosition);
-            return ResponseEntity.ok("Đã di chuyển thẻ thành công");
+        int newListId = payload.get("newListId");
+        int newPosition = payload.get("newPosition");
+        
+        this.cardService.moveCard(cardId, newListId, newPosition);
+        return ResponseEntity.ok("Đã di chuyển thẻ thành công");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Lỗi kéo thả: " + e.getMessage());
         }

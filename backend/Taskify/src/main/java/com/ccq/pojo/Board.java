@@ -22,6 +22,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -41,22 +42,24 @@ import java.util.Set;
     @NamedQuery(name = "Board.findByIsPublic", query = "SELECT b FROM Board b WHERE b.isPublic = :isPublic")})
 public class Board implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "name")
+    private String name;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "name")
-    private String name;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
     @Column(name = "is_public")
     private Boolean isPublic;
+    @JsonIgnore
     @OneToMany(mappedBy = "boardId")
     private Set<List> listSet;
     @JoinColumn(name = "workspace_id", referencedColumnName = "id")
@@ -83,13 +86,6 @@ public class Board implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Date getCreatedDate() {
         return createdDate;
@@ -108,6 +104,7 @@ public class Board implements Serializable {
     }
 
     @XmlTransient
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public Set<List> getListSet() {
         return listSet;
     }
@@ -147,6 +144,14 @@ public class Board implements Serializable {
     @Override
     public String toString() {
         return "com.ccq.pojo.Board[ id=" + id + " ]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
     
 }

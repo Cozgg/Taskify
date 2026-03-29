@@ -31,7 +31,7 @@ import java.io.Serializable;
 @NamedQueries({
     @NamedQuery(name = "UserWorkspace.findAll", query = "SELECT u FROM UserWorkspace u"),
     @NamedQuery(name = "UserWorkspace.findById", query = "SELECT u FROM UserWorkspace u WHERE u.id = :id"),
-    @NamedQuery(name = "UserWorkspace.findByRoleWorkspace", query = "SELECT u FROM UserWorkspace u WHERE u.roleWorkspace = :roleWorkspace")})
+    })
 public class UserWorkspace implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,9 +40,6 @@ public class UserWorkspace implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Column(name = "role_workspace")
-    @Enumerated(EnumType.STRING)
-    private RoleWorkspace roleWorkspace;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
     private User userId;
@@ -63,14 +60,6 @@ public class UserWorkspace implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public RoleWorkspace getRoleWorkspace() {
-        return roleWorkspace;
-    }
-
-    public void setRoleWorkspace(RoleWorkspace roleWorkspace) {
-        this.roleWorkspace = roleWorkspace;
     }
 
     public User getUserId() {
@@ -98,7 +87,6 @@ public class UserWorkspace implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof UserWorkspace)) {
             return false;
         }

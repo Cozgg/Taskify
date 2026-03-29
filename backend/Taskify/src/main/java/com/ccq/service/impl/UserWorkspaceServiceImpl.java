@@ -4,7 +4,6 @@
  */
 package com.ccq.service.impl;
 
-import com.ccq.pojo.RoleWorkspace;
 import com.ccq.pojo.User;
 import com.ccq.pojo.UserWorkspace;
 import com.ccq.pojo.Workspace;
@@ -51,7 +50,6 @@ public class UserWorkspaceServiceImpl implements UserWorkspaceService{
         UserWorkspace uw = new UserWorkspace();
         uw.setUserId(u);
         uw.setWorkspaceId(w);
-        uw.setRoleWorkspace(RoleWorkspace.THANH_VIEN);
         this.userWorkRepo.saveInviteUser(uw);
     }
     
