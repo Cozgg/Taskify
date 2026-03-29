@@ -4,10 +4,15 @@
  */
 package com.ccq.service.impl;
 
+import com.ccq.pojo.Boardlist;
 import com.ccq.pojo.Card;
 import com.ccq.repository.CardRepository;
 import com.ccq.repository.ListRepository;
 import com.ccq.service.CardService;
+import com.ccq.state.CardState;
+import com.ccq.state.DoneState;
+import com.ccq.state.InProgressState;
+import com.ccq.state.ToDoState;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +29,7 @@ public class CardServiceImpl implements CardService {
     private CardRepository cardRepo;
     @Autowired
     private ListRepository listRepo;
-    
+
     @Override
     public Card getById(int id) {
         return this.cardRepo.getById(id);
@@ -47,31 +52,42 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public void createCardInList(int listId, Card c) {
-        com.ccq.pojo.List list = this.listRepo.getById(listId);
-        if(list == null){
+        Boardlist list = this.listRepo.getById(listId);
+        if (list == null) {
             throw new RuntimeException("Không tìm thấy cột");
         }
         c.setListId(list);
         this.cardRepo.addOrUpdate(c);
     }
-    
+
     @Override
-    public void moveCard(int cardId, int newListId, int newPosition) {
+    public String moveCard(int cardId, int newListId, int newPosition) {
         Card card = this.cardRepo.getById(cardId);
         if (card == null) {
             throw new RuntimeException("Không tìm thấy thẻ cần di chuyển!");
         }
-
+        String msg = "Đang di chuyển thẻ";
         if (card.getListId() == null || card.getListId().getId() != newListId) {
-            com.ccq.pojo.List newList = this.listRepo.getById(newListId);
+            Boardlist newList = this.listRepo.getById(newListId);
             if (newList == null) {
                 throw new RuntimeException("Không tìm thấy Cột đích!");
             }
-            card.setListId(newList);
+
+            CardState newState = switch (newList.getStatus().toString()) {
+                case "IN_PROGRESS" ->
+                    new InProgressState();
+                case "DONE" ->
+                    new DoneState();
+                default ->
+                    new ToDoState();
+            };
+                    
+            msg = card.changeState(newState, newList);
         }
+
         card.setPosition(newPosition);
 
         this.cardRepo.addOrUpdate(card);
+        return msg;
     }
 }
-    

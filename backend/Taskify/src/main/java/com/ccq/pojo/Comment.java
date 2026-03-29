@@ -25,7 +25,7 @@ import java.util.Date;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "comment")
@@ -61,8 +61,8 @@ public class Comment implements Serializable {
     public Comment() {
     }
 
-    public Comment(Integer id) {
-        this.id = id;
+    public Comment(String comment) {
+        this.comment = comment;
     }
 
     public Comment(Integer id, String comment) {

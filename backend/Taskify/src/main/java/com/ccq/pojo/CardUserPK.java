@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Embeddable
 public class CardUserPK implements Serializable {

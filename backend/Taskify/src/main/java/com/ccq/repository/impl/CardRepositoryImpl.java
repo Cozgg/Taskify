@@ -104,4 +104,6 @@ public class CardRepositoryImpl implements CardRepository{
         Session s = this.factory.getObject().getCurrentSession();
         return s.get(Card.class, cardId);
     }
+
+
 }

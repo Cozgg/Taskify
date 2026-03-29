@@ -4,6 +4,7 @@
  */
 package com.ccq.pojo;
 
+import com.ccq.state.CardState;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -19,6 +20,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -29,7 +31,7 @@ import java.util.Set;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "card")
@@ -83,11 +85,23 @@ public class Card implements Serializable {
     private Set<Comment> commentSet;
     @JoinColumn(name = "list_id", referencedColumnName = "id")
     @ManyToOne
-    private List listId;
+    private Boardlist listId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "card")
     private Set<CardUser> cardUserSet;
+    @Transient
+    private CardState state;
 
     public Card() {
+    }
+    
+    public String changeState(CardState state, Boardlist boardListId){
+        this.state = state;
+        this.listId = boardListId;
+        
+        if(state != null){
+            return this.state.applyBehavior(this);
+        }
+        return "Đã cập nhật trạng thái thẻ.";
     }
 
     public Card(Integer id) {
@@ -199,11 +213,11 @@ public class Card implements Serializable {
         this.commentSet = commentSet;
     }
 
-    public List getListId() {
+    public Boardlist getListId() {
         return listId;
     }
 
-    public void setListId(List listId) {
+    public void setListId(Boardlist listId) {
         this.listId = listId;
     }
 

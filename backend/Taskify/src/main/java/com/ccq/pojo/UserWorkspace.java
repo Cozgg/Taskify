@@ -15,15 +15,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "user_workspace")
@@ -40,9 +39,11 @@ public class UserWorkspace implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 13)
     @Column(name = "role_workspace")
-    @Enumerated(EnumType.STRING)
-    private RoleWorkspace roleWorkspace;
+    private String roleWorkspace;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
     private User userId;
@@ -57,6 +58,11 @@ public class UserWorkspace implements Serializable {
         this.id = id;
     }
 
+    public UserWorkspace(Integer id, String roleWorkspace) {
+        this.id = id;
+        this.roleWorkspace = roleWorkspace;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -65,11 +71,11 @@ public class UserWorkspace implements Serializable {
         this.id = id;
     }
 
-    public RoleWorkspace getRoleWorkspace() {
+    public String getRoleWorkspace() {
         return roleWorkspace;
     }
 
-    public void setRoleWorkspace(RoleWorkspace roleWorkspace) {
+    public void setRoleWorkspace(String roleWorkspace) {
         this.roleWorkspace = roleWorkspace;
     }
 

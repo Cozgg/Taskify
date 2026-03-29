@@ -28,7 +28,7 @@ import java.util.Set;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "board")
@@ -58,7 +58,7 @@ public class Board implements Serializable {
     @Column(name = "is_public")
     private Boolean isPublic;
     @OneToMany(mappedBy = "boardId")
-    private Set<List> listSet;
+    private Set<Boardlist> boardlistSet;
     @JoinColumn(name = "workspace_id", referencedColumnName = "id")
     @ManyToOne
     private Workspace workspaceId;
@@ -108,12 +108,12 @@ public class Board implements Serializable {
     }
 
     @XmlTransient
-    public Set<List> getListSet() {
-        return listSet;
+    public Set<Boardlist> getBoardlistSet() {
+        return boardlistSet;
     }
 
-    public void setListSet(Set<List> listSet) {
-        this.listSet = listSet;
+    public void setBoardlistSet(Set<Boardlist> boardlistSet) {
+        this.boardlistSet = boardlistSet;
     }
 
     public Workspace getWorkspaceId() {

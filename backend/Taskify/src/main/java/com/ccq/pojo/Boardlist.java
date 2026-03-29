@@ -16,8 +16,6 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -27,18 +25,18 @@ import java.util.Set;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
-@Table(name = "list")
+@Table(name = "boardlist")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "List.findAll", query = "SELECT l FROM List l"),
-    @NamedQuery(name = "List.findById", query = "SELECT l FROM List l WHERE l.id = :id"),
-    @NamedQuery(name = "List.findByName", query = "SELECT l FROM List l WHERE l.name = :name"),
-    @NamedQuery(name = "List.findByPosition", query = "SELECT l FROM List l WHERE l.position = :position"),
-    @NamedQuery(name = "List.findByStatus", query = "SELECT l FROM List l WHERE l.status = :status")})
-public class List implements Serializable {
+    @NamedQuery(name = "Boardlist.findAll", query = "SELECT b FROM Boardlist b"),
+    @NamedQuery(name = "Boardlist.findById", query = "SELECT b FROM Boardlist b WHERE b.id = :id"),
+    @NamedQuery(name = "Boardlist.findByName", query = "SELECT b FROM Boardlist b WHERE b.name = :name"),
+    @NamedQuery(name = "Boardlist.findByPosition", query = "SELECT b FROM Boardlist b WHERE b.position = :position"),
+    @NamedQuery(name = "Boardlist.findByStatus", query = "SELECT b FROM Boardlist b WHERE b.status = :status")})
+public class Boardlist implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -53,25 +51,28 @@ public class List implements Serializable {
     private String name;
     @Column(name = "position")
     private Integer position;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 11)
     @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private ListStatus status;
+    private String status;
     @JoinColumn(name = "board_id", referencedColumnName = "id")
     @ManyToOne
     private Board boardId;
     @OneToMany(mappedBy = "listId")
     private Set<Card> cardSet;
 
-    public List() {
+    public Boardlist() {
     }
 
-    public List(Integer id) {
+    public Boardlist(Integer id) {
         this.id = id;
     }
 
-    public List(Integer id, String name) {
+    public Boardlist(Integer id, String name, String status) {
         this.id = id;
         this.name = name;
+        this.status = status;
     }
 
     public Integer getId() {
@@ -98,11 +99,11 @@ public class List implements Serializable {
         this.position = position;
     }
 
-    public ListStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(ListStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -133,10 +134,10 @@ public class List implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof List)) {
+        if (!(object instanceof Boardlist)) {
             return false;
         }
-        List other = (List) object;
+        Boardlist other = (Boardlist) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -145,7 +146,7 @@ public class List implements Serializable {
 
     @Override
     public String toString() {
-        return "com.ccq.pojo.List[ id=" + id + " ]";
+        return "com.ccq.pojo.Boardlist[ id=" + id + " ]";
     }
     
 }

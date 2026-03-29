@@ -71,8 +71,8 @@ public class CardController {
             int newListId = payload.get("newListId");
             int newPosition = payload.get("newPosition");
             
-            this.cardService.moveCard(cardId, newListId, newPosition);
-            return ResponseEntity.ok("Đã di chuyển thẻ thành công");
+            String msg = this.cardService.moveCard(cardId, newListId, newPosition);
+            return ResponseEntity.ok("Đã di chuyển thẻ thành công " + msg);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Lỗi kéo thả: " + e.getMessage());
         }
