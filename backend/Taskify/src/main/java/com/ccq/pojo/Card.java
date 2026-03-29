@@ -4,6 +4,8 @@
  */
 package com.ccq.pojo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ccq.state.CardState;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
@@ -35,7 +37,6 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "card")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Card.findAll", query = "SELECT c FROM Card c"),
     @NamedQuery(name = "Card.findById", query = "SELECT c FROM Card c WHERE c.id = :id"),
@@ -76,13 +77,18 @@ public class Card implements Serializable {
     @Column(name = "position")
     private Integer position;
     @OneToMany(mappedBy = "cardId")
+    @JsonManagedReference
     private Set<ChecklistItem> checklistItemSet;
     @OneToMany(mappedBy = "cardId")
+    @JsonManagedReference
     private Set<Activity> activitySet;
     @OneToMany(mappedBy = "cardId")
+    @JsonManagedReference
     private Set<Attachment> attachmentSet;
     @OneToMany(mappedBy = "cardId")
+    @JsonManagedReference
     private Set<Comment> commentSet;
+    @JsonBackReference
     @JoinColumn(name = "list_id", referencedColumnName = "id")
     @ManyToOne
     private Boardlist listId;

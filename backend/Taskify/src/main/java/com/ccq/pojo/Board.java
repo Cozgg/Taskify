@@ -4,6 +4,7 @@
  */
 package com.ccq.pojo;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,7 +33,6 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "board")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Board.findAll", query = "SELECT b FROM Board b"),
     @NamedQuery(name = "Board.findById", query = "SELECT b FROM Board b WHERE b.id = :id"),
@@ -58,6 +58,7 @@ public class Board implements Serializable {
     @Column(name = "is_public")
     private Boolean isPublic;
     @OneToMany(mappedBy = "boardId")
+    @JsonManagedReference
     private Set<Boardlist> boardlistSet;
     @JoinColumn(name = "workspace_id", referencedColumnName = "id")
     @ManyToOne

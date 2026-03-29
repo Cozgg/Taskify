@@ -32,6 +32,8 @@ public class JwtUtil {
     public String extractUsername(String token) {
         return parseClaims(token).getSubject();
     }
+    
+    
 
     public boolean validateToken(String token) {
         try {

@@ -4,6 +4,7 @@
  */
 package com.ccq.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -53,6 +54,7 @@ public class User implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "username")
     private String username;
+    @JsonIgnore
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
