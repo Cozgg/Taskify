@@ -4,7 +4,10 @@
  */
 package com.ccq.controller.client;
 
+import com.ccq.pojo.User;
 import com.ccq.service.ListService;
+import com.ccq.service.UserService;
+import com.ccq.utils.JwtUtil;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,24 +21,30 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  *
  * @author nguye
  */
 @RestController
+@RequestMapping("/api/lists")
 public class ListController {
     @Autowired
     private ListService listSer;
     
-    @GetMapping("/boards/{boardId}/lists")
+    @Autowired 
+    private UserService userSer;
+    
+    @GetMapping("/boards/{boardId}")
     public ResponseEntity<?> getLists(@PathVariable("boardId") int boardId, @RequestParam Map<String, String> params){
         params.put("boardId", String.valueOf(boardId));
         List<com.ccq.pojo.List> lists = this.listSer.getList(params);
         return new ResponseEntity<>(lists, HttpStatus.OK);
     }
     
-    @PostMapping("/boards/{boardId}/lists")
+    @PostMapping("/boards/{boardId}")
     public ResponseEntity<?> createList(
             @PathVariable("boardId") int boardId, 
             @RequestBody com.ccq.pojo.List list) {
@@ -47,7 +56,7 @@ public class ListController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-    @PutMapping("/lists/{listId}")
+    @PutMapping("/{listId}")
     public ResponseEntity<?> updateList(
             @PathVariable("listId") int listId, 
             @RequestBody com.ccq.pojo.List list) {
@@ -61,7 +70,8 @@ public class ListController {
         }
     }
 
-    @DeleteMapping("/lists/{listId}")
+    @DeleteMapping("/{listId}")
+    
     public ResponseEntity<?> deleteList(@PathVariable("listId") int listId) {
         try {
             this.listSer.delete(listId);

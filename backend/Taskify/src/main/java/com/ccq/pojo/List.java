@@ -4,6 +4,7 @@
  */
 package com.ccq.pojo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,7 +32,6 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "list")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "List.findAll", query = "SELECT l FROM List l"),
     @NamedQuery(name = "List.findById", query = "SELECT l FROM List l WHERE l.id = :id"),
@@ -58,6 +58,7 @@ public class List implements Serializable {
     private ListStatus status;
     @JoinColumn(name = "board_id", referencedColumnName = "id")
     @ManyToOne
+    @JsonBackReference
     private Board boardId;
     @OneToMany(mappedBy = "listId")
     private Set<Card> cardSet;

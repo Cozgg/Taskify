@@ -28,7 +28,6 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "attachment")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Attachment.findAll", query = "SELECT a FROM Attachment a"),
     @NamedQuery(name = "Attachment.findById", query = "SELECT a FROM Attachment a WHERE a.id = :id"),

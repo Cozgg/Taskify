@@ -30,11 +30,12 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author nguye
  */
 @RestController
+@RequestMapping("/api/boards")
 public class BoardController {
     @Autowired
     private BoardService boardService;
 
-    @GetMapping("/workspaces/{workspaceId}/boards")
+    @GetMapping("/workspaces/{workspaceId}")
     public ResponseEntity<?> getBoardsByWorkspace(
             @PathVariable("workspaceId") int workspaceId,
             @RequestParam Map<String, String> params) {
@@ -45,7 +46,7 @@ public class BoardController {
         return new ResponseEntity<>(boards, HttpStatus.OK);
     }
 
-    @GetMapping("/boards/{boardId}")
+    @GetMapping("/{boardId}")
     public ResponseEntity<?> getBoardById(@PathVariable("boardId") int boardId) {
         Board board = this.boardService.getById(boardId);
         if (board != null) {
@@ -54,7 +55,7 @@ public class BoardController {
         return new ResponseEntity<>("Không tìm thấy Bảng", HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/workspaces/{workspaceId}/boards")
+    @PostMapping("/workspaces/{workspaceId}")
     public ResponseEntity<?> createBoard(
             @PathVariable("workspaceId") int workspaceId,
             @RequestBody Board board) {
@@ -66,7 +67,7 @@ public class BoardController {
         }
     }
 
-    @PutMapping("/boards/{boardId}")
+    @PutMapping("/{boardId}")
     public ResponseEntity<?> updateBoard(
             @PathVariable("boardId") int boardId,
             @RequestBody Board board) {
@@ -79,7 +80,7 @@ public class BoardController {
         }
     }
     
-    @DeleteMapping("/boards/{boardId}")
+    @DeleteMapping("/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable("boardId") int boardId) {
         try {
             this.boardService.delete(boardId);
