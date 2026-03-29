@@ -14,8 +14,8 @@ import com.ccq.pojo.ListStatus;
 public class InProgressState implements CardState {
 
     @Override
-    public void applyBehavior(Card card) {
-        System.out.println("Thẻ đang IN_PROGRESS, gửi thông báo team!");
+    public String applyBehavior(Card card) {
+        return "Thẻ đang IN_PROGRESS, gửi thông báo team!";
     }
 
     @Override

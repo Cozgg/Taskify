@@ -9,5 +9,7 @@ package com.ccq.pojo;
  * @author Admin
  */
 public enum ListStatus {
-    TO_DO, IN_PROGRESS, DONE
+    TODO,
+    IN_PROGRESS,
+    DONE
 }

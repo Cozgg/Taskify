@@ -14,8 +14,8 @@ import com.ccq.pojo.ListStatus;
 public class DoneState implements CardState {
 
     @Override
-    public void applyBehavior(Card card) {
-        System.out.println("Thẻ đã DONE, cập nhật tiến độ!");
+    public String applyBehavior(Card card) {
+        return "Thẻ đã DONE, cập nhật tiến độ!";
     }
 
     @Override

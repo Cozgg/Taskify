@@ -5,6 +5,20 @@
 package com.ccq.repository.impl;
 
 import com.ccq.pojo.Card;
+import com.ccq.pojo.Workspace;
+import com.ccq.repository.CardRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import com.ccq.repository.CardRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,21 +31,78 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Admin
  */
 @Repository
+@PropertySource("classpath:configs.properties")
 @Transactional
-public class CardRepositoryImpl implements CardRepository {
-
+public class CardRepositoryImpl implements CardRepository{
+    @Autowired
+    private Environment env;
+    
     @Autowired
     private LocalSessionFactoryBean factory;
+    
+    @Override
+    public Card getById(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        return s.get(Card.class, id);
+    }
+
+    @Override
+    public void addOrUpdate(Card c) {
+        Session s = this.factory.getObject().getCurrentSession();
+        if (c.getId() != null) {
+            s.merge(c);
+        } else {
+            s.persist(c);
+        }
+    }
+
+    @Override
+    public void delete(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Card c = this.getById(id);
+        if(s != null){
+            s.remove(c);
+        }
+    }
+
+    @Override
+    public List<Card> getCard(Map<String, String> params) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<Card> q = b.createQuery(Card.class);
+        Root<Card> root = q.from(Card.class);
+        q.select(root);
+
+        if (params != null) {
+            List<Predicate> predicates = new ArrayList<>();
+
+            String kw = params.get("kw");
+            predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw)));
+
+            if (!predicates.isEmpty()) {
+                q.where(predicates.toArray(new Predicate[0]));
+            }
+        }
+        
+        q.orderBy(b.desc(root.get("id")));
+        Query<Card> query = s.createQuery(q);
+        if (params != null) {
+                int pageSize = this.env.getProperty("workspace.page_size", Integer.class);
+                int page = Integer.parseInt(params.getOrDefault("page", "1"));
+                int start = (page - 1) * pageSize;
+                
+                query.setMaxResults(pageSize);
+                query.setFirstResult(start);
+                
+            }
+        
+        return query.getResultList();
+    }
 
     @Override
     public Card findCardById(int cardId) {
         Session s = this.factory.getObject().getCurrentSession();
         return s.get(Card.class, cardId);
-    }
-
-    @Override
-    public void updateCardLabel(int cardId, int labelId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 

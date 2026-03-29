@@ -4,6 +4,9 @@
  */
 package com.ccq.service;
 
+import java.util.List;
+import java.util.Map;
+
 import com.ccq.pojo.Board;
 
 /**
@@ -11,7 +14,14 @@ import com.ccq.pojo.Board;
  * @author nguye
  */
 public interface BoardService {
+
     Board getById(int id);
+
     void addOrUpdate(Board b);
+
     void delete(int id);
+
+    List<Board> getBoards(Map<String, String> params);
+
+    void createBoardInWorkspace(int workspaceId, Board board);
 }

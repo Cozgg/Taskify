@@ -4,11 +4,17 @@
  */
 package com.ccq.repository;
 
+import com.ccq.pojo.Boardlist;
+import java.util.Map;
+
 
 /**
  *
  * @author nguye
  */
-public class ListRepository {
-    
+public interface ListRepository {
+    Boardlist getById(int id);
+    void addOrUpdate(Boardlist l);
+    void delete(int id);
+    java.util.List<Boardlist> getList(Map<String, String> params);
 }

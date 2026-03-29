@@ -14,13 +14,13 @@ import com.ccq.pojo.ListStatus;
 public class ToDoState implements CardState {
 
     @Override
-    public void applyBehavior(Card card) {
-        System.out.println("Thẻ đã chuyển sang TO_DO");
+    public String applyBehavior(Card card) {
+        return "Thẻ đã chuyển sang TO_DO";
     }
 
     @Override
     public ListStatus getStatus() {
-        return ListStatus.TO_DO;
+        return ListStatus.TODO;
     }
 
 }

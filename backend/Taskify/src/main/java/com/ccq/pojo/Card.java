@@ -23,6 +23,8 @@ import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -33,6 +35,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "card")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Card.findAll", query = "SELECT c FROM Card c"),
     @NamedQuery(name = "Card.findById", query = "SELECT c FROM Card c WHERE c.id = :id"),
@@ -82,22 +85,23 @@ public class Card implements Serializable {
     private Set<Comment> commentSet;
     @JoinColumn(name = "list_id", referencedColumnName = "id")
     @ManyToOne
-    private List listId;
-    @Transient
-    private CardState state;
+    private Boardlist listId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "card")
     private Set<CardUser> cardUserSet;
-    
-    public void changeState(CardState state, List list){
-        this.state = state;
-        this.listId = list;
-        
-        if(this.state != null){
-            this.state.applyBehavior(this);
-        }
-    }
+    @Transient
+    private CardState state;
 
     public Card() {
+    }
+    
+    public String changeState(CardState state, Boardlist boardListId){
+        this.state = state;
+        this.listId = boardListId;
+        
+        if(state != null){
+            return this.state.applyBehavior(this);
+        }
+        return "Đã cập nhật trạng thái thẻ.";
     }
 
     public Card(Integer id) {
@@ -173,6 +177,7 @@ public class Card implements Serializable {
         this.position = position;
     }
 
+    @XmlTransient
     public Set<ChecklistItem> getChecklistItemSet() {
         return checklistItemSet;
     }
@@ -181,6 +186,7 @@ public class Card implements Serializable {
         this.checklistItemSet = checklistItemSet;
     }
 
+    @XmlTransient
     public Set<Activity> getActivitySet() {
         return activitySet;
     }
@@ -189,6 +195,7 @@ public class Card implements Serializable {
         this.activitySet = activitySet;
     }
 
+    @XmlTransient
     public Set<Attachment> getAttachmentSet() {
         return attachmentSet;
     }
@@ -197,6 +204,7 @@ public class Card implements Serializable {
         this.attachmentSet = attachmentSet;
     }
 
+    @XmlTransient
     public Set<Comment> getCommentSet() {
         return commentSet;
     }
@@ -205,14 +213,15 @@ public class Card implements Serializable {
         this.commentSet = commentSet;
     }
 
-    public List getListId() {
+    public Boardlist getListId() {
         return listId;
     }
 
-    public void setListId(List listId) {
+    public void setListId(Boardlist listId) {
         this.listId = listId;
     }
 
+    @XmlTransient
     public Set<CardUser> getCardUserSet() {
         return cardUserSet;
     }

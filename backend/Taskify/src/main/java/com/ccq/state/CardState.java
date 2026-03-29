@@ -12,6 +12,6 @@ import com.ccq.pojo.ListStatus;
  * @author Admin
  */
 public interface CardState {
-    void applyBehavior(Card card); 
+    String applyBehavior(Card card); 
     ListStatus getStatus();
 }

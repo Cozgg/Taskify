@@ -4,10 +4,12 @@
  */
 package com.ccq.service;
 
+import com.ccq.pojo.Activity;
+
 /**
  *
  * @author Admin
  */
 public interface ActivityService {
-    void assignUserForCard(int userId, int cardId);
+    Activity assignUserForCard(int userId, int cardId);
 }

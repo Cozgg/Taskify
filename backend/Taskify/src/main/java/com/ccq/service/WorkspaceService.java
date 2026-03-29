@@ -4,17 +4,36 @@
  */
 package com.ccq.service;
 
-import com.ccq.pojo.Workspace;
 import java.util.List;
 import java.util.Map;
+
+import com.ccq.pojo.Board;
+import com.ccq.pojo.User;
+import com.ccq.pojo.Workspace;
 
 /**
  *
  * @author nguye
  */
 public interface WorkspaceService {
+
     void addOrUpdate(Workspace w);
+
     void delete(int id);
-    List<Workspace> getWorkSpace(Map<String, String> params);
+
+    Workspace getWorkspaceByOwnerId(int ownerId);
+
+    boolean hasWorkspace(int ownerId);
+
     Workspace getWorkspaceById(int workspaceId);
+
+    List<Workspace> getWorkspaces(Map<String, String> params);
+
+    List<Board> getBoardsByWorkspaceId(int wsId);
+
+    List<User> getMembersByWorkspaceId(int workspaceId);
+
+    Long countUserInWorkspace(int workspaceId);
+
+    Long countBoardInWorkspace(int workspaceId);
 }

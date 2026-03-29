@@ -8,11 +8,11 @@
     <class>com.ccq.pojo.Workspace</class>
     <class>com.ccq.pojo.ChecklistItem</class>
     <class>com.ccq.pojo.Activity</class>
-    <class>com.ccq.pojo.Label</class>
     <class>com.ccq.pojo.User</class>
     <class>com.ccq.pojo.Comment</class>
     <class>com.ccq.pojo.List</class>
     <class>com.ccq.pojo.UserWorkspace</class>
+<<<<<<< HEAD
     <class>com.ccq.configs.Comment</class>
     <class>com.ccq.configs.Workspace</class>
     <class>com.ccq.configs.User</class>
@@ -24,6 +24,8 @@
     <class>com.ccq.configs.Label</class>
     <class>com.ccq.configs.List</class>
     <class>com.ccq.configs.Card</class>
+=======
+>>>>>>> 1a633b8b6499605a87af1081d18a8dc8edf2203c
     <class>com.ccq.pojo.CardUser</class>
   </persistence-unit>
 </persistence>

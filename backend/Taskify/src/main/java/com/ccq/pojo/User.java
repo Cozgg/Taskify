@@ -19,6 +19,8 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -29,6 +31,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "user")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
@@ -140,6 +143,7 @@ public class User implements Serializable {
         this.avatar = avatar;
     }
 
+    @XmlTransient
     public Set<Workspace> getWorkspaceSet() {
         return workspaceSet;
     }
@@ -148,6 +152,7 @@ public class User implements Serializable {
         this.workspaceSet = workspaceSet;
     }
 
+    @XmlTransient
     public Set<Activity> getActivitySet() {
         return activitySet;
     }
@@ -156,6 +161,7 @@ public class User implements Serializable {
         this.activitySet = activitySet;
     }
 
+    @XmlTransient
     public Set<Comment> getCommentSet() {
         return commentSet;
     }
@@ -164,6 +170,7 @@ public class User implements Serializable {
         this.commentSet = commentSet;
     }
 
+    @XmlTransient
     public Set<UserWorkspace> getUserWorkspaceSet() {
         return userWorkspaceSet;
     }
@@ -172,6 +179,7 @@ public class User implements Serializable {
         this.userWorkspaceSet = userWorkspaceSet;
     }
 
+    @XmlTransient
     public Set<CardUser> getCardUserSet() {
         return cardUserSet;
     }

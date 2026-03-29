@@ -9,5 +9,7 @@ package com.ccq.pojo;
  * @author Admin
  */
 public enum RoleWorkspace {
-    THANH_VIEN, QUAN_TRI_VIEN, QUAN_LY
+    QUAN_TRI,
+    THANH_VIEN,
+    QUAN_LY
 }

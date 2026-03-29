@@ -3,15 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.ccq.repository.impl;
-import com.ccq.pojo.Workspace;
-import com.ccq.repository.WorkspaceRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +16,16 @@ import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.ccq.pojo.Board;
+import com.ccq.pojo.User;
+import com.ccq.pojo.Workspace;
+import com.ccq.repository.WorkspaceRepository;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 @Repository
 @PropertySource("classpath:configs.properties")
@@ -58,7 +64,16 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
 
     @Override
-    public List<Workspace> getWorkSpace(Map<String, String> params) {
+    public Workspace getWorkspaceByOwnerId(int ownerId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query<Workspace> q = s.createQuery(
+                "FROM Workspace w WHERE w.ownerId.id = :ownerId", Workspace.class);
+        q.setParameter("ownerId", ownerId);
+        return q.uniqueResult();
+    }
+
+    @Override
+    public List<Workspace> getWorkspaces(Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = s.getCriteriaBuilder();
         CriteriaQuery<Workspace> q = b.createQuery(Workspace.class);
@@ -69,25 +84,51 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
             List<Predicate> predicates = new ArrayList<>();
 
             String kw = params.get("kw");
-            predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw)));
+            if (kw != null && !kw.isBlank()) {
+                predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw)));
+            }
 
             if (!predicates.isEmpty()) {
                 q.where(predicates.toArray(new Predicate[0]));
             }
         }
-        
+
         q.orderBy(b.desc(root.get("id")));
         Query<Workspace> query = s.createQuery(q);
         if (params != null) {
-                int pageSize = this.env.getProperty("workspace.page_size", Integer.class);
-                int page = Integer.parseInt(params.getOrDefault("page", "1"));
-                int start = (page - 1) * pageSize;
-                
-                query.setMaxResults(pageSize);
-                query.setFirstResult(start);
-                
-            }
-        
+            int pageSize = this.env.getProperty("workspace.page_size", Integer.class);
+            int page = Integer.parseInt(params.getOrDefault("page", "1"));
+            int start = (page - 1) * pageSize;
+
+            query.setMaxResults(pageSize);
+            query.setFirstResult(start);
+
+        }
+
         return query.getResultList();
+    }
+
+    @Override
+    public List<User> getMembersByWorkspaceId(int workspaceId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query<com.ccq.pojo.User> q = s.createQuery(
+                "SELECT uw.userId FROM UserWorkspace uw WHERE uw.workspaceId.id = :wsId", User.class);
+        q.setParameter("wsId", workspaceId);
+        return q.getResultList();
+    }
+
+    @Override
+    public List<Board> getBoardsByWorkspaceId(int wsId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query<com.ccq.pojo.Board> q = s.createQuery("FROM Board b WHERE b.workspaceId.id = :wsId", Board.class);
+        q.setParameter("wsId", wsId);
+        return q.getResultList();
+    }
+
+    @Override
+    public Long count() {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query<Long> q = s.createQuery("SELECT COUNT(*) FROM Workspace", Long.class);
+        return q.getSingleResult();
     }
 }
