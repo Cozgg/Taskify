@@ -24,13 +24,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.security.access.prepost.PreAuthorize; 
 
 /**
  *
  * @author nguye
  */
 @RestController
-@RequestMapping("/api/lists")
+@RequestMapping("/api") 
 public class ListController {
     @Autowired
     private ListService listSer;
@@ -38,14 +39,14 @@ public class ListController {
     @Autowired 
     private UserService userSer;
     
-    @GetMapping("/boards/{boardId}")
+    @GetMapping("/boards/{boardId}/lists")
     public ResponseEntity<?> getLists(@PathVariable("boardId") int boardId, @RequestParam Map<String, String> params){
         params.put("boardId", String.valueOf(boardId));
         List<Boardlist> lists = this.listSer.getList(params);
         return new ResponseEntity<>(lists, HttpStatus.OK);
     }
     
-    @PostMapping("/boards/{boardId}")
+    @PostMapping("/boards/{boardId}/lists")
     public ResponseEntity<?> createList(
             @PathVariable("boardId") int boardId, 
             @RequestBody Boardlist list) {
@@ -57,7 +58,8 @@ public class ListController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-    @PutMapping("/{listId}")
+    
+    @PutMapping("/lists/{listId}")
     public ResponseEntity<?> updateList(
             @PathVariable("listId") int listId, 
             @RequestBody Boardlist list) {
@@ -70,9 +72,8 @@ public class ListController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
-    @DeleteMapping("/{listId}")
     
+    @DeleteMapping("/lists/{listId}")
     public ResponseEntity<?> deleteList(@PathVariable("listId") int listId) {
         try {
             this.listSer.delete(listId);
