@@ -4,6 +4,7 @@
  */
 package com.ccq.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -16,16 +17,17 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+import org.hibernate.annotations.CreationTimestamp;
 
 /**
  *
@@ -53,12 +55,14 @@ public class Board implements Serializable {
     @Column(name = "name")
     private String name;
     @Column(name = "created_date")
+    @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
     @Column(name = "is_public")
     private Boolean isPublic;
     @OneToMany(mappedBy = "boardId")
     @JsonManagedReference
+    @JsonIgnore
     private Set<Boardlist> boardlistSet;
     @JoinColumn(name = "workspace_id", referencedColumnName = "id")
     @ManyToOne
@@ -149,5 +153,5 @@ public class Board implements Serializable {
     public String toString() {
         return "com.ccq.pojo.Board[ id=" + id + " ]";
     }
-    
+
 }

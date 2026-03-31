@@ -18,16 +18,16 @@ import org.springframework.web.bind.annotation.*;
  * @author nguye
  */
 @RestController
-@RequestMapping("/api/cards")
+@RequestMapping("/api")
 public class CardController {
 
     @Autowired
     private CardService cardService;
 
-    @GetMapping("/lists/{listId}")
+    @GetMapping("/lists/{listId}/cards")
     public ResponseEntity<?> getCards(@PathVariable("listId") int listId, @RequestParam Map<String, String> params){
-        params.put("listId", String.valueOf(listId));
         List<Card> cards = this.cardService.getCard(params);
+        
         return new ResponseEntity<>(cards, HttpStatus.OK);
     }
     
