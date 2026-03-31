@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
 import com.ccq.pojo.Workspace;
+import com.ccq.repository.UserRepository;
 import com.ccq.repository.WorkspaceRepository;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -37,6 +38,9 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     @Autowired
     private LocalSessionFactoryBean factory;
+
+    @Autowired
+    private UserRepository userRepo;
 
     @Override
     public Workspace getWorkspaceById(int id) {
@@ -111,7 +115,7 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     @Override
     public List<User> getMembersByWorkspaceId(int workspaceId) {
         Session s = this.factory.getObject().getCurrentSession();
-        Query<com.ccq.pojo.User> q = s.createQuery(
+        Query<User> q = s.createQuery(
                 "SELECT uw.userId FROM UserWorkspace uw WHERE uw.workspaceId.id = :wsId", User.class);
         q.setParameter("wsId", workspaceId);
         return q.getResultList();
@@ -120,7 +124,7 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     @Override
     public List<Board> getBoardsByWorkspaceId(int wsId) {
         Session s = this.factory.getObject().getCurrentSession();
-        Query<com.ccq.pojo.Board> q = s.createQuery("FROM Board b WHERE b.workspaceId.id = :wsId", Board.class);
+        Query<Board> q = s.createQuery("FROM Board b WHERE b.workspaceId.id = :wsId", Board.class);
         q.setParameter("wsId", wsId);
         return q.getResultList();
     }
@@ -131,4 +135,27 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
         Query<Long> q = s.createQuery("SELECT COUNT(*) FROM Workspace", Long.class);
         return q.getSingleResult();
     }
+
+    @Override
+    public boolean existsByUsernameAndWorkspaceIdAndRole(String username, int workspaceId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query<Long> q = s.createQuery(
+                "SELECT COUNT(w.id) FROM Workspace w WHERE w.id = :wsId AND w.ownerId.username = :username", Long.class);
+        q.setParameter("wsId", workspaceId);
+        q.setParameter("username", username);
+
+        return q.uniqueResult() > 0;
+    }
+
+    @Override
+    public boolean existsByUsernameAndWorkspaceId(String username, int workspaceId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query<Long> q = s.createQuery(
+                "SELECT COUNT(uw.id) FROM UserWorkspace uw WHERE uw.workspaceId.id = :wsId AND uw.userId.username = :username", Long.class);
+        q.setParameter("wsId", workspaceId);
+        q.setParameter("username", username);
+
+        return q.uniqueResult() > 0;
+    }
+
 }

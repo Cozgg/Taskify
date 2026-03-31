@@ -4,16 +4,11 @@
  */
 package com.ccq.controller.client;
 
+import com.ccq.dto.BoardDTO;
+import com.ccq.dto.request.BoardRequestDTO;
 import com.ccq.pojo.Board;
 import com.ccq.service.BoardService;
-import java.util.List;
-import java.util.Map;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,64 +18,67 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
  * @author nguye
  */
 @RestController
-@RequestMapping("/api/boards")
+@RequestMapping("/api")
 public class BoardController {
+
     @Autowired
     private BoardService boardService;
 
-    @GetMapping("/workspaces/{workspaceId}")
-    public ResponseEntity<?> getBoardsByWorkspace(
-            @PathVariable("workspaceId") int workspaceId,
-            @RequestParam Map<String, String> params) {
-        
-        params.put("workspaceId", String.valueOf(workspaceId));
-        
-        List<Board> boards = this.boardService.getBoards(params);
-        return new ResponseEntity<>(boards, HttpStatus.OK);
-    }
-
-    @GetMapping("/{boardId}")
+    //da test, chua phan quyen
+    @GetMapping("/boards/{boardId}")
     public ResponseEntity<?> getBoardById(@PathVariable("boardId") int boardId) {
         Board board = this.boardService.getById(boardId);
         if (board != null) {
-            return new ResponseEntity<>(board, HttpStatus.OK);
+            BoardDTO bdto = new BoardDTO(board.getId(), board.getName(), board.getCreatedDate(), board.getIsPublic());
+            return new ResponseEntity<>(bdto, HttpStatus.OK);
         }
         return new ResponseEntity<>("Không tìm thấy Bảng", HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/workspaces/{workspaceId}")
+    //da test, chua phan quyen
+    @PostMapping("/workspaces/{workspaceId}/boards")
     public ResponseEntity<?> createBoard(
             @PathVariable("workspaceId") int workspaceId,
-            @RequestBody Board board) {
+            @RequestBody BoardRequestDTO req) {
         try {
-            this.boardService.createBoardInWorkspace(workspaceId, board);
-            return new ResponseEntity<>(board, HttpStatus.CREATED); // 201
+            Board board = new Board();
+            board.setName(req.getName());
+            board.setIsPublic(req.getIsPublic());
+            Board b = this.boardService.createBoardInWorkspace(workspaceId, board);
+            BoardDTO bdto = new BoardDTO(b.getId(), b.getName(), b.getCreatedDate(), b.getIsPublic(), b.getWorkspaceId().getId());
+            return new ResponseEntity<>(bdto, HttpStatus.CREATED); // 201
         } catch (Exception e) {
             return new ResponseEntity<>("Lỗi tạo bảng: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
-    @PutMapping("/{boardId}")
+    
+    //da test, chua phan quyen
+    @PutMapping("/boards/{boardId}")
     public ResponseEntity<?> updateBoard(
             @PathVariable("boardId") int boardId,
-            @RequestBody Board board) {
+            @RequestBody BoardRequestDTO req) {
         try {
-            board.setId(boardId);
+            Board board = this.boardService.getById(boardId);
+            if (board == null) {
+                return new ResponseEntity<>("Không tìm thấy Board với ID: " + boardId, HttpStatus.NOT_FOUND);
+            }
+            board.setName(req.getName());
+            board.setIsPublic(req.getIsPublic());
             this.boardService.addOrUpdate(board);
-            return new ResponseEntity<>(board, HttpStatus.OK);
+            BoardDTO bdto = new BoardDTO(board.getId(), board.getName(), board.getCreatedDate(), board.getIsPublic(), board.getWorkspaceId().getId());
+            return new ResponseEntity<>(bdto, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Lỗi cập nhật bảng: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-    
-    @DeleteMapping("/{boardId}")
+    //da test, chua phan quyen
+    @DeleteMapping("/boards/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable("boardId") int boardId) {
         try {
             this.boardService.delete(boardId);

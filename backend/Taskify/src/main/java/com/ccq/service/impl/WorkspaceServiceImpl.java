@@ -14,6 +14,7 @@ import com.ccq.repository.BoardRepository;
 import com.ccq.repository.UserRepository;
 import com.ccq.repository.WorkspaceRepository;
 import com.ccq.service.WorkspaceService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class WorkspaceServiceImpl implements WorkspaceService {
@@ -36,6 +37,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     }
 
     @Override
+    @Transactional
     public Workspace getWorkspaceByOwnerId(int ownerId) {
         if (ownerId <= 0) {
             throw new IllegalArgumentException("Owner ID phải là số dương");

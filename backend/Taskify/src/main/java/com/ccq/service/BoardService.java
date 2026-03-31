@@ -23,5 +23,5 @@ public interface BoardService {
 
     List<Board> getBoards(Map<String, String> params);
 
-    void createBoardInWorkspace(int workspaceId, Board board);
+    Board createBoardInWorkspace(int workspaceId, Board board);
 }

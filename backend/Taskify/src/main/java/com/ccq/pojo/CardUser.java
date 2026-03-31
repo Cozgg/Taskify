@@ -14,7 +14,6 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -24,7 +23,6 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "card_user")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "CardUser.findAll", query = "SELECT c FROM CardUser c"),
     @NamedQuery(name = "CardUser.findByCardId", query = "SELECT c FROM CardUser c WHERE c.cardUserPK.cardId = :cardId"),

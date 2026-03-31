@@ -9,5 +9,6 @@ package com.ccq.dto;
  * @author nguye
  */
 public class ListDTO {
-    
+    private int id;
+    private String name;
 }
