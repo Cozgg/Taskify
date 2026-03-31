@@ -28,7 +28,6 @@ import java.util.Set;
  * @author Admin
  */
 @Entity
-
 @Table(name = "boardlist")
 @NamedQueries({
     @NamedQuery(name = "Boardlist.findAll", query = "SELECT b FROM Boardlist b"),
@@ -60,7 +59,7 @@ public class Boardlist implements Serializable {
     @ManyToOne
     @JsonBackReference
     private Board boardId;
-    @OneToMany(mappedBy = "listId")
+    @OneToMany(mappedBy = "boardList")
     private Set<Card> cardSet;
 
     public Boardlist() {

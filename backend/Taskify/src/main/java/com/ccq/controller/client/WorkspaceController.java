@@ -1,5 +1,8 @@
 package com.ccq.controller.client;
 
+import com.ccq.dto.BoardDTO;
+import com.ccq.dto.UserDTO;
+import com.ccq.dto.WorkspaceDTO;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,26 +24,29 @@ import com.ccq.pojo.Workspace;
 import com.ccq.service.WorkspaceService;
 
 import jakarta.validation.Valid;
+import java.util.ArrayList;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 public class WorkspaceController {
 
     @Autowired
     private WorkspaceService workspaceService;
-
+    
     @GetMapping("/workspace/owner/{ownerId}")
-    public ResponseEntity<?> getWorkspaceByOwner(@PathVariable("ownerId") int ownerId) {
+    public ResponseEntity getWorkspaceByOwner(@PathVariable("ownerId") int ownerId) {
         try {
             Workspace workspace = this.workspaceService.getWorkspaceByOwnerId(ownerId);
             if (workspace == null) {
                 return new ResponseEntity<>("Người dùng chưa có workspace", HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity<>(workspace, HttpStatus.OK);
+            WorkspaceDTO dto = new WorkspaceDTO(workspace.getId(), workspace.getName(), workspace.getOwnerId().getId());
+            return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
+    //da test, chua check quyen
     @GetMapping("/workspace/{id}")
     public ResponseEntity<?> getWorkspaceById(@PathVariable("id") int id) {
         try {
@@ -48,12 +54,14 @@ public class WorkspaceController {
             if (workspace == null) {
                 return new ResponseEntity<>("Không tìm thấy workspace", HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity<>(workspace, HttpStatus.OK);
+            WorkspaceDTO dto = new WorkspaceDTO(workspace.getId(), workspace.getName(), workspace.getOwnerId().getId());
+            return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
+    
+    //da test, chua check quyen
     @GetMapping("/workspace/{id}/members")
     public ResponseEntity<?> getMembers(@PathVariable("id") int id) {
         try {
@@ -62,7 +70,13 @@ public class WorkspaceController {
                 return new ResponseEntity<>("Không tìm thấy workspace", HttpStatus.NOT_FOUND);
             }
             List<User> members = this.workspaceService.getMembersByWorkspaceId(id);
-            return new ResponseEntity<>(members, HttpStatus.OK);
+            List<UserDTO> dtoMembers = new ArrayList<>();
+            for(var m : members){
+                UserDTO udto = new UserDTO(m.getId(), m.getUsername(), m.getEmail());
+                dtoMembers.add(udto);
+            }
+            WorkspaceDTO workspaceDto = WorkspaceDTO.withMembers(workspace.getId(), workspace.getName(), workspace.getOwnerId().getId(), dtoMembers);
+            return new ResponseEntity<>(workspaceDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -76,7 +90,13 @@ public class WorkspaceController {
                 return new ResponseEntity<>("Không tìm thấy workspace", HttpStatus.NOT_FOUND);
             }
             List<Board> boards = this.workspaceService.getBoardsByWorkspaceId(id);
-            return new ResponseEntity<>(boards, HttpStatus.OK);
+            List<BoardDTO> dtoBoards = new ArrayList<>();
+            for(var b : boards){
+                BoardDTO bdto = new BoardDTO(b.getId(), b.getName(), b.getCreatedDate(), b.getIsPublic());
+                dtoBoards.add(bdto);
+            }
+            WorkspaceDTO workspaceDto = WorkspaceDTO.withBoards(workspace.getId(), workspace.getName(), workspace.getOwnerId().getId(), dtoBoards);
+            return new ResponseEntity<>(workspaceDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -100,7 +120,7 @@ public class WorkspaceController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/workspace/{id}")
     public ResponseEntity<?> deleteWorkspace(@PathVariable("id") int id) {
         try {

@@ -30,6 +30,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+import org.hibernate.annotations.CreationTimestamp;
 
 /**
  *
@@ -65,6 +66,7 @@ public class Card implements Serializable {
     private String description;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     private Date createdDate;
     @Column(name = "is_active")
     private Boolean isActive;
@@ -91,7 +93,7 @@ public class Card implements Serializable {
     @JsonBackReference
     @JoinColumn(name = "list_id", referencedColumnName = "id")
     @ManyToOne
-    private Boardlist listId;
+    private Boardlist boardList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "card")
     private Set<CardUser> cardUserSet;
     @Transient
@@ -99,12 +101,12 @@ public class Card implements Serializable {
 
     public Card() {
     }
-    
-    public String changeState(CardState state, Boardlist boardListId){
+
+    public String changeState(CardState state, Boardlist boardListId) {
         this.state = state;
-        this.listId = boardListId;
-        
-        if(state != null){
+        this.boardList = boardListId;
+
+        if (state != null) {
             return this.state.applyBehavior(this);
         }
         return "Đã cập nhật trạng thái thẻ.";
@@ -220,11 +222,11 @@ public class Card implements Serializable {
     }
 
     public Boardlist getListId() {
-        return listId;
+        return boardList;
     }
 
     public void setListId(Boardlist listId) {
-        this.listId = listId;
+        this.boardList = listId;
     }
 
     @XmlTransient
@@ -260,5 +262,5 @@ public class Card implements Serializable {
     public String toString() {
         return "com.ccq.pojo.Card[ id=" + id + " ]";
     }
-    
+
 }
