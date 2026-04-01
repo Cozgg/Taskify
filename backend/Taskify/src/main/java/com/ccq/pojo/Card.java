@@ -102,7 +102,7 @@ public class Card implements Serializable {
     @JoinColumn(name = "list_id", referencedColumnName = "id")
     @ManyToOne
     private Boardlist boardList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "card")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cardId")
     private Set<CardUser> cardUserSet;
     @Transient
     private CardState state;
