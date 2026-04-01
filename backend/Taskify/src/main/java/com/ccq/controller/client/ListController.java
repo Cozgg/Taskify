@@ -52,8 +52,8 @@ public class ListController {
             @RequestBody Boardlist list) {
         
         try {
-            this.listSer.createListInBoard(boardId, list);
-            return new ResponseEntity<>(list, HttpStatus.CREATED);
+        this.listSer.createListInBoard(boardId, list);
+        return new ResponseEntity<>(list, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -76,8 +76,8 @@ public class ListController {
     @DeleteMapping("/lists/{listId}")
     public ResponseEntity<?> deleteList(@PathVariable("listId") int listId) {
         try {
-            this.listSer.delete(listId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        this.listSer.delete(listId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

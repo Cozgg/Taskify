@@ -5,9 +5,6 @@
 package com.ccq.repository.impl;
 
 import com.ccq.pojo.User;
-import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import static org.mockito.Mockito.*;
 import org.springframework.core.env.Environment;
+import org.springframework.orm.hibernate5.SessionFactoryUtils;
 
 /**
  *

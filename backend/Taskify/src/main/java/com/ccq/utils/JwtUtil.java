@@ -3,6 +3,7 @@ package com.ccq.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -12,19 +13,34 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    // Khóa bí mật (>= 32 ký tự cho HS256)
-    private static final String SECRET = "TaskifySecretKey2024!SuperStrongKey#$%";
-    private static final long EXPIRATION_MS = 24 * 60 * 60 * 1000L; // 24 giờ
+    @Value("${jwt.secret}")
+    private String secret;
+
+    @Value("${jwt.expiration-ms}")
+    private long expirationMs;
+
+    @Value("${jwt.refresh-expiration-ms}")
+    private long refreshExpirationMs;
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
+    // mặc định 24h
     public String generateToken(String username) {
+        return buildToken(username, expirationMs);
+    }
+
+    // mặc định 7 ngày
+    public String generateRefreshToken(String username) {
+        return buildToken(username, refreshExpirationMs);
+    }
+
+    private String buildToken(String username, long ttlMs) {
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .expiration(new Date(System.currentTimeMillis() + ttlMs))
                 .signWith(getSigningKey())
                 .compact();
     }

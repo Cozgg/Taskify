@@ -4,15 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
 import com.ccq.pojo.Workspace;
-import com.ccq.repository.BoardRepository;
-import com.ccq.repository.UserRepository;
 import com.ccq.repository.WorkspaceRepository;
+import com.ccq.service.PermissionService;
 import com.ccq.service.WorkspaceService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +21,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     private WorkspaceRepository workspaceRepo;
 
     @Autowired
-    private BoardRepository boardRepo;
-
-    @Autowired
-    private UserRepository userRepo;
+    private PermissionService permissionService;
 
     @Override
     public Workspace getWorkspaceById(int id) {
@@ -72,15 +67,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             if (existing == null) {
                 throw new IllegalArgumentException("Không tìm thấy workspace với ID: " + w.getId());
             }
-            var auth = SecurityContextHolder.getContext().getAuthentication();
-            boolean isAdmin = auth.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")); // chinh role lại
-            if (!isAdmin) {
-                User currentUser = this.userRepo.getUserByUsername(auth.getName());
-                if (currentUser == null || !existing.getOwnerId().getId().equals(currentUser.getId())) {
-                    throw new SecurityException("Bạn không có quyền chỉnh sửa workspace này");
-                }
-            }
+            // Chỉ ADMIN hoặc owner workspace mới được chỉnh sửa
+            permissionService.requireDeleteWorkspacePermission(w.getId());
         }
         this.workspaceRepo.addOrUpdate(w);
     }
@@ -95,15 +83,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             throw new IllegalArgumentException("Không tìm thấy workspace với ID: " + id);
         }
         
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAdmin = auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));// chỉnh role lại
-        if (!isAdmin) {
-            User currentUser = this.userRepo.getUserByUsername(auth.getName());
-            if (currentUser == null || !existing.getOwnerId().getId().equals(currentUser.getId())) {
-                throw new SecurityException("Bạn không có quyền xóa workspace này");
-            }
-        }
+        // Chỉ ADMIN hoặc owner workspace mới được xóa
+        permissionService.requireDeleteWorkspacePermission(id);
 
         this.workspaceRepo.delete(id);
     }
@@ -134,7 +115,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (workspaceId <= 0) {
             throw new IllegalArgumentException("Workspace ID phải là số dương, nhận được: " + workspaceId);
         }
-        return this.userRepo.count();
+        return this.workspaceRepo.countMembersByWorkspaceId(workspaceId);
     }
 
     @Override
@@ -142,6 +123,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (workspaceId <= 0) {
             throw new IllegalArgumentException("Workspace ID phải là số dương, nhận được: " + workspaceId);
         }
-        return this.boardRepo.count();
+        return (long) this.workspaceRepo.getBoardsByWorkspaceId(workspaceId).size();
     }
 }
