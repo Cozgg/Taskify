@@ -32,7 +32,17 @@ public class BoardController {
     @Autowired
     private BoardService boardService;
 
-    //da test, chua phan quyen
+    @GetMapping("/workspaces/{workspaceId}/boards")
+    public ResponseEntity<?> getBoardsByWorkspace(
+            @PathVariable("workspaceId") int workspaceId,
+            @RequestParam Map<String, String> params) {
+        
+        params.put("workspaceId", String.valueOf(workspaceId));
+        
+        List<Board> boards = this.boardService.getBoards(params);
+        return new ResponseEntity<>(boards, HttpStatus.OK);
+    }
+
     @GetMapping("/boards/{boardId}")
     public ResponseEntity<?> getBoardById(@PathVariable("boardId") int boardId) {
         Board board = this.boardService.getById(boardId);
@@ -43,7 +53,6 @@ public class BoardController {
         return new ResponseEntity<>("Không tìm thấy Bảng", HttpStatus.NOT_FOUND);
     }
 
-    //da test, chua phan quyen
     @PostMapping("/workspaces/{workspaceId}/boards")
     public ResponseEntity<?> createBoard(
             @PathVariable("workspaceId") int workspaceId,
