@@ -8,6 +8,8 @@ import com.ccq.dto.BoardDTO;
 import com.ccq.dto.request.BoardRequestDTO;
 import com.ccq.pojo.Board;
 import com.ccq.service.BoardService;
+import java.util.List;
+import java.util.Map;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
