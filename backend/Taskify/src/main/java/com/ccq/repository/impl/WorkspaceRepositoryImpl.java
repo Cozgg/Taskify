@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
 import com.ccq.pojo.Workspace;
-import com.ccq.repository.UserRepository;
 import com.ccq.repository.WorkspaceRepository;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -38,9 +37,6 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     @Autowired
     private LocalSessionFactoryBean factory;
-
-    @Autowired
-    private UserRepository userRepo;
 
     @Override
     public Workspace getWorkspaceById(int id) {
@@ -156,6 +152,15 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
         q.setParameter("username", username);
 
         return q.uniqueResult() > 0;
+    }
+
+    @Override
+    public Long countMembersByWorkspaceId(int workspaceId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query<Long> q = s.createQuery(
+                "SELECT COUNT(uw.id) FROM UserWorkspace uw WHERE uw.workspaceId.id = :wsId", Long.class);
+        q.setParameter("wsId", workspaceId);
+        return q.uniqueResult();
     }
 
 }

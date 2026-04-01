@@ -4,9 +4,12 @@
  */
 package com.ccq.pojo;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
@@ -25,41 +28,39 @@ import java.util.Date;
 @Table(name = "card_user")
 @NamedQueries({
     @NamedQuery(name = "CardUser.findAll", query = "SELECT c FROM CardUser c"),
-    @NamedQuery(name = "CardUser.findByCardId", query = "SELECT c FROM CardUser c WHERE c.cardUserPK.cardId = :cardId"),
-    @NamedQuery(name = "CardUser.findByUserId", query = "SELECT c FROM CardUser c WHERE c.cardUserPK.userId = :userId"),
+    @NamedQuery(name = "CardUser.findById", query = "SELECT c FROM CardUser c WHERE c.id = :id"),
     @NamedQuery(name = "CardUser.findByAssignedDate", query = "SELECT c FROM CardUser c WHERE c.assignedDate = :assignedDate")})
 public class CardUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    protected CardUserPK cardUserPK;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Column(name = "assigned_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date assignedDate;
-    @JoinColumn(name = "card_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "card_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Card card;
-    @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Card cardId;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private User user;
+    private User userId;
 
     public CardUser() {
     }
 
-    public CardUser(CardUserPK cardUserPK) {
-        this.cardUserPK = cardUserPK;
+    public CardUser(Integer id) {
+        this.id = id;
     }
 
-    public CardUser(int cardId, int userId) {
-        this.cardUserPK = new CardUserPK(cardId, userId);
+    public Integer getId() {
+        return id;
     }
 
-    public CardUserPK getCardUserPK() {
-        return cardUserPK;
-    }
-
-    public void setCardUserPK(CardUserPK cardUserPK) {
-        this.cardUserPK = cardUserPK;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Date getAssignedDate() {
@@ -70,26 +71,26 @@ public class CardUser implements Serializable {
         this.assignedDate = assignedDate;
     }
 
-    public Card getCard() {
-        return card;
+    public Card getCardId() {
+        return cardId;
     }
 
-    public void setCard(Card card) {
-        this.card = card;
+    public void setCardId(Card cardId) {
+        this.cardId = cardId;
     }
 
-    public User getUser() {
-        return user;
+    public User getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(User userId) {
+        this.userId = userId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (cardUserPK != null ? cardUserPK.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -100,7 +101,7 @@ public class CardUser implements Serializable {
             return false;
         }
         CardUser other = (CardUser) object;
-        if ((this.cardUserPK == null && other.cardUserPK != null) || (this.cardUserPK != null && !this.cardUserPK.equals(other.cardUserPK))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -108,7 +109,7 @@ public class CardUser implements Serializable {
 
     @Override
     public String toString() {
-        return "com.ccq.pojo.CardUser[ cardUserPK=" + cardUserPK + " ]";
+        return "com.ccq.pojo.CardUser[ id=" + id + " ]";
     }
     
 }
