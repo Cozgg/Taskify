@@ -20,6 +20,9 @@ import com.ccq.pojo.Board;
 import com.ccq.pojo.response.ResBoardDTO;
 import com.ccq.service.BoardService;
 import com.ccq.utils.DTOMapper;
+import java.util.List;
+import java.util.Map;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
