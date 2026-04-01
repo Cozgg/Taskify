@@ -5,7 +5,7 @@
 package com.ccq.service.impl;
 
 import com.ccq.pojo.Board;
-import com.ccq.pojo.List;
+import com.ccq.pojo.Boardlist;
 import com.ccq.repository.BoardRepository;
 import com.ccq.repository.ListRepository;
 import com.ccq.service.ListService;
@@ -27,12 +27,12 @@ public class ListServiceImpl implements ListService{
     private BoardRepository boardRepo;
     
     @Override
-    public List getById(int id) {
+    public Boardlist getById(int id) {
         return this.listRepo.getById(id);
     }
 
     @Override
-    public void addOrUpdate(List l) {
+    public void addOrUpdate(Boardlist l) {
         this.listRepo.addOrUpdate(l);
     }
 
@@ -42,12 +42,12 @@ public class ListServiceImpl implements ListService{
     }
 
     @Override
-    public java.util.List<List> getList(Map<String, String> params) {
+    public java.util.List<Boardlist> getList(Map<String, String> params) {
         return this.listRepo.getList(params);
     }
 
     @Override
-    public void createListInBoard(int boardId, List list) {
+    public void createListInBoard(int boardId, Boardlist list) {
         Board board = this.boardRepo.getById(boardId);
         
         if(board == null){

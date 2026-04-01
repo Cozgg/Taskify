@@ -21,11 +21,10 @@ import java.io.Serializable;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "checklist_item")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "ChecklistItem.findAll", query = "SELECT c FROM ChecklistItem c"),
     @NamedQuery(name = "ChecklistItem.findById", query = "SELECT c FROM ChecklistItem c WHERE c.id = :id"),

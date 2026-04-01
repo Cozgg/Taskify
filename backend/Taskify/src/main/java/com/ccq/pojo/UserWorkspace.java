@@ -15,19 +15,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-
-import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "user_workspace")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UserWorkspace.findAll", query = "SELECT u FROM UserWorkspace u"),
     @NamedQuery(name = "UserWorkspace.findById", query = "SELECT u FROM UserWorkspace u WHERE u.id = :id"),
@@ -46,6 +43,10 @@ public class UserWorkspace implements Serializable {
     @JoinColumn(name = "workspace_id", referencedColumnName = "id")
     @ManyToOne
     private Workspace workspaceId;
+
+    @Size(max = 20)
+    @Column(name = "role_workspace")
+    private String roleWorkspace;
 
     public UserWorkspace() {
     }
@@ -76,6 +77,14 @@ public class UserWorkspace implements Serializable {
 
     public void setWorkspaceId(Workspace workspaceId) {
         this.workspaceId = workspaceId;
+    }
+
+    public String getRoleWorkspace() {
+        return roleWorkspace;
+    }
+
+    public void setRoleWorkspace(String roleWorkspace) {
+        this.roleWorkspace = roleWorkspace;
     }
 
     @Override

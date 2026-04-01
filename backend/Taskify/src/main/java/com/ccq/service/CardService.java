@@ -19,5 +19,5 @@ public interface CardService {
     List<Card> getCard(Map<String, String> params);
     
     void createCardInList(int listId, Card c);
-    public void moveCard(int cardId, int newListId, int newPosition);
+    public String moveCard(int cardId, int newListId, int newPosition);
 }

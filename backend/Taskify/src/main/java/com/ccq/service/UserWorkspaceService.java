@@ -9,5 +9,5 @@ package com.ccq.service;
  * @author Admin
  */
 public interface UserWorkspaceService {
-    void inviteUser(int userId, int workspaceId);
+    String inviteUser(int userId, int workspaceId);
 }

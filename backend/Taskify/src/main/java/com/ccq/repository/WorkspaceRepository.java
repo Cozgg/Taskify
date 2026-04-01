@@ -32,4 +32,10 @@ public interface WorkspaceRepository {
     List<Board> getBoardsByWorkspaceId(int wsId);
 
     Long count();
+    
+    boolean existsByUsernameAndWorkspaceIdAndRole(String username, int workspaceId);
+    
+    boolean existsByUsernameAndWorkspaceId(String username, int workspaceId);
+
+    Long countMembersByWorkspaceId(int workspaceId);
 }

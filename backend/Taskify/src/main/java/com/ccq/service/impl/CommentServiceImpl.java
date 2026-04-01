@@ -9,11 +9,15 @@ import com.ccq.repository.CommentRepository;
 import com.ccq.repository.UserRepository;
 import com.ccq.service.CommentService;
 import com.ccq.service.PermissionService;
+
 import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.ccq.pojo.Boardlist;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -42,7 +46,6 @@ public class CommentServiceImpl implements CommentService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy Card");
         }
 
-        // Kiểm tra người bình luận có phải thành viên Workspace chứa Card không
         int workspaceId = resolveWorkspaceId(ca);
         permissionService.requireWorkspaceMember(workspaceId);
 
@@ -54,14 +57,14 @@ public class CommentServiceImpl implements CommentService {
         return c;
     }
 
-    /** Truy ngược Card → List → Board → Workspace để lấy workspaceId. */
+    // truy ngược Card → List → Board → Workspace để lấy workspaceId.
     private int resolveWorkspaceId(Card card) {
-        com.ccq.pojo.List list = card.getListId();
-        if (list == null || list.getBoardId() == null) {
+        Boardlist boardList = card.getBoardList();
+        if (boardList == null || boardList.getBoardId() == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Không xác định được Workspace của Card này");
         }
-        Workspace ws = list.getBoardId().getWorkspaceId();
+        Workspace ws = boardList.getBoardId().getWorkspaceId();
         if (ws == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Board không thuộc Workspace nào");

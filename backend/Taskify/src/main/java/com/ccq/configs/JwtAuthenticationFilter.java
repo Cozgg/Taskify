@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 User user = userRepo.getUserByUsername(username);
 
                 if (user != null) {
-                    java.util.List<org.springframework.security.core.GrantedAuthority> authorities =
+                    List<org.springframework.security.core.GrantedAuthority> authorities =
                             java.util.Collections.singletonList(
                                     new SimpleGrantedAuthority("ROLE_" + user.getRole())
                             );

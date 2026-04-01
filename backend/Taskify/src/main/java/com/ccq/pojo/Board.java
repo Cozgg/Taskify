@@ -4,6 +4,15 @@
  */
 package com.ccq.pojo;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Set;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,20 +29,14 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "board")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Board.findAll", query = "SELECT b FROM Board b"),
     @NamedQuery(name = "Board.findById", query = "SELECT b FROM Board b WHERE b.id = :id"),
@@ -55,13 +58,15 @@ public class Board implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Column(name = "created_date")
+    @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
     @Column(name = "is_public")
     private Boolean isPublic;
     @JsonIgnore
     @OneToMany(mappedBy = "boardId")
-    private Set<List> listSet;
+    @JsonManagedReference
+    private Set<Boardlist> boardlistSet;
     @JoinColumn(name = "workspace_id", referencedColumnName = "id")
     @ManyToOne
     private Workspace workspaceId;
@@ -86,7 +91,6 @@ public class Board implements Serializable {
         this.id = id;
     }
 
-
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -104,13 +108,13 @@ public class Board implements Serializable {
     }
 
     @XmlTransient
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public Set<List> getListSet() {
-        return listSet;
+    @JsonIgnore
+    public Set<Boardlist> getBoardlistSet() {
+        return this.boardlistSet;
     }
 
-    public void setListSet(Set<List> listSet) {
-        this.listSet = listSet;
+    public void setBoardlistSet(Set<Boardlist> boardlistSet) {
+        this.boardlistSet = boardlistSet;
     }
 
     public Workspace getWorkspaceId() {
@@ -153,5 +157,5 @@ public class Board implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
 }

@@ -4,29 +4,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
 import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
 import com.ccq.pojo.Workspace;
-import com.ccq.repository.BoardRepository;
-import com.ccq.repository.UserRepository;
 import com.ccq.repository.WorkspaceRepository;
 import com.ccq.service.PermissionService;
 import com.ccq.service.WorkspaceService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Autowired
     private WorkspaceRepository workspaceRepo;
-
-    @Autowired
-    private BoardRepository boardRepo;
-
-    @Autowired
-    private UserRepository userRepo;
 
     @Autowired
     private PermissionService permissionService;
@@ -40,6 +32,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     }
 
     @Override
+    @Transactional
     public Workspace getWorkspaceByOwnerId(int ownerId) {
         if (ownerId <= 0) {
             throw new IllegalArgumentException("Owner ID phải là số dương");
@@ -122,7 +115,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (workspaceId <= 0) {
             throw new IllegalArgumentException("Workspace ID phải là số dương, nhận được: " + workspaceId);
         }
-        return this.userRepo.count();
+        return this.workspaceRepo.countMembersByWorkspaceId(workspaceId);
     }
 
     @Override
@@ -130,6 +123,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (workspaceId <= 0) {
             throw new IllegalArgumentException("Workspace ID phải là số dương, nhận được: " + workspaceId);
         }
-        return this.boardRepo.count();
+        return (long) this.workspaceRepo.getBoardsByWorkspaceId(workspaceId).size();
     }
 }

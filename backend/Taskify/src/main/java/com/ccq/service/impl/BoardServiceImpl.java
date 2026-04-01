@@ -64,7 +64,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void createBoardInWorkspace(int workspaceId, Board board) {
+    public Board createBoardInWorkspace(int workspaceId, Board board) {
         Workspace ws = this.wsRepo.getWorkspaceById(workspaceId);
         if (ws == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -72,5 +72,6 @@ public class BoardServiceImpl implements BoardService {
         }
         board.setWorkspaceId(ws);
         this.boardRepo.addOrUpdate(board);
+        return board;
     }
 }

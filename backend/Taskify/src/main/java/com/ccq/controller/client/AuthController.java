@@ -1,24 +1,28 @@
 package com.ccq.controller.client;
 
-import com.ccq.pojo.response.ResLoginDTO;
-import com.ccq.pojo.request.ReqLoginDTO;
-import com.ccq.pojo.request.ReqRegisterDTO;
-import com.ccq.pojo.User;
-import com.ccq.service.UserService;
-import com.ccq.utils.JwtUtil;
+import java.util.Date;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import com.ccq.utils.error.IdInvalidException;
-import com.ccq.pojo.response.RestResponse;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ccq.pojo.User;
+import com.ccq.pojo.request.ReqLoginDTO;
+import com.ccq.pojo.request.ReqRegisterDTO;
+import com.ccq.pojo.response.ResLoginDTO;
+import com.ccq.pojo.response.RestResponse;
+import com.ccq.service.UserService;
+import com.ccq.utils.JwtUtil;
+import com.ccq.utils.error.IdInvalidException;
 
 import jakarta.validation.Valid;
-import java.util.Date;
-import java.util.Map;
 
 @RestController
 public class AuthController {

@@ -18,7 +18,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
@@ -26,11 +25,10 @@ import java.util.Set;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "workspace")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Workspace.findAll", query = "SELECT w FROM Workspace w"),
     @NamedQuery(name = "Workspace.findById", query = "SELECT w FROM Workspace w WHERE w.id = :id"),

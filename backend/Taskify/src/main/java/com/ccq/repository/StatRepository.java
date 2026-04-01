@@ -2,14 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.ccq.service;
+package com.ccq.repository;
 
-import com.ccq.pojo.Activity;
+import java.util.List;
 
 /**
  *
  * @author Admin
  */
-public interface ActivityService {
-    Activity assignUserForCard(int userId, int cardId);
+public interface StatRepository {
+    List<Object[]> getBoardProgressStats(int id);
+    List<Object[]> getMemberProgress(int id);
 }

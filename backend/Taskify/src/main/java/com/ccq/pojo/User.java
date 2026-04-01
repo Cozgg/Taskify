@@ -4,6 +4,7 @@
  */
 package com.ccq.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -21,9 +22,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Date;
@@ -31,11 +30,10 @@ import java.util.Set;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "user")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
@@ -51,6 +49,7 @@ public class User implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "username")
     private String username;
+    @JsonIgnore
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)

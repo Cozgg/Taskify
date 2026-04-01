@@ -4,6 +4,17 @@
  */
 package com.ccq.pojo;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Set;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.ccq.state.CardState;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -19,22 +30,17 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "card")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Card.findAll", query = "SELECT c FROM Card c"),
     @NamedQuery(name = "Card.findById", query = "SELECT c FROM Card c WHERE c.id = :id"),
@@ -64,6 +70,7 @@ public class Card implements Serializable {
     private Integer id;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     private Date createdDate;
     @Column(name = "is_active")
     private Boolean isActive;
@@ -77,24 +84,40 @@ public class Card implements Serializable {
     private Integer position;
     @JsonIgnore
     @OneToMany(mappedBy = "cardId")
+    @JsonManagedReference
     private Set<ChecklistItem> checklistItemSet;
     @JsonIgnore
     @OneToMany(mappedBy = "cardId")
+    @JsonManagedReference
     private Set<Activity> activitySet;
     @JsonIgnore
     @OneToMany(mappedBy = "cardId")
+    @JsonManagedReference
     private Set<Attachment> attachmentSet;
     @JsonIgnore
     @OneToMany(mappedBy = "cardId")
+    @JsonManagedReference
     private Set<Comment> commentSet;
+    @JsonBackReference
     @JoinColumn(name = "list_id", referencedColumnName = "id")
     @ManyToOne
-    private List listId;
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cardId")
+    private Boardlist boardList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "card")
     private Set<CardUser> cardUserSet;
+    @Transient
+    private CardState state;
 
     public Card() {
+    }
+
+    public String changeState(CardState state, Boardlist boardListId) {
+        this.state = state;
+        this.boardList = boardListId;
+
+        if (state != null) {
+            return this.state.applyBehavior(this);
+        }
+        return "Đã cập nhật trạng thái thẻ.";
     }
 
     public Card(Integer id) {
@@ -113,7 +136,6 @@ public class Card implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
-
 
     public Date getCreatedDate() {
         return createdDate;
@@ -195,12 +217,12 @@ public class Card implements Serializable {
         this.commentSet = commentSet;
     }
 
-    public List getListId() {
-        return listId;
+    public Boardlist getListId() {
+        return boardList;
     }
 
-    public void setListId(List listId) {
-        this.listId = listId;
+    public void setListId(Boardlist listId) {
+        this.boardList = listId;
     }
 
     @XmlTransient
@@ -222,7 +244,6 @@ public class Card implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Card)) {
             return false;
         }
@@ -231,11 +252,6 @@ public class Card implements Serializable {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return "com.ccq.pojo.Card[ id=" + id + " ]";
     }
 
     public String getName() {
@@ -253,5 +269,26 @@ public class Card implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
+    public Boardlist getBoardList() {
+        return boardList;
+    }
+
+    public void setBoardList(Boardlist boardList) {
+        this.boardList = boardList;
+    }
+
+    public CardState getState() {
+        return state;
+    }
+
+    public void setState(CardState state) {
+        this.state = state;
+    }
+
+    @Override
+    public String toString() {
+        return "com.ccq.pojo.Card[ id=" + id + " ]";
+    }
+
 }

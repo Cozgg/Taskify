@@ -1,6 +1,7 @@
 package com.ccq.controller.client;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,20 +13,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;    
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
 import com.ccq.pojo.Workspace;
-import com.ccq.service.WorkspaceService;
-
+import com.ccq.pojo.response.ResBoardDTO;
 import com.ccq.pojo.response.ResUserDTO;
 import com.ccq.pojo.response.ResWorkspaceDTO;
-import com.ccq.pojo.response.ResBoardDTO;
 import com.ccq.pojo.response.RestResponse;
+import com.ccq.service.UserService;
+import com.ccq.service.WorkspaceService;
 import com.ccq.utils.DTOMapper;
-import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
@@ -34,6 +33,9 @@ public class WorkspaceController {
 
     @Autowired
     private WorkspaceService workspaceService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/workspace/owner/{ownerId}")
     public ResponseEntity<RestResponse<ResWorkspaceDTO>> getWorkspaceByOwner(@PathVariable("ownerId") int ownerId) {
@@ -51,6 +53,7 @@ public class WorkspaceController {
         return ResponseEntity.ok(res);
     }
 
+    //da test, chua check quyen
     @GetMapping("/workspace/{id}")
     public ResponseEntity<RestResponse<ResWorkspaceDTO>> getWorkspaceById(@PathVariable("id") int id) {
         Workspace workspace = this.workspaceService.getWorkspaceById(id);
@@ -67,6 +70,7 @@ public class WorkspaceController {
         return ResponseEntity.ok(res);
     }
 
+    //da test, chua check quyen
     @GetMapping("/workspace/{id}/members")
     public ResponseEntity<?> getMembers(@PathVariable("id") int id) {
         Workspace workspace = this.workspaceService.getWorkspaceById(id);
@@ -104,12 +108,54 @@ public class WorkspaceController {
         if (workspaceReq.getName() != null) {
             existing.setName(workspaceReq.getName());
         }
-        
+
         this.workspaceService.addOrUpdate(existing);
         ResWorkspaceDTO dto = DTOMapper.toWorkspaceDTO(existing);
         RestResponse<ResWorkspaceDTO> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.OK.value());
         res.setData(dto);
         return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/workspace")
+    public ResponseEntity<RestResponse<ResWorkspaceDTO>> createWorkspace(
+            @Valid @RequestBody Workspace workspaceReq) {
+        try {
+            String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+            com.ccq.pojo.User owner = userService.getUserByUsername(currentUsername);
+            if (owner == null) {
+                RestResponse<ResWorkspaceDTO> err = new RestResponse<>();
+                err.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+                err.setError("Không xác định được người dùng");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
+            }
+            workspaceReq.setOwnerId(owner);
+            workspaceReq.setId(null);
+            this.workspaceService.addOrUpdate(workspaceReq);
+            ResWorkspaceDTO dto = DTOMapper.toWorkspaceDTO(workspaceReq);
+            RestResponse<ResWorkspaceDTO> res = new RestResponse<>();
+            res.setStatusCode(HttpStatus.CREATED.value());
+            res.setData(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(res);
+        } catch (Exception e) {
+            RestResponse<ResWorkspaceDTO> err = new RestResponse<>();
+            err.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            err.setError("Lỗi tạo workspace: " + e.getMessage());
+            return ResponseEntity.badRequest().body(err);
+        }
+    }
+
+    // Xóa workspace theo id
+    @DeleteMapping("/workspace/{id}")
+    public ResponseEntity<?> deleteWorkspace(@PathVariable("id") int id) {
+        try {
+            this.workspaceService.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            RestResponse<ResWorkspaceDTO> err = new RestResponse<>();
+            err.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            err.setError("Lỗi xóa workspace: " + e.getMessage());
+            return ResponseEntity.badRequest().body(err);
+        }
     }
 }

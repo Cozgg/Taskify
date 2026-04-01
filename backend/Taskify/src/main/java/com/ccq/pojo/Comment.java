@@ -19,17 +19,15 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  *
- * @author paqvi
+ * @author Admin
  */
 @Entity
 @Table(name = "comment")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Comment.findAll", query = "SELECT c FROM Comment c"),
     @NamedQuery(name = "Comment.findById", query = "SELECT c FROM Comment c WHERE c.id = :id"),
@@ -61,8 +59,8 @@ public class Comment implements Serializable {
     public Comment() {
     }
 
-    public Comment(Integer id) {
-        this.id = id;
+    public Comment(String comment) {
+        this.comment = comment;
     }
 
     public Comment(Integer id, String comment) {

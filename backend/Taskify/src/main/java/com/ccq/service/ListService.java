@@ -4,7 +4,7 @@
  */
 package com.ccq.service;
 
-import com.ccq.pojo.List;
+import com.ccq.pojo.Boardlist;
 import java.util.Map;
 
 /**
@@ -12,9 +12,9 @@ import java.util.Map;
  * @author nguye
  */
 public interface ListService {
-    List getById(int id);
-    void addOrUpdate(List l);
+    Boardlist getById(int id);
+    void addOrUpdate(Boardlist l);
     void delete(int id);
-    java.util.List<List> getList(Map<String, String> params);
-    void createListInBoard(int boardId, com.ccq.pojo.List list);
+    java.util.List<Boardlist> getList(Map<String, String> params);
+    void createListInBoard(int boardId, Boardlist list);
 }
