@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.ccq.dto;
 
 import java.util.Date;
@@ -13,15 +9,17 @@ import java.util.Date;
 public class CardDTO {
     private int id;
     private String name;
+    private String description;
     private boolean isActive;
     private Date dueDate;
     private Date reminderDate;
     private int position;
     private int listId;
 
-    public CardDTO(int id, String name, boolean isActive, Date dueDate, Date reminderDate, int position, int listId) {
+    public CardDTO(int id, String name, String description, boolean isActive, Date dueDate, Date reminderDate, int position, int listId) {
         this.id = id;
         this.name = name;
+        this.description = description;
         this.isActive = isActive;
         this.dueDate = dueDate;
         this.reminderDate = reminderDate;
@@ -55,6 +53,20 @@ public class CardDTO {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
@@ -126,7 +138,4 @@ public class CardDTO {
     public void setListId(int listId) {
         this.listId = listId;
     }
-    
-    
-    
 }
