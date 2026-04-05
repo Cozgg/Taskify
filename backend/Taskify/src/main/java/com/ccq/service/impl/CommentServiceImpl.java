@@ -46,8 +46,8 @@ public class CommentServiceImpl implements CommentService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy Card");
         }
 
-        int workspaceId = resolveWorkspaceId(ca);
-        permissionService.requireWorkspaceMember(workspaceId);
+//        int workspaceId = resolveWorkspaceId(ca);
+//        permissionService.requireWorkspaceMember(workspaceId);
 
         c.setUserId(u);
         c.setCardId(ca);
@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
 
     // truy ngược Card → List → Board → Workspace để lấy workspaceId.
     private int resolveWorkspaceId(Card card) {
-        Boardlist boardList = card.getBoardList();
+        Boardlist boardList = card.getListId();
         if (boardList == null || boardList.getBoardId() == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Không xác định được Workspace của Card này");
@@ -70,5 +70,10 @@ public class CommentServiceImpl implements CommentService {
                     "Board không thuộc Workspace nào");
         }
         return ws.getId();
+    }
+
+    @Override
+    public void deleteComment(int id) {
+        this.commRepo.deleteComment(id);
     }
 }

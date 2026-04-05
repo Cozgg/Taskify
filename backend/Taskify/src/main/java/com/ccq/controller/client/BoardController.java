@@ -22,6 +22,7 @@ import com.ccq.service.BoardService;
 import com.ccq.utils.DTOMapper;
 import java.util.List;
 import java.util.Map;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -95,6 +96,7 @@ public class BoardController {
     }
 
     //da test, chua phan quyen
+    @PreAuthorize("hasRole('ADMIN') or ")
     @DeleteMapping("/boards/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable("boardId") int boardId) {
         try {

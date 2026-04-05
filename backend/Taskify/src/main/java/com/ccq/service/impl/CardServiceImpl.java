@@ -1,20 +1,26 @@
 package com.ccq.service.impl;
 
+import com.ccq.pojo.Activity;
 import com.ccq.pojo.Boardlist;
 import com.ccq.pojo.Card;
+import com.ccq.pojo.CardUser;
+import com.ccq.pojo.User;
 import com.ccq.pojo.Workspace;
 import com.ccq.repository.CardRepository;
 import com.ccq.repository.ListRepository;
+import com.ccq.repository.UserRepository;
 import com.ccq.service.CardService;
 import com.ccq.service.PermissionService;
 import com.ccq.state.CardState;
 import com.ccq.state.DoneState;
 import com.ccq.state.InProgressState;
 import com.ccq.state.ToDoState;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +34,9 @@ public class CardServiceImpl implements CardService {
 
     @Autowired
     private ListRepository listRepo;
+    
+    @Autowired
+    private UserRepository userRepo;
 
     @Override
     public Card getById(int id) {
@@ -88,8 +97,6 @@ public class CardServiceImpl implements CardService {
                     new ToDoState();
             };
 
-            msg = card.changeState(newState, newList);
-
             if (oldList != null) {
                 updatePositionsInList(oldList.getId(), oldPosition + 1, Integer.MAX_VALUE, -1);
             }
@@ -121,6 +128,29 @@ public class CardServiceImpl implements CardService {
                 this.cardRepo.addOrUpdate(c);
             }
         }
+    }
+    
+    @Override
+    public CardUser assignUserForCard(int userId, int cardId) {
+        User u = this.userRepo.findUserById(userId);
+        if(u == null){
+            throw new ResponseStatusException(HttpStatusCode.valueOf(404), "User not found");
+        }
+        Card c = this.cardRepo.findCardById(cardId);
+        if(c == null){
+            throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Card not found");
+        }
+        
+        boolean isUserValid = this.cardRepo.isUserInCard(userId, cardId);
+        if(isUserValid){
+            throw  new ResponseStatusException(HttpStatusCode.valueOf(409), "User đã tồn tại trong card");
+        }
+        CardUser ac = new CardUser();
+        ac.setCardId(c);
+        ac.setUserId(u);
+        ac.setAssignedDate(new Date());
+        this.cardRepo.assignUserForCard(ac);
+        return ac;
     }
 
 }

@@ -18,26 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Admin
  */
 @Repository
-@Transactional
 public class ActivityRepositoryImpl implements ActivityRepository{
-    @Autowired
-    private LocalSessionFactoryBean factory;
-    
-    
-    @Override
-    public void assignUserForCard(Activity ac) {
-        Session s = this.factory.getObject().getCurrentSession();
-        s.persist(ac);
-    }
-    
-    @Override
-    public boolean isUserInCard(int userId, int cardId) {
-        Session s = this.factory.getObject().getCurrentSession();
-        String sql = "from Activity ac " + "where ac.userId.id = :userId and ac.cardId.id = :cardId";
-        Query q = s.createQuery(sql, Activity.class);
-        q.setParameter("userId", userId);
-        q.setParameter("cardId", cardId);
-        return q.uniqueResult() != null;
-    }
+
     
 }

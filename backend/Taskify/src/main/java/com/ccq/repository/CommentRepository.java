@@ -12,4 +12,7 @@ import com.ccq.pojo.Comment;
  */
 public interface CommentRepository {
     void addComment(Comment c);
+    void deleteComment(int id);
+    Comment getCommentById(int id);
+    boolean isCommentOwner(int commentId, String username);
 }

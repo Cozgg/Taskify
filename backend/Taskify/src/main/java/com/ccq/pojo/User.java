@@ -4,7 +4,6 @@
  */
 package com.ccq.pojo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -18,12 +17,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -34,6 +31,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "user")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
@@ -41,15 +39,21 @@ import java.util.Set;
     @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
     @NamedQuery(name = "User.findByCreatedDate", query = "SELECT u FROM User u WHERE u.createdDate = :createdDate"),
-    @NamedQuery(name = "User.findByAvatar", query = "SELECT u FROM User u WHERE u.avatar = :avatar")})
+    @NamedQuery(name = "User.findByAvatar", query = "SELECT u FROM User u WHERE u.avatar = :avatar"),
+    @NamedQuery(name = "User.findByRole", query = "SELECT u FROM User u WHERE u.role = :role")})
 public class User implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "username")
     private String username;
-    @JsonIgnore
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -61,6 +65,9 @@ public class User implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "email")
     private String email;
+    @Column(name = "created_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
     @Size(max = 255)
     @Column(name = "avatar")
     private String avatar;
@@ -69,29 +76,14 @@ public class User implements Serializable {
     @Size(min = 1, max = 5)
     @Column(name = "role")
     private String role;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
-    @JsonIgnore
     @OneToMany(mappedBy = "ownerId")
     private Set<Workspace> workspaceSet;
-    @JsonIgnore
     @OneToMany(mappedBy = "userId")
     private Set<Activity> activitySet;
-    @JsonIgnore
     @OneToMany(mappedBy = "userId")
     private Set<Comment> commentSet;
-    @JsonIgnore
-    @OneToMany(mappedBy = "userId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Set<UserWorkspace> userWorkspaceSet;
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Set<CardUser> cardUserSet;
 
@@ -102,12 +94,12 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String username, String password, String email) {
+    public User(Integer id, String username, String password, String email, String role) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.role = UserRole.USER.name();
+        this.role = role;
     }
 
     public Integer getId() {
@@ -118,6 +110,29 @@ public class User implements Serializable {
         this.id = id;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public Date getCreatedDate() {
         return createdDate;
@@ -127,9 +142,23 @@ public class User implements Serializable {
         this.createdDate = createdDate;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     @XmlTransient
-    @JsonIgnore
     public Set<Workspace> getWorkspaceSet() {
         return workspaceSet;
     }
@@ -139,7 +168,6 @@ public class User implements Serializable {
     }
 
     @XmlTransient
-    @JsonIgnore
     public Set<Activity> getActivitySet() {
         return activitySet;
     }
@@ -149,7 +177,6 @@ public class User implements Serializable {
     }
 
     @XmlTransient
-    @JsonIgnore
     public Set<Comment> getCommentSet() {
         return commentSet;
     }
@@ -159,7 +186,6 @@ public class User implements Serializable {
     }
 
     @XmlTransient
-    @JsonIgnore
     public Set<UserWorkspace> getUserWorkspaceSet() {
         return userWorkspaceSet;
     }
@@ -169,7 +195,6 @@ public class User implements Serializable {
     }
 
     @XmlTransient
-    @JsonIgnore
     public Set<CardUser> getCardUserSet() {
         return cardUserSet;
     }
@@ -201,46 +226,6 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.ccq.pojo.User[ id=" + id + " ]";
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
     
 }

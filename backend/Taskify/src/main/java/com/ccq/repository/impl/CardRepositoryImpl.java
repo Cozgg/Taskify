@@ -4,7 +4,9 @@
  */
 package com.ccq.repository.impl;
 
+import com.ccq.pojo.Activity;
 import com.ccq.pojo.Card;
+import com.ccq.pojo.CardUser;
 import com.ccq.pojo.Workspace;
 import com.ccq.repository.CardRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -117,5 +119,19 @@ public class CardRepositoryImpl implements CardRepository{
         return s.get(Card.class, cardId);
     }
 
-
+    @Override
+    public void assignUserForCard(CardUser ac) {
+        Session s = this.factory.getObject().getCurrentSession();
+        s.persist(ac);
+    }
+    
+    @Override
+    public boolean isUserInCard(int userId, int cardId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        String sql = "from CardUser cu " + "where cu.userId.id = :userId and cu.cardId.id = :cardId";
+        Query q = s.createQuery(sql, CardUser.class);
+        q.setParameter("userId", userId);
+        q.setParameter("cardId", cardId);
+        return q.uniqueResult() != null;
+    }
 }

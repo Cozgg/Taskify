@@ -4,6 +4,7 @@
  */
 package com.ccq.controller.client;
 
+import com.ccq.pojo.Activity;
 import com.ccq.pojo.Card;
 import com.ccq.service.CardService;
 import java.util.List;
@@ -24,7 +25,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ccq.pojo.Card;
+import com.ccq.pojo.CardUser;
+import com.ccq.pojo.User;
+import com.ccq.pojo.response.ResActivityDTO;
 import com.ccq.service.CardService;
+import com.ccq.service.UserService;
+import com.ccq.utils.DTOMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -36,6 +43,9 @@ public class CardController {
 
     @Autowired
     private CardService cardService;
+    
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/lists/{listId}/cards")
     public ResponseEntity<?> getCards(@PathVariable("listId") int listId, @RequestParam Map<String, String> params) {
@@ -92,5 +102,17 @@ public class CardController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+    
+    @PostMapping("/cards/{cardId}/assign")
+    public ResponseEntity<?> assignUserToCard(@PathVariable("cardId") int cardId) {
+
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = this.userService.getUserByUsername(currentUsername);
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không tìm thấy user!");
+        }
+        CardUser ac = this.cardService.assignUserForCard(currentUser.getId(), cardId);
+        return new ResponseEntity<>(ac, HttpStatus.CREATED);
     }
 }

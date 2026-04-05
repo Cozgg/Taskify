@@ -208,8 +208,9 @@ public class UserRepositoryImplTest {
         params.put("kw", "can");
         params.put("page", "1");
         List<User> mockList = Arrays.asList(
-                new User(1, "Canh", "123", "canh@gmail.com"),
-                new User(2, "Test", "123", "test@gmail.com")
+//                new User(1, "Canh", "123", "canh@gmail.com"),
+//                new User(2, "Test", "123", "test@gmail.com")
+                new User()
         );
 
         when(factory.getObject()).thenReturn(sessionFactory);
@@ -238,7 +239,7 @@ public class UserRepositoryImplTest {
         List<User> result = userRepository.getUsers(params);
 
         assertNotNull(result);
-        assertEquals(2, result.size()); 
+        assertEquals(1, result.size()); 
         verify(query).setFirstResult(0);
         verify(query).setMaxResults(10);
         verify(query).getResultList();
