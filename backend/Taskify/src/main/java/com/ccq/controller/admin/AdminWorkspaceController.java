@@ -3,6 +3,7 @@ package com.ccq.controller.admin;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,10 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
 import com.ccq.pojo.Workspace;
+import com.ccq.pojo.request.ReqAdminWorkspaceDTO;
+import com.ccq.pojo.response.ResBoardDTO;
+import com.ccq.pojo.response.ResUserDTO;
+import com.ccq.pojo.response.ResWorkspaceDTO;
 import com.ccq.service.WorkspaceService;
+import com.ccq.utils.DTOMapper;
 
 import jakarta.validation.Valid;
 
@@ -32,23 +37,34 @@ public class AdminWorkspaceController {
     private WorkspaceService workspaceService;
 
     @GetMapping
-    public ResponseEntity<List<Workspace>> getAllWorkspaces(@RequestParam Map<String, String> params) {
-        List<Workspace> workspaces = this.workspaceService.getWorkspaces(params);
+    public ResponseEntity<List<ResWorkspaceDTO>> getAllWorkspaces(@RequestParam Map<String, String> params) {
+        List<ResWorkspaceDTO> workspaces = this.workspaceService.getWorkspaces(params)
+                .stream()
+                .map(DTOMapper::toWorkspaceDTO)
+                .collect(Collectors.toList());
         return new ResponseEntity<>(workspaces, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getWorkspaceDetail(@PathVariable("id") int id) {
+    public ResponseEntity<?> getWorkspaceDetail(@PathVariable("id") int id) {
         try {
             Workspace workspace = this.workspaceService.getWorkspaceById(id);
             if (workspace == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            List<User> members = this.workspaceService.getMembersByWorkspaceId(id);
-            List<Board> boards = this.workspaceService.getBoardsByWorkspaceId(id);
+
+            List<ResUserDTO> members = this.workspaceService.getMembersByWorkspaceId(id)
+                    .stream()
+                    .map(DTOMapper::toUserDTO)
+                    .collect(Collectors.toList());
+
+            List<ResBoardDTO> boards = this.workspaceService.getBoardsByWorkspaceId(id)
+                    .stream()
+                    .map(DTOMapper::toBoardDTO)
+                    .collect(Collectors.toList());
 
             Map<String, Object> detail = new HashMap<>();
-            detail.put("workspace", workspace);
+            detail.put("workspace", DTOMapper.toWorkspaceDTO(workspace));
             detail.put("totalMembers", members.size());
             detail.put("members", members);
             detail.put("totalBoards", boards.size());
@@ -56,8 +72,7 @@ public class AdminWorkspaceController {
 
             return new ResponseEntity<>(detail, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
-            Map<String, Object> error = Map.of("message", e.getMessage());
-            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -68,7 +83,10 @@ public class AdminWorkspaceController {
             if (workspace == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            List<User> members = this.workspaceService.getMembersByWorkspaceId(id);
+            List<ResUserDTO> members = this.workspaceService.getMembersByWorkspaceId(id)
+                    .stream()
+                    .map(DTOMapper::toUserDTO)
+                    .collect(Collectors.toList());
             return new ResponseEntity<>(members, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
@@ -76,9 +94,15 @@ public class AdminWorkspaceController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addWorkspace(@Valid @RequestBody Workspace workspace) {
+    public ResponseEntity<?> addWorkspace(@Valid @RequestBody ReqAdminWorkspaceDTO dto) {
         try {
-            workspace.setId(null);
+            Workspace workspace = new Workspace();
+            workspace.setName(dto.getName());
+            if (dto.getOwnerId() != null) {
+                User owner = new User();
+                owner.setId(dto.getOwnerId());
+                workspace.setOwnerId(owner);
+            }
             this.workspaceService.addOrUpdate(workspace);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {

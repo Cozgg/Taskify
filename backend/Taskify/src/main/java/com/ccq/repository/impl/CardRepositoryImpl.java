@@ -76,26 +76,38 @@ public class CardRepositoryImpl implements CardRepository{
         if (params != null) {
             List<Predicate> predicates = new ArrayList<>();
 
+            // Filter theo listId
+            String listId = params.get("listId");
+            if (listId != null && !listId.isEmpty()) {
+                predicates.add(b.equal(root.get("boardList").get("id"), Integer.parseInt(listId)));
+            }
+
+            // Filter theo keyword tên card
             String kw = params.get("kw");
-            predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw)));
+            if (kw != null && !kw.isEmpty()) {
+                predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw)));
+            }
 
             if (!predicates.isEmpty()) {
                 q.where(predicates.toArray(new Predicate[0]));
             }
         }
-        
+
         q.orderBy(b.desc(root.get("id")));
         Query<Card> query = s.createQuery(q);
+
         if (params != null) {
+            String pageStr = params.get("page");
+            if (pageStr != null && !pageStr.isEmpty()) {
                 int pageSize = this.env.getProperty("workspace.page_size", Integer.class);
                 int page = Integer.parseInt(params.getOrDefault("page", "1"));
                 int start = (page - 1) * pageSize;
-                
+
                 query.setMaxResults(pageSize);
                 query.setFirstResult(start);
-                
             }
-        
+        }
+
         return query.getResultList();
     }
 

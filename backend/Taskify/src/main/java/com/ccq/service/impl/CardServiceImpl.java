@@ -1,14 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.ccq.service.impl;
 
 import com.ccq.pojo.Boardlist;
 import com.ccq.pojo.Card;
+import com.ccq.pojo.Workspace;
 import com.ccq.repository.CardRepository;
 import com.ccq.repository.ListRepository;
 import com.ccq.service.CardService;
+import com.ccq.service.PermissionService;
 import com.ccq.state.CardState;
 import com.ccq.state.DoneState;
 import com.ccq.state.InProgressState;
@@ -16,19 +14,18 @@ import com.ccq.state.ToDoState;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- *
- * @author Admin
- */
 @Service
 
 public class CardServiceImpl implements CardService {
 
     @Autowired
     private CardRepository cardRepo;
+
     @Autowired
     private ListRepository listRepo;
 
@@ -67,7 +64,8 @@ public class CardServiceImpl implements CardService {
     public String moveCard(int cardId, int newListId, int newPosition) {
         Card card = this.cardRepo.getById(cardId);
         if (card == null) {
-            throw new RuntimeException("Không tìm thấy thẻ cần di chuyển!");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Không tìm thấy thẻ cần di chuyển!");
         }
 
         Boardlist oldList = card.getListId();
@@ -77,7 +75,8 @@ public class CardServiceImpl implements CardService {
         if (oldList == null || oldList.getId() != newListId) {
             Boardlist newList = this.listRepo.getById(newListId);
             if (newList == null) {
-                throw new RuntimeException("Không tìm thấy Cột đích!");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Không tìm thấy cột đích!");
             }
 
             CardState newState = switch (newList.getStatus().toString()) {
@@ -123,4 +122,5 @@ public class CardServiceImpl implements CardService {
             }
         }
     }
+
 }
