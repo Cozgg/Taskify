@@ -1,35 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.ccq.controller.client;
 
+import com.ccq.dto.CardDTO;
 import com.ccq.pojo.Card;
 import com.ccq.service.CardService;
 import java.util.List;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.ccq.pojo.Card;
-import com.ccq.service.CardService;
-
-/**
- *
- * @author nguye
- */
 @RestController
 @RequestMapping("/api")
 public class CardController {
@@ -39,35 +20,47 @@ public class CardController {
 
     @GetMapping("/lists/{listId}/cards")
     public ResponseEntity<?> getCards(@PathVariable("listId") int listId, @RequestParam Map<String, String> params) {
+        params.put("listId", String.valueOf(listId));
         List<Card> cards = this.cardService.getCard(params);
-
-        return new ResponseEntity<>(cards, HttpStatus.OK);
+        List<CardDTO> cardDTOs = cards.stream().map(c -> 
+            new CardDTO(c.getId(), c.getName(), c.getDescription(), c.getIsActive(), c.getDueDate(), c.getReminderDate(), c.getPosition(), c.getListId().getId())
+        ).collect(Collectors.toList());
+        
+        return new ResponseEntity<>(cardDTOs, HttpStatus.OK);
     }
 
-    @PostMapping("/lists/{listId}")
+    @PostMapping("/lists/{listId}/cards")
     public ResponseEntity<?> createCard(
             @PathVariable("listId") int listId,
             @RequestBody Card c) {
         try {
             this.cardService.createCardInList(listId, c);
-            return new ResponseEntity<>(c, HttpStatus.CREATED);
+            
+            CardDTO dto = new CardDTO(c.getId(), c.getName(), c.getDescription(), c.getIsActive(), c.getDueDate(), c.getReminderDate(), c.getPosition(), listId);
+            return new ResponseEntity<>(dto, HttpStatus.CREATED);
+            
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @PutMapping("/{cardId}")
+    @PutMapping("/cards/{cardId}")
     public ResponseEntity<?> updateCard(@PathVariable("cardId") int cardId, @RequestBody Card c) {
         try {
             c.setId(cardId);
             this.cardService.addOrUpdate(c);
-            return new ResponseEntity<>(c, HttpStatus.OK);
+            
+            Card updatedCard = this.cardService.getById(cardId);
+            
+            CardDTO dto = new CardDTO(updatedCard.getId(), updatedCard.getName(), updatedCard.getDescription(), updatedCard.getIsActive(), updatedCard.getDueDate(), updatedCard.getReminderDate(), updatedCard.getPosition(), updatedCard.getListId().getId());
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+            
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @DeleteMapping("/{cardId}")
+    @DeleteMapping("/cards/{cardId}")
     public ResponseEntity<?> deleteCard(@PathVariable("cardId") int cardId) {
         try {
             this.cardService.delete(cardId);
@@ -77,7 +70,7 @@ public class CardController {
         }
     }
 
-    @PatchMapping("/{cardId}/move")
+    @PatchMapping("/cards/{cardId}/move")
     public ResponseEntity<?> moveCard(
             @PathVariable("cardId") int cardId,
             @RequestBody Map<String, Integer> payload) {
@@ -87,7 +80,9 @@ public class CardController {
 
             this.cardService.moveCard(cardId, newListId, newPosition);
             Card updateCard = this.cardService.getById(cardId);
-            return ResponseEntity.ok(updateCard);
+            
+            CardDTO dto = new CardDTO(updateCard.getId(), updateCard.getName(), updateCard.getDescription(), updateCard.getIsActive(), updateCard.getDueDate(), updateCard.getReminderDate(), updateCard.getPosition(), updateCard.getListId().getId());
+            return ResponseEntity.ok(dto);
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
