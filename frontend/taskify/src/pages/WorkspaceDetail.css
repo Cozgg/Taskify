@@ -1,0 +1,71 @@
+.workspace-detail-container {
+    padding: 32px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Phần Header bao gồm Avatar chữ to và nút Mời */
+.workspace-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #DFE1E6;
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+}
+
+.workspace-info-block {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.workspace-actions {
+    display: flex;
+    align-items: center;
+}
+
+/* Chỉnh khoảng cách Tab của Antd */
+.workspace-tabs .ant-tabs-nav {
+    margin-bottom: 16px;
+}
+
+/* Card đại diện cho các Bảng (Boards) */
+.board-card {
+    height: 100px;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 1px 2px rgba(9, 30, 66, 0.25);
+    transition: filter 0.2s;
+}
+
+/* Trello có hiệu ứng tối đi một chút khi hover vào Bảng */
+.board-card:hover {
+    filter: brightness(0.9); 
+}
+
+/* Căn chỉnh chữ bên trong Card Bảng */
+.board-card .ant-card-body {
+    padding: 12px 16px;
+    height: 100%;
+}
+
+.board-title {
+    color: #ffffff;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+
+/* Card để tạo bảng mới */
+.create-board-card {
+    background-color: #091e420a;
+    color: #172b4d;
+    box-shadow: none;
+}
+
+.create-board-card:hover {
+    background-color: #091e4214;
+    filter: none;
+}

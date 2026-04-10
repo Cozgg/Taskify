@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ccq.pojo.User;
+import com.ccq.pojo.UserRole;
 import com.ccq.pojo.request.ReqLoginDTO;
 import com.ccq.pojo.request.ReqRegisterDTO;
 import com.ccq.pojo.response.ResLoginDTO;
@@ -51,7 +52,7 @@ public class AuthController {
         String accessToken = jwtUtil.generateToken(user.getUsername());
         String refreshToken = jwtUtil.generateRefreshToken(user.getUsername());
 
-        ResLoginDTO resLogin = new ResLoginDTO(accessToken, user.getId(), user.getUsername());
+        ResLoginDTO resLogin = new ResLoginDTO(accessToken, user.getId(), user.getUsername(), user.getRole());
         resLogin.setRefreshToken(refreshToken);
 
         RestResponse<ResLoginDTO> res = new RestResponse<>();
@@ -79,7 +80,7 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEmail(request.getEmail());
         user.setCreatedDate(new Date());
-
+        user.setRole(String.valueOf(UserRole.USER));
         userService.addOrUpdateUser(user);
 
         User saved = userService.getUserByUsername(request.getUsername());
@@ -87,7 +88,7 @@ public class AuthController {
         String accessToken = jwtUtil.generateToken(saved.getUsername());
         String refreshToken = jwtUtil.generateRefreshToken(saved.getUsername());
 
-        ResLoginDTO resLogin = new ResLoginDTO(accessToken, saved.getId(), saved.getUsername());
+        ResLoginDTO resLogin = new ResLoginDTO(accessToken, saved.getId(), saved.getUsername(), saved.getRole());
         resLogin.setRefreshToken(refreshToken);
 
         RestResponse<ResLoginDTO> res = new RestResponse<>();

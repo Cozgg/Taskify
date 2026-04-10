@@ -22,4 +22,5 @@ public interface CardRepository {
     Card findCardById(int cardId);
     void assignUserForCard(CardUser ac);
     boolean isUserInCard(int userId, int cardId);
+    boolean isWorkspaceAdminOfThisCard(int cardId, String username);
 }

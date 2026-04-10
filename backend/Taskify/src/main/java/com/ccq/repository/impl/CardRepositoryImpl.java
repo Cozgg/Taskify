@@ -134,4 +134,12 @@ public class CardRepositoryImpl implements CardRepository{
         q.setParameter("cardId", cardId);
         return q.uniqueResult() != null;
     }
+
+    @Override
+    public boolean isWorkspaceAdminOfThisCard(int cardId, String username) {
+        Session s = this.factory.getObject().getCurrentSession();
+        String sql = "select count(c.id) from Card c " + "where c.id = :cardId " + "and c.listId.boardId.workspaceId.ownerId.username = :username";
+        Query<Long> q = s.createQuery(sql, Long.class);
+        return q.getSingleResult() > 0;
+    }
 }

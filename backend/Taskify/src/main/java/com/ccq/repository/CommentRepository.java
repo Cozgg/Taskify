@@ -15,4 +15,5 @@ public interface CommentRepository {
     void deleteComment(int id);
     Comment getCommentById(int id);
     boolean isCommentOwner(int commentId, String username);
+    boolean isWorkspaceAdminOfThisComment(int commentId, String username);
 }

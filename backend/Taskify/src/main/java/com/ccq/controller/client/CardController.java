@@ -31,6 +31,7 @@ import com.ccq.pojo.response.ResActivityDTO;
 import com.ccq.service.CardService;
 import com.ccq.service.UserService;
 import com.ccq.utils.DTOMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -104,6 +105,8 @@ public class CardController {
         }
     }
     
+    
+    @PreAuthorize("@securityCustom.isWorkspaceAdminOfThisCard(#p0, authentication.name)")
     @PostMapping("/cards/{cardId}/assign")
     public ResponseEntity<?> assignUserToCard(@PathVariable("cardId") int cardId) {
 

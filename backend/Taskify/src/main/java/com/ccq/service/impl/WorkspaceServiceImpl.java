@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
+import com.ccq.pojo.UserWorkspace;
 import com.ccq.pojo.Workspace;
+import com.ccq.repository.UserRepository;
 import com.ccq.repository.WorkspaceRepository;
 import com.ccq.service.PermissionService;
 import com.ccq.service.WorkspaceService;
@@ -19,6 +21,11 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Autowired
     private WorkspaceRepository workspaceRepo;
+    
+    @Autowired
+    private UserRepository userRepo;
+    
+    
 
     @Autowired
     private PermissionService permissionService;
@@ -124,5 +131,18 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             throw new IllegalArgumentException("Workspace ID phải là số dương, nhận được: " + workspaceId);
         }
         return (long) this.workspaceRepo.getBoardsByWorkspaceId(workspaceId).size();
+    }
+
+    @Override
+    public UserWorkspace addUserIntoWorkspace(int workspaceId, int userId) {
+        UserWorkspace uw = new UserWorkspace();
+        Workspace w = workspaceRepo.getWorkspaceById(workspaceId);
+        User u = userRepo.findUserById(userId);
+        
+        uw.setUserId(u);
+        uw.setWorkspaceId(w);
+        
+        this.workspaceRepo.addUserIntoWorkspace(uw);
+        return uw;
     }
 }

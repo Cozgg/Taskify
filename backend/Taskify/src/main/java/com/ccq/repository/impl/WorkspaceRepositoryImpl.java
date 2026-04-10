@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
+import com.ccq.pojo.UserWorkspace;
 import com.ccq.pojo.Workspace;
 import com.ccq.repository.WorkspaceRepository;
 
@@ -133,18 +134,7 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
 
     @Override
-    public boolean existsByUsernameAndWorkspaceIdAndRole(String username, int workspaceId) {
-        Session s = this.factory.getObject().getCurrentSession();
-        Query<Long> q = s.createQuery(
-                "SELECT COUNT(w.id) FROM Workspace w WHERE w.id = :wsId AND w.ownerId.username = :username", Long.class);
-        q.setParameter("wsId", workspaceId);
-        q.setParameter("username", username);
-
-        return q.uniqueResult() > 0;
-    }
-
-    @Override
-    public boolean existsByUsernameAndWorkspaceId(String username, int workspaceId) {
+    public boolean isAdminOfThisWorkspace(int workspaceId, String username) {
         Session s = this.factory.getObject().getCurrentSession();
         Query<Long> q = s.createQuery(
                 "SELECT COUNT(uw.id) FROM UserWorkspace uw WHERE uw.workspaceId.id = :wsId AND uw.userId.username = :username", Long.class);
@@ -161,6 +151,12 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
                 "SELECT COUNT(uw.id) FROM UserWorkspace uw WHERE uw.workspaceId.id = :wsId", Long.class);
         q.setParameter("wsId", workspaceId);
         return q.uniqueResult();
+    }
+
+    @Override
+    public void addUserIntoWorkspace(UserWorkspace uw) {
+        Session s = this.factory.getObject().getCurrentSession();
+        s.persist(uw);
     }
 
 }

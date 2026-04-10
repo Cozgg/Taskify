@@ -51,7 +51,17 @@ public class CommentRepositoryImpl implements CommentRepository{
         q.setParameter("cId", commentId);
         q.setParameter("username", username);
 
-        return q.uniqueResult() > 0;
+        return q.getSingleResult()> 0;
+    }
+
+    @Override
+    public boolean isWorkspaceAdminOfThisComment(int commentId, String username) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query<Long> q = s.createQuery("select count(c.id) from Comment c " + "where c.id = :cId " + 
+                "and c.cardId.listId.boardId.workspaceId.ownerId.username = :username", Long.class);
+        q.setParameter("cId", commentId);
+        q.setParameter("username", username);
+        return q.getSingleResult() > 0;
     }
     
     

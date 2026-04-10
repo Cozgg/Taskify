@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
+import com.ccq.pojo.UserWorkspace;
 import com.ccq.pojo.Workspace;
 
 /**
@@ -32,10 +33,10 @@ public interface WorkspaceRepository {
     List<Board> getBoardsByWorkspaceId(int wsId);
 
     Long count();
-    
-    boolean existsByUsernameAndWorkspaceIdAndRole(String username, int workspaceId);
-    
-    boolean existsByUsernameAndWorkspaceId(String username, int workspaceId);
 
     Long countMembersByWorkspaceId(int workspaceId);
+    
+    void addUserIntoWorkspace(UserWorkspace uw);
+    
+    boolean isAdminOfThisWorkspace(int workspaceId, String username);
 }

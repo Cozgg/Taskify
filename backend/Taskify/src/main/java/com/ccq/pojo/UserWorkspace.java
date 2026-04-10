@@ -15,7 +15,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
@@ -28,8 +27,7 @@ import java.io.Serializable;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UserWorkspace.findAll", query = "SELECT u FROM UserWorkspace u"),
-    @NamedQuery(name = "UserWorkspace.findById", query = "SELECT u FROM UserWorkspace u WHERE u.id = :id"),
-    @NamedQuery(name = "UserWorkspace.findByRoleWorkspace", query = "SELECT u FROM UserWorkspace u WHERE u.roleWorkspace = :roleWorkspace")})
+    @NamedQuery(name = "UserWorkspace.findById", query = "SELECT u FROM UserWorkspace u WHERE u.id = :id")})
 public class UserWorkspace implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -38,9 +36,6 @@ public class UserWorkspace implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Size(max = 20)
-    @Column(name = "role_workspace")
-    private String roleWorkspace;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private User userId;
@@ -61,14 +56,6 @@ public class UserWorkspace implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getRoleWorkspace() {
-        return roleWorkspace;
-    }
-
-    public void setRoleWorkspace(String roleWorkspace) {
-        this.roleWorkspace = roleWorkspace;
     }
 
     public User getUserId() {

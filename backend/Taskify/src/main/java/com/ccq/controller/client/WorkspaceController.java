@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
+import com.ccq.pojo.UserWorkspace;
 import com.ccq.pojo.Workspace;
 import com.ccq.pojo.response.ResBoardDTO;
 import com.ccq.pojo.response.ResUserDTO;
+import com.ccq.pojo.response.ResUserWorkspaceDTO;
 import com.ccq.pojo.response.ResWorkspaceDTO;
 import com.ccq.pojo.response.RestResponse;
 import com.ccq.service.UserService;
@@ -27,8 +29,12 @@ import com.ccq.service.WorkspaceService;
 import com.ccq.utils.DTOMapper;
 
 import jakarta.validation.Valid;
+import java.util.Map;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
+@RequestMapping("/api")
 public class WorkspaceController {
 
     @Autowired
@@ -157,5 +163,13 @@ public class WorkspaceController {
             err.setError("Lỗi xóa workspace: " + e.getMessage());
             return ResponseEntity.badRequest().body(err);
         }
+    }
+    @PreAuthorize("@securityCustom.isAdminOfThisWorkspace(#p0, authentication.name)")
+    @PostMapping("/workspaces/{workspaceId}/users")
+    public ResponseEntity<ResUserWorkspaceDTO> inviteUser(@PathVariable("workspaceId") int workspaceId, @RequestBody Map<String, String> params){
+        User u = this.userService.getUserById(Integer.parseInt(params.get("userId")));
+        UserWorkspace uw = this.workspaceService.addUserIntoWorkspace(workspaceId, u.getId());
+        ResUserWorkspaceDTO dto = DTOMapper.toUserWorkspaceDTO(uw);
+        return new ResponseEntity(dto, HttpStatus.CREATED);
     }
 }
