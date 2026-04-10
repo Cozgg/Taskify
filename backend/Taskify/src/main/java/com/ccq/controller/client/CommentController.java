@@ -13,29 +13,53 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ccq.pojo.Comment;
+import com.ccq.pojo.User;
+import com.ccq.pojo.response.ResCommentDTO;
 import com.ccq.service.CommentService;
+import com.ccq.service.UserService;
+import com.ccq.utils.DTOMapper;
 import java.util.Map;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  *
  * @author Admin
  */
 @RestController
+@RequestMapping("/api")
 public class CommentController {
 
     @Autowired
     private CommentService commSer;
 
+    @Autowired
+    private UserService userSer;
+
     @PostMapping("/cards/{cardId}/comments")
     public ResponseEntity<?> addComment(@PathVariable("cardId") int cardId, @RequestBody Map<String, String> params) {
         try {
-            int userId = Integer.parseInt(params.get("userId"));
+            String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+            User currentUser = this.userSer.getUserByUsername(currentUsername);
+            if (currentUser == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không tìm thấy user!");
+            }
             Comment c = new Comment(params.get("content"));
-            Comment saveComment = this.commSer.addComment(c, userId, cardId);
-            return new ResponseEntity<>(saveComment, HttpStatus.CREATED);
+            Comment saveComment = this.commSer.addComment(c, currentUser.getId(), cardId);
+            ResCommentDTO cdto = DTOMapper.toCommentDTO(saveComment);
+            return new ResponseEntity<>(cdto, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Lỗi thêm comment " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+    
+    @PreAuthorize("hasRole('ADMIN') or @securityCustom.isWorkspaceAdminOfThisComment(#p0, authentication.name) or @securityCustom.isCommentOwner(#p0, authentication.name)")
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable("commentId") int commentId){
+        this.commSer.deleteComment(commentId);
+        return new ResponseEntity<>("Xóa thành công", HttpStatus.NO_CONTENT);
     }
 
 }

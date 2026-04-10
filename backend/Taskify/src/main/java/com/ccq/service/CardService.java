@@ -5,6 +5,7 @@
 package com.ccq.service;
 
 import com.ccq.pojo.Card;
+import com.ccq.pojo.CardUser;
 import java.util.List;
 import java.util.Map;
 
@@ -20,4 +21,5 @@ public interface CardService {
     
     void createCardInList(int listId, Card c);
     public String moveCard(int cardId, int newListId, int newPosition);
+    CardUser assignUserForCard(int userId, int cardId);
 }

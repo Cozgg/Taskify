@@ -4,7 +4,9 @@
  */
 package com.ccq.repository;
 
+import com.ccq.pojo.Activity;
 import com.ccq.pojo.Card;
+import com.ccq.pojo.CardUser;
 import java.util.List;
 import java.util.Map;
 
@@ -18,4 +20,7 @@ public interface CardRepository {
     void delete(int id);
     List<Card> getCard(Map<String, String> params);
     Card findCardById(int cardId);
+    void assignUserForCard(CardUser ac);
+    boolean isUserInCard(int userId, int cardId);
+    boolean isWorkspaceAdminOfThisCard(int cardId, String username);
 }

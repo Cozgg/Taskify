@@ -11,5 +11,4 @@ import com.ccq.pojo.Activity;
  * @author Admin
  */
 public interface ActivityService {
-    Activity assignUserForCard(int userId, int cardId);
 }

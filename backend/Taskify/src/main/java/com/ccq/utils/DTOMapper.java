@@ -13,6 +13,7 @@ import com.ccq.pojo.Comment;
 import com.ccq.pojo.User;
 import com.ccq.pojo.Workspace;
 import com.ccq.pojo.ListStatus;
+import com.ccq.pojo.UserWorkspace;
 import com.ccq.pojo.response.*;
 
 public class DTOMapper {
@@ -152,6 +153,13 @@ public class DTOMapper {
             dto.setLists(board.getBoardlistSet().stream()
                     .map(DTOMapper::toListDTO).collect(Collectors.toList()));
         }
+        return dto;
+    }
+    
+    public static ResUserWorkspaceDTO toUserWorkspaceDTO(UserWorkspace uw){
+        if (uw == null)
+            return null;
+        ResUserWorkspaceDTO dto = new ResUserWorkspaceDTO(uw.getUserId().getId(), uw.getWorkspaceId().getId());
         return dto;
     }
 }

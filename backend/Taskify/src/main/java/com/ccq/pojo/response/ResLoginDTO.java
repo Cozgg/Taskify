@@ -5,13 +5,15 @@ public class ResLoginDTO {
     private String refreshToken;
     private Integer userId;
     private String username;
+    private String role;
 
     public ResLoginDTO() {}
 
-    public ResLoginDTO(String token, Integer userId, String username) {
+    public ResLoginDTO(String token, Integer userId, String username, String role) {
         this.token = token;
         this.userId = userId;
         this.username = username;
+        this.role = role;
     }
 
     public String getToken() { return token; }
@@ -25,5 +27,19 @@ public class ResLoginDTO {
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
+
+    /**
+     * @return the role
+     */
+    public String getRole() {
+        return role;
+    }
+
+    /**
+     * @param role the role to set
+     */
+    public void setRole(String role) {
+        this.role = role;
+    }
 }
 

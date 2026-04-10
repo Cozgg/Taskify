@@ -4,16 +4,27 @@
  */
 package com.ccq.controller.client;
 
+
+
 import com.ccq.pojo.Board;
 import com.ccq.service.BoardService;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.web.bind.annotation.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 /**
  *
@@ -69,7 +80,10 @@ public class BoardController {
             return new ResponseEntity<>("Lỗi cập nhật bảng: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-    
+
+
+    //da test, chua phan quyen
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/boards/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable("boardId") int boardId) {
         try {
