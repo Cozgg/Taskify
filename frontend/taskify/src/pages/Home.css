@@ -1,0 +1,71 @@
+.kanban-home-container {
+    min-height: 100vh;
+    background-color: #F4F5F7;
+}
+
+.kanban-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #DFE1E6;
+}
+
+.kanban-header .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #0052CC;
+}
+
+.kanban-content {
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.workspace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #DFE1E6;
+    padding-bottom: 16px;
+}
+
+/* Card Style */
+.workspace-card {
+    border-radius: 8px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 1px 2px rgba(9, 30, 66, 0.25);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.workspace-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(9, 30, 66, 0.2);
+}
+
+.workspace-cover {
+    height: 120px;
+    padding: 16px;
+    display: flex;
+    align-items: flex-end;
+}
+
+.workspace-cover h3 {
+    margin: 0;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+.workspace-info {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+}

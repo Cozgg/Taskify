@@ -15,8 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
@@ -25,10 +24,10 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "user_workspace")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UserWorkspace.findAll", query = "SELECT u FROM UserWorkspace u"),
-    @NamedQuery(name = "UserWorkspace.findById", query = "SELECT u FROM UserWorkspace u WHERE u.id = :id"),
-    })
+    @NamedQuery(name = "UserWorkspace.findById", query = "SELECT u FROM UserWorkspace u WHERE u.id = :id")})
 public class UserWorkspace implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -38,15 +37,11 @@ public class UserWorkspace implements Serializable {
     @Column(name = "id")
     private Integer id;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne
+    @ManyToOne(optional = false)
     private User userId;
     @JoinColumn(name = "workspace_id", referencedColumnName = "id")
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Workspace workspaceId;
-
-    @Size(max = 20)
-    @Column(name = "role_workspace")
-    private String roleWorkspace;
 
     public UserWorkspace() {
     }
@@ -79,14 +74,6 @@ public class UserWorkspace implements Serializable {
         this.workspaceId = workspaceId;
     }
 
-    public String getRoleWorkspace() {
-        return roleWorkspace;
-    }
-
-    public void setRoleWorkspace(String roleWorkspace) {
-        this.roleWorkspace = roleWorkspace;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -96,6 +83,7 @@ public class UserWorkspace implements Serializable {
 
     @Override
     public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof UserWorkspace)) {
             return false;
         }

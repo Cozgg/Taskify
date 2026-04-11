@@ -11,6 +11,5 @@ import com.ccq.pojo.Activity;
  * @author Admin
  */
 public interface ActivityRepository {
-    void assignUserForCard(Activity ac);
-    boolean isUserInCard(int userId, int cardId);
+
 }

@@ -3,7 +3,6 @@ package com.ccq.service;
 import com.ccq.pojo.User;
 import com.ccq.pojo.Workspace;
 import com.ccq.repository.UserRepository;
-import com.ccq.repository.UserWorkspaceRepository;
 import com.ccq.repository.WorkspaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,8 +24,6 @@ public class PermissionService {
     @Autowired
     private WorkspaceRepository workspaceRepo;
 
-    @Autowired
-    private UserWorkspaceRepository userWorkspaceRepo;
 
     // ─── Helpers ─────────────────────────────────────────────────────────────
 
@@ -102,14 +99,14 @@ public class PermissionService {
      * ADMIN bỏ qua kiểm tra này.
      * @param workspaceId ID workspace cần kiểm tra tư cách thành viên.
      */
-    public void requireWorkspaceMember(int workspaceId) {
-        if (isCurrentUserAdmin()) return;
-
-        User me = getCurrentUser();
-        boolean isMember = userWorkspaceRepo.isUserInWorkspace(me.getId(), workspaceId);
-        if (!isMember) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "Bạn không phải thành viên của Workspace này");
-        }
-    }
+//    public void requireWorkspaceMember(int workspaceId) {
+//        if (isCurrentUserAdmin()) return;
+//
+//        User me = getCurrentUser();
+//        boolean isMember = userWorkspaceRepo.isUserInWorkspace(me.getId(), workspaceId);
+//        if (!isMember) {
+//            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+//                    "Bạn không phải thành viên của Workspace này");
+//        }
+//    }
 }

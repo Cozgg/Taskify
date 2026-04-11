@@ -14,6 +14,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class GlobalException {
@@ -89,5 +90,14 @@ public class GlobalException {
         res.setError("Forbidden");
         res.setMessage(ex.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(res);
+    }
+    
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<RestResponse<Object>> handleResponseStatusException(ResponseStatusException ex) {
+        RestResponse<Object> res = new RestResponse<Object>();
+        res.setStatusCode(ex.getStatusCode().value());
+        res.setError(ex.getStatusCode().toString());
+        res.setMessage(ex.getReason()); // Trích xuất đúng câu thông báo gốc
+        return ResponseEntity.status(ex.getStatusCode()).body(res);
     }
 }

@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.ccq.controller.client;
 
 import com.ccq.pojo.Card;
@@ -23,7 +27,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+import com.ccq.pojo.Card;
+import com.ccq.pojo.CardUser;
+import com.ccq.pojo.User;
+import com.ccq.pojo.response.ResActivityDTO;
+import com.ccq.service.CardService;
+import com.ccq.service.UserService;
+import com.ccq.utils.DTOMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+
 @RequestMapping("/api")
 public class CardController {
 
@@ -32,6 +46,7 @@ public class CardController {
 
     @Autowired
     private PermissionService permissionService;
+    private UserService userService;
 
     @GetMapping("/lists/{listId}/cards")
     @PreAuthorize("@securityCustom.canAccessList(authentication.name, #listId)")

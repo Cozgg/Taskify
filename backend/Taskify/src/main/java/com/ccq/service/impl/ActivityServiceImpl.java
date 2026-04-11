@@ -23,37 +23,6 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @Service
 public class ActivityServiceImpl implements ActivityService{
-    @Autowired
-    private ActivityRepository actiRepo;
-    
-    @Autowired
-    private UserRepository userRepo;
-    
-    @Autowired
-    private CardRepository cardRepo;
-    
-    @Override
-    public Activity assignUserForCard(int userId, int cardId) {
-        User u = this.userRepo.findUserById(userId);
-        if(u == null){
-            throw new ResponseStatusException(HttpStatusCode.valueOf(404), "User not found");
-        }
-        Card c = this.cardRepo.findCardById(cardId);
-        if(c == null){
-            throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Card not found");
-        }
-        
-        boolean isUserValid = this.actiRepo.isUserInCard(userId, cardId);
-        if(isUserValid){
-            throw  new ResponseStatusException(HttpStatusCode.valueOf(409), "User đã tồn tại trong workspace");
-        }
-        Activity ac = new Activity();
-        ac.setCardId(c);
-        ac.setUserId(u);
-        ac.setActivity(1);
-        ac.setCreatedDate(new Date());
-        this.actiRepo.assignUserForCard(ac);
-        return ac;
-    }
+  
     
 }

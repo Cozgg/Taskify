@@ -1,0 +1,85 @@
+/* Layout bao ngoài giống hệt Trello */
+.kanban-login-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #F4F5F7; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Khung card trắng bo góc */
+.login-card {
+    background: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(9, 30, 66, 0.08), 0 0 1px rgba(9, 30, 66, 0.31);
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.brand {
+    text-align: center;
+    margin-bottom: 24px;
+    color: #0052CC; /* Xanh đặc trưng của hệ thống Atlassian/Trello */
+}
+
+.brand h1 {
+    font-size: 28px;
+    margin: 8px 0 0 0;
+    font-weight: 800;
+}
+
+.logo-icon {
+    font-size: 36px;
+}
+
+.login-title {
+    text-align: center;
+    color: #5E6C84;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 24px;
+}
+
+/* --- OVERRIDE MỘT CHÚT CỦA ANT DESIGN --- */
+
+/* Style cho label của antd */
+.trello-label {
+    color: #5E6C84;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Làm cho input của antd có màu nền xám nhạt như Trello */
+.ant-input-affix-wrapper.trello-input {
+    background-color: #FAFBFC;
+    border: 2px solid #DFE1E6;
+    border-radius: 3px;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+/* Khi bấm vào input thì sáng lên */
+.ant-input-affix-wrapper.trello-input:focus,
+.ant-input-affix-wrapper.trello-input-focused {
+    background-color: #FFFFFF;
+    border-color: #4C9AFF;
+    box-shadow: none; /* Bỏ shadow mặc định của antd */
+}
+
+.ant-input-affix-wrapper.trello-input > input.ant-input {
+    background-color: transparent;
+}
+
+/* Đổi màu nút primary của Antd sang xanh Trello */
+.ant-btn-primary.trello-btn {
+    background-color: #0052CC;
+    border-radius: 3px;
+    font-weight: 600;
+}
+
+.ant-btn-primary.trello-btn:hover,
+.ant-btn-primary.trello-btn:focus {
+    background-color: #0065FF;
+}

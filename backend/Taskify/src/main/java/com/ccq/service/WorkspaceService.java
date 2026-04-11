@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
+import com.ccq.pojo.UserWorkspace;
 import com.ccq.pojo.Workspace;
 
 /**
@@ -36,4 +37,6 @@ public interface WorkspaceService {
     Long countUserInWorkspace(int workspaceId);
 
     Long countBoardInWorkspace(int workspaceId);
+    
+    UserWorkspace addUserIntoWorkspace(int workspaceId, int userId);
 }
