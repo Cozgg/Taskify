@@ -3,9 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.ccq.controller.client;
-
-
-
 import com.ccq.pojo.Board;
 import com.ccq.service.BoardService;
 import java.util.List;
@@ -21,6 +18,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ccq.pojo.Board;
+import com.ccq.service.BoardService;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,8 +33,9 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author nguye
  */
 @RestController
-@RequestMapping("/api") 
+@RequestMapping("/api")
 public class BoardController {
+
     @Autowired
     private BoardService boardService;
 
@@ -40,14 +43,15 @@ public class BoardController {
     public ResponseEntity<?> getBoardsByWorkspace(
             @PathVariable("workspaceId") int workspaceId,
             @RequestParam Map<String, String> params) {
-        
+
         params.put("workspaceId", String.valueOf(workspaceId));
-        
+
         List<Board> boards = this.boardService.getBoards(params);
         return new ResponseEntity<>(boards, HttpStatus.OK);
     }
 
     @GetMapping("/boards/{boardId}")
+    @PreAuthorize("@securityCustom.canAccessBoard(authentication.name, #boardId)")
     public ResponseEntity<?> getBoardById(@PathVariable("boardId") int boardId) {
         Board board = this.boardService.getById(boardId);
         if (board != null) {
@@ -69,6 +73,7 @@ public class BoardController {
     }
 
     @PutMapping("/boards/{boardId}")
+    @PreAuthorize("@securityCustom.canAccessBoard(authentication.name, #boardId)")
     public ResponseEntity<?> updateBoard(
             @PathVariable("boardId") int boardId,
             @RequestBody Board board) {
@@ -85,6 +90,7 @@ public class BoardController {
     //da test, chua phan quyen
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/boards/{boardId}")
+    @PreAuthorize("@securityCustom.canAccessBoard(authentication.name, #boardId)")
     public ResponseEntity<?> deleteBoard(@PathVariable("boardId") int boardId) {
         try {
             this.boardService.delete(boardId);
