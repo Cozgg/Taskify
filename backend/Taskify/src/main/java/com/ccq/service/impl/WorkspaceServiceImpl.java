@@ -24,8 +24,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     
     @Autowired
     private UserRepository userRepo;
-    
-    
 
     @Autowired
     private PermissionService permissionService;
@@ -35,7 +33,11 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (id <= 0) {
             throw new IllegalArgumentException("Workspace ID phải là số dương, nhận được: " + id);
         }
-        return this.workspaceRepo.getWorkspaceById(id);
+        Workspace workspace = this.workspaceRepo.getWorkspaceById(id);
+        if (workspace != null) {
+            permissionService.requireWorkspaceAccess(id);
+        }
+        return workspace;
     }
 
     @Override
@@ -44,6 +46,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (ownerId <= 0) {
             throw new IllegalArgumentException("Owner ID phải là số dương");
         }
+        permissionService.requireUserSelfOrAdmin(ownerId);
         return this.workspaceRepo.getWorkspaceByOwnerId(ownerId);
     }
 
@@ -75,7 +78,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 throw new IllegalArgumentException("Không tìm thấy workspace với ID: " + w.getId());
             }
             // Chỉ ADMIN hoặc owner workspace mới được chỉnh sửa
-            permissionService.requireDeleteWorkspacePermission(w.getId());
+            permissionService.requireWorkspaceOwnerPermission(w.getId());
         }
         this.workspaceRepo.addOrUpdate(w);
     }
@@ -91,7 +94,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         }
         
         // Chỉ ADMIN hoặc owner workspace mới được xóa
-        permissionService.requireDeleteWorkspacePermission(id);
+        permissionService.requireWorkspaceOwnerPermission(id);
 
         this.workspaceRepo.delete(id);
     }
@@ -106,6 +109,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (wsId <= 0) {
             throw new IllegalArgumentException("Workspace ID phải là số dương, nhận được: " + wsId);
         }
+        permissionService.requireWorkspaceAccess(wsId);
         return this.workspaceRepo.getBoardsByWorkspaceId(wsId);
     }
 
@@ -114,6 +118,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (workspaceId <= 0) {
             throw new IllegalArgumentException("Workspace ID phải là số dương, nhận được: " + workspaceId);
         }
+        permissionService.requireWorkspaceAccess(workspaceId);
         return this.workspaceRepo.getMembersByWorkspaceId(workspaceId);
     }
 
@@ -122,6 +127,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (workspaceId <= 0) {
             throw new IllegalArgumentException("Workspace ID phải là số dương, nhận được: " + workspaceId);
         }
+        permissionService.requireWorkspaceAccess(workspaceId);
         return this.workspaceRepo.countMembersByWorkspaceId(workspaceId);
     }
 
@@ -130,14 +136,27 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (workspaceId <= 0) {
             throw new IllegalArgumentException("Workspace ID phải là số dương, nhận được: " + workspaceId);
         }
+        permissionService.requireWorkspaceAccess(workspaceId);
         return (long) this.workspaceRepo.getBoardsByWorkspaceId(workspaceId).size();
     }
 
     @Override
     public UserWorkspace addUserIntoWorkspace(int workspaceId, int userId) {
+        if (workspaceId <= 0 || userId <= 0) {
+            throw new IllegalArgumentException("workspaceId vA userId phai la so duong");
+        }
+        permissionService.requireWorkspaceOwnerPermission(workspaceId);
+
         UserWorkspace uw = new UserWorkspace();
         Workspace w = workspaceRepo.getWorkspaceById(workspaceId);
         User u = userRepo.findUserById(userId);
+
+        if (w == null) {
+            throw new IllegalArgumentException("Khong tim thay workspace voi ID: " + workspaceId);
+        }
+        if (u == null) {
+            throw new IllegalArgumentException("Khong tim thay user voi ID: " + userId);
+        }
         
         uw.setUserId(u);
         uw.setWorkspaceId(w);

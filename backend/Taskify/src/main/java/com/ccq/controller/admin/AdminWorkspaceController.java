@@ -28,9 +28,8 @@ import com.ccq.utils.DTOMapper;
 
 import jakarta.validation.Valid;
 
-
 @RestController
-@RequestMapping("/admin/workspaces")
+@RequestMapping("/api/admin/workspaces")
 public class AdminWorkspaceController {
 
     @Autowired

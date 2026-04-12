@@ -1,22 +1,26 @@
 package com.ccq.configs;
 
-import com.ccq.pojo.User;
-import com.ccq.repository.UserRepository;
-import com.ccq.utils.JwtUtil;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.List;
+import com.ccq.pojo.User;
+import com.ccq.repository.UserRepository;
+import com.ccq.utils.JwtUtil;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 @Component
@@ -44,8 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 User user = userRepo.getUserByUsername(username);
 
                 if (user != null) {
-                    List<org.springframework.security.core.GrantedAuthority> authorities =
-                            java.util.Collections.singletonList(
+                    List<GrantedAuthority> authorities =
+                            Collections.singletonList(
                                     new SimpleGrantedAuthority("ROLE_" + user.getRole())
                             );
 

@@ -35,8 +35,8 @@ public interface WorkspaceRepository {
     Long count();
 
     Long countMembersByWorkspaceId(int workspaceId);
-    
+
     void addUserIntoWorkspace(UserWorkspace uw);
-    
-    boolean isAdminOfThisWorkspace(int workspaceId, String username);
+
+    // boolean isAdminOfThisWorkspace(int workspaceId, String username);
 }

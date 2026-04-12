@@ -1,56 +1,142 @@
 package com.ccq.pojo.response;
 
 import java.util.Date;
-import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
+/**
+ *
+ * @author Admin
+ */
 public class ResCardDTO {
-    private Integer id;
+
+    private int id;
     private String name;
     private String description;
-    @JsonFormat(pattern="yyyy-MM-dd", timezone="Asia/Ho_Chi_Minh")
-    private Date createdDate;
-    private Boolean isActive;
-    @JsonFormat(pattern="yyyy-MM-dd", timezone="Asia/Ho_Chi_Minh")
+    private boolean isActive;
     private Date dueDate;
-    @JsonFormat(pattern="yyyy-MM-dd", timezone="Asia/Ho_Chi_Minh")
     private Date reminderDate;
-    private Integer position;
-    
-    private List<ResChecklistItemDTO> checklists;
-    private List<ResActivityDTO> activities;
-    private List<ResAttachmentDTO> attachments;
-    private List<ResCommentDTO> comments;
-    private List<ResUserDTO> assignees;
+    private int position;
+    private int listId;
 
-    public ResCardDTO() {}
+    public ResCardDTO(int id, String name, String description, boolean isActive, Date dueDate, Date reminderDate, int position, int listId) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.isActive = isActive;
+        this.dueDate = dueDate;
+        this.reminderDate = reminderDate;
+        this.position = position;
+        this.listId = listId;
+    }
 
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public Date getCreatedDate() { return createdDate; }
-    public void setCreatedDate(Date createdDate) { this.createdDate = createdDate; }
-    public Boolean getIsActive() { return isActive; }
-    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
-    public Date getDueDate() { return dueDate; }
-    public void setDueDate(Date dueDate) { this.dueDate = dueDate; }
-    public Date getReminderDate() { return reminderDate; }
-    public void setReminderDate(Date reminderDate) { this.reminderDate = reminderDate; }
-    public Integer getPosition() { return position; }
-    public void setPosition(Integer position) { this.position = position; }
+    /**
+     * @return the id
+     */
+    public int getId() {
+        return id;
+    }
 
-    public List<ResChecklistItemDTO> getChecklists() { return checklists; }
-    public void setChecklists(List<ResChecklistItemDTO> checklists) { this.checklists = checklists; }
-    public List<ResActivityDTO> getActivities() { return activities; }
-    public void setActivities(List<ResActivityDTO> activities) { this.activities = activities; }
-    public List<ResAttachmentDTO> getAttachments() { return attachments; }
-    public void setAttachments(List<ResAttachmentDTO> attachments) { this.attachments = attachments; }
-    public List<ResCommentDTO> getComments() { return comments; }
-    public void setComments(List<ResCommentDTO> comments) { this.comments = comments; }
-    public List<ResUserDTO> getAssignees() { return assignees; }
-    public void setAssignees(List<ResUserDTO> assignees) { this.assignees = assignees; }
+    /**
+     * @param id the id to set
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * @return the isActive
+     */
+    public boolean isIsActive() {
+        return isActive;
+    }
+
+    /**
+     * @param isActive the isActive to set
+     */
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    /**
+     * @return the dueDate
+     */
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    /**
+     * @param dueDate the dueDate to set
+     */
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    /**
+     * @return the reminderDate
+     */
+    public Date getReminderDate() {
+        return reminderDate;
+    }
+
+    /**
+     * @param reminderDate the reminderDate to set
+     */
+    public void setReminderDate(Date reminderDate) {
+        this.reminderDate = reminderDate;
+    }
+
+    /**
+     * @return the position
+     */
+    public int getPosition() {
+        return position;
+    }
+
+    /**
+     * @param position the position to set
+     */
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    /**
+     * @return the listId
+     */
+    public int getListId() {
+        return listId;
+    }
+
+    /**
+     * @param listId the listId to set
+     */
+    public void setListId(int listId) {
+        this.listId = listId;
+    }
 }

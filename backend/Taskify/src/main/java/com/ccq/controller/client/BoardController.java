@@ -4,12 +4,9 @@
  */
 package com.ccq.controller.client;
 
-
-
-import com.ccq.pojo.Board;
-import com.ccq.service.BoardService;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,18 +18,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.ccq.pojo.Board;
+import com.ccq.service.BoardService;
 
 /**
  *
  * @author nguye
  */
 @RestController
-@RequestMapping("/api") 
+@RequestMapping("/api")
+@PreAuthorize("isAuthenticated()")
 public class BoardController {
+
     @Autowired
     private BoardService boardService;
 
@@ -40,9 +40,9 @@ public class BoardController {
     public ResponseEntity<?> getBoardsByWorkspace(
             @PathVariable("workspaceId") int workspaceId,
             @RequestParam Map<String, String> params) {
-        
+
         params.put("workspaceId", String.valueOf(workspaceId));
-        
+
         List<Board> boards = this.boardService.getBoards(params);
         return new ResponseEntity<>(boards, HttpStatus.OK);
     }
@@ -81,9 +81,7 @@ public class BoardController {
         }
     }
 
-
     //da test, chua phan quyen
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/boards/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable("boardId") int boardId) {
         try {

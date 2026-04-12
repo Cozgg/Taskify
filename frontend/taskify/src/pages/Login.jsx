@@ -3,7 +3,7 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useContext, useState } from "react";
 import Apis, { endpoints } from "../utils/Apis";
 import cookies from "react-cookies";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MyContext } from "../utils/context/MyContext";
 import "./Login.css";
 
@@ -98,6 +98,12 @@ const Login = () => {
                             Đăng nhập
                         </Button>
                     </Form.Item>
+
+                    <div style={{ textAlign: 'center', fontSize: '14px', marginTop: 12 }}>
+                        <Link to="/register" style={{ color: '#0052CC', fontWeight: 500 }}>
+                            Chưa có tài khoản? Đăng ký ngay
+                        </Link>
+                    </div>
                 </Form>
             </div>
         </div>

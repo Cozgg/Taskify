@@ -133,16 +133,16 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
         return q.getSingleResult();
     }
 
-    @Override
-    public boolean isAdminOfThisWorkspace(int workspaceId, String username) {
-        Session s = this.factory.getObject().getCurrentSession();
-        Query<Long> q = s.createQuery(
-                "SELECT COUNT(uw.id) FROM UserWorkspace uw WHERE uw.workspaceId.id = :wsId AND uw.userId.username = :username", Long.class);
-        q.setParameter("wsId", workspaceId);
-        q.setParameter("username", username);
+    // @Override
+    // public boolean isAdminOfThisWorkspace(int workspaceId, String username) {
+    //     Session s = this.factory.getObject().getCurrentSession();
+    //     Query<Long> q = s.createQuery(
+    //             "SELECT COUNT(uw.id) FROM UserWorkspace uw WHERE uw.workspaceId.id = :wsId AND uw.userId.username = :username", Long.class);
+    //     q.setParameter("wsId", workspaceId);
+    //     q.setParameter("username", username);
 
-        return q.uniqueResult() > 0;
-    }
+    //     return q.uniqueResult() > 0;
+    // }
 
     @Override
     public Long countMembersByWorkspaceId(int workspaceId) {

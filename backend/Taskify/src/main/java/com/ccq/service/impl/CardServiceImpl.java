@@ -38,28 +38,45 @@ public class CardServiceImpl implements CardService {
     @Autowired
     private UserRepository userRepo;
 
+    @Autowired
+    private PermissionService permissionService;
+
     @Override
     public Card getById(int id) {
-        return this.cardRepo.getById(id);
+        Card card = this.cardRepo.getById(id);
+        if (card != null) {
+            permissionService.requireCardAccess(id);
+        }
+        return card;
     }
 
     @Override
     public void addOrUpdate(Card c) {
+        if (c.getId() != null) {
+            permissionService.requireCardWritePermission(c.getId());
+        } else if (c.getListId() != null && c.getListId().getId() != null) {
+            permissionService.requireListWritePermission(c.getListId().getId());
+        }
         this.cardRepo.addOrUpdate(c);
     }
 
     @Override
     public void delete(int id) {
+        permissionService.requireCardWritePermission(id);
         this.cardRepo.delete(id);
     }
 
     @Override
     public List<Card> getCard(Map<String, String> params) {
+        if (params != null && params.containsKey("listId")) {
+            permissionService.requireListAccess(Integer.parseInt(params.get("listId")));
+        }
         return this.cardRepo.getCard(params);
     }
 
     @Override
     public void createCardInList(int listId, Card c) {
+        permissionService.requireListWritePermission(listId);
         Boardlist list = this.listRepo.getById(listId);
         if (list == null) {
             throw new RuntimeException("Không tìm thấy cột");
@@ -71,6 +88,9 @@ public class CardServiceImpl implements CardService {
     @Override
     @Transactional
     public String moveCard(int cardId, int newListId, int newPosition) {
+        permissionService.requireCardWritePermission(cardId);
+        permissionService.requireListWritePermission(newListId);
+
         Card card = this.cardRepo.getById(cardId);
         if (card == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -132,6 +152,7 @@ public class CardServiceImpl implements CardService {
     
     @Override
     public CardUser assignUserForCard(int userId, int cardId) {
+        permissionService.requireCardWritePermission(cardId);
         User u = this.userRepo.findUserById(userId);
         if(u == null){
             throw new ResponseStatusException(HttpStatusCode.valueOf(404), "User not found");

@@ -11,6 +11,8 @@ import java.util.List;
  * @author Admin
  */
 public interface StatRepository {
+
     List<Object[]> getBoardProgressStats(int id);
+
     List<Object[]> getMemberProgress(int id);
 }

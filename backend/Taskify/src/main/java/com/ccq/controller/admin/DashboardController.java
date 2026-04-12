@@ -17,7 +17,7 @@ public class DashboardController {
     @Autowired
     private UserService userSer;
 
-    @GetMapping("/admin/dashboard")
+    @GetMapping("/api/admin/dashboard")
     public ResponseEntity<Map<String, Object>> getDashBoard() {
         Map<String, Object> data = new HashMap<>();
         long countUsers = this.userSer.countUsers();

@@ -25,7 +25,7 @@ import com.ccq.utils.DTOMapper;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/admin/users")
+@RequestMapping("/api/admin/users")
 public class AdminUserController {
 
     @Autowired
