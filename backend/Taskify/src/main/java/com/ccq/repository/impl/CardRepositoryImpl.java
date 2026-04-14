@@ -4,29 +4,27 @@
  */
 package com.ccq.repository.impl;
 
-import com.ccq.pojo.Activity;
-import com.ccq.pojo.Card;
-import com.ccq.pojo.CardUser;
-import com.ccq.pojo.Workspace;
-import com.ccq.repository.CardRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import com.ccq.repository.CardRepository;
-import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.ccq.pojo.Card;
+import com.ccq.pojo.CardUser;
+import com.ccq.repository.CardRepository;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 /**
  *
@@ -135,11 +133,11 @@ public class CardRepositoryImpl implements CardRepository{
         return q.uniqueResult() != null;
     }
 
-    @Override
-    public boolean isWorkspaceAdminOfThisCard(int cardId, String username) {
-        Session s = this.factory.getObject().getCurrentSession();
-        String sql = "select count(c.id) from Card c " + "where c.id = :cardId " + "and c.listId.boardId.workspaceId.ownerId.username = :username";
-        Query<Long> q = s.createQuery(sql, Long.class);
-        return q.getSingleResult() > 0;
-    }
+    // @Override
+    // public boolean isWorkspaceAdminOfThisCard(int cardId, String username) {
+    //     Session s = this.factory.getObject().getCurrentSession();
+    //     String sql = "select count(c.id) from Card c " + "where c.id = :cardId " + "and c.listId.boardId.workspaceId.ownerId.username = :username";
+    //     Query<Long> q = s.createQuery(sql, Long.class);
+    //     return q.getSingleResult() > 0;
+    // }
 }

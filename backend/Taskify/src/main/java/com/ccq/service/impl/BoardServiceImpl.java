@@ -29,11 +29,23 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public Board getById(int id) {
-        return this.boardRepo.getById(id);
+        Board board = this.boardRepo.getById(id);
+        if (board != null) {
+            permissionService.requireBoardAccess(id);
+        }
+        return board;
     }
 
     @Override
     public void addOrUpdate(Board b) {
+        if (b == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Board khong duoc de trong");
+        }
+        if (b.getId() != null) {
+            permissionService.requireBoardWritePermission(b.getId());
+        } else if (b.getWorkspaceId() != null && b.getWorkspaceId().getId() != null) {
+            permissionService.requireWorkspaceAccess(b.getWorkspaceId().getId());
+        }
         this.boardRepo.addOrUpdate(b);
     }
 
@@ -53,18 +65,30 @@ public class BoardServiceImpl implements BoardService {
         }
 
         // Chỉ ADMIN hoặc owner workspace mới được xóa board
-        permissionService.requireDeleteBoardPermission(ws.getId());
+        permissionService.requireBoardDeletePermission(id);
 
         this.boardRepo.delete(id);
     }
 
     @Override
     public List<Board> getBoards(Map<String, String> params) {
+        if (params != null && params.containsKey("workspaceId")) {
+            permissionService.requireWorkspaceAccess(Integer.parseInt(params.get("workspaceId")));
+        }
         return this.boardRepo.getBoards(params);
     }
 
     @Override
+    public Long countBoards(Map<String, String> params) {
+        if (params != null && params.containsKey("workspaceId")) {
+            permissionService.requireWorkspaceAccess(Integer.parseInt(params.get("workspaceId")));
+        }
+        return this.boardRepo.countBoards(params);
+    }
+
+    @Override
     public Board createBoardInWorkspace(int workspaceId, Board board) {
+        permissionService.requireWorkspaceAccess(workspaceId);
         Workspace ws = this.wsRepo.getWorkspaceById(workspaceId);
         if (ws == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,

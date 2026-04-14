@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,27 +23,55 @@ import com.ccq.pojo.Workspace;
 import com.ccq.pojo.request.ReqAdminWorkspaceDTO;
 import com.ccq.pojo.response.ResBoardDTO;
 import com.ccq.pojo.response.ResUserDTO;
-import com.ccq.pojo.response.ResWorkspaceDTO;
+import com.ccq.pojo.response.ResWorkspacePageDTO;
+import com.ccq.pojo.response.RestResponse;
 import com.ccq.service.WorkspaceService;
 import com.ccq.utils.DTOMapper;
 
 import jakarta.validation.Valid;
 
-
 @RestController
-@RequestMapping("/admin/workspaces")
+@RequestMapping("/api/admin/workspaces")
 public class AdminWorkspaceController {
 
     @Autowired
     private WorkspaceService workspaceService;
 
+    @Autowired
+    private Environment env;
+
     @GetMapping
-    public ResponseEntity<List<ResWorkspaceDTO>> getAllWorkspaces(@RequestParam Map<String, String> params) {
-        List<ResWorkspaceDTO> workspaces = this.workspaceService.getWorkspaces(params)
-                .stream()
-                .map(DTOMapper::toWorkspaceDTO)
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(workspaces, HttpStatus.OK);
+    public ResponseEntity<RestResponse<ResWorkspacePageDTO>> getAllWorkspaces(@RequestParam Map<String, String> params) {
+        List<Workspace> workspaces = this.workspaceService.getWorkspaces(params);
+        Long totalItems = this.workspaceService.countWorkspaces(params);
+
+        int page = 1;
+        int pageSize = Integer.parseInt(this.env.getProperty("workspace.page_size", "10"));
+        if (params != null) {
+            try {
+                page = Integer.parseInt(params.getOrDefault("page", "1"));
+            } catch (NumberFormatException ignored) {
+                page = 1;
+            }
+            try {
+                pageSize = Integer.parseInt(params.getOrDefault("size", String.valueOf(pageSize)));
+            } catch (NumberFormatException ignored) {
+                // keep default from configs
+            }
+        }
+        if (page < 1) {
+            page = 1;
+        }
+        if (pageSize < 1) {
+            pageSize = Integer.parseInt(this.env.getProperty("workspace.page_size", "10"));
+        }
+
+        ResWorkspacePageDTO pageDto = DTOMapper.toWorkspacePageDTO(workspaces, totalItems, page, pageSize);
+
+        RestResponse<ResWorkspacePageDTO> res = new RestResponse<>();
+        res.setStatusCode(HttpStatus.OK.value());
+        res.setData(pageDto);
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping("/{id}")

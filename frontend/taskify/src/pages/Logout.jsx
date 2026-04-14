@@ -11,6 +11,7 @@ const Logout = () => {
             console.log("Logging out...");
             cookies.remove('token');
             cookies.remove('refreshToken');
+            cookies.remove('userdata');
             dispatch({
                 'type': 'logout',
                 'payload': null

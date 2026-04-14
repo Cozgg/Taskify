@@ -65,12 +65,86 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
 
     @Override
-    public Workspace getWorkspaceByOwnerId(int ownerId) {
+    public List<Workspace> getWorkspaceByOwnerId(int ownerId) {
         Session s = this.factory.getObject().getCurrentSession();
         Query<Workspace> q = s.createQuery(
                 "FROM Workspace w WHERE w.ownerId.id = :ownerId", Workspace.class);
         q.setParameter("ownerId", ownerId);
-        return q.uniqueResult();
+        return q.getResultList();
+    }
+
+    @Override
+    public List<Workspace> getWorkspacesByOwnerId(int ownerId, Map<String, String> params) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<Workspace> q = b.createQuery(Workspace.class);
+        Root<Workspace> root = q.from(Workspace.class);
+        q.select(root);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(b.equal(root.get("ownerId").get("id"), ownerId));
+
+        if (params != null) {
+            String kw = params.get("kw");
+            if (kw != null && !kw.isBlank()) {
+                predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw.trim())));
+            }
+        }
+
+        if (!predicates.isEmpty()) {
+            q.where(predicates.toArray(new Predicate[0]));
+        }
+
+        q.orderBy(b.desc(root.get("id")));
+        Query<Workspace> query = s.createQuery(q);
+
+        int defaultPageSize = Integer.parseInt(this.env.getProperty("workspace.page_size", "10"));
+        int pageSize = defaultPageSize;
+        int page = 1;
+        if (params != null) {
+            try {
+                page = Integer.parseInt(params.getOrDefault("page", "1"));
+            } catch (NumberFormatException ignored) {
+                page = 1;
+            }
+            try {
+                pageSize = Integer.parseInt(params.getOrDefault("size", String.valueOf(defaultPageSize)));
+            } catch (NumberFormatException ignored) {
+                pageSize = defaultPageSize;
+            }
+        }
+
+        if (page < 1) {
+            page = 1;
+        }
+        if (pageSize < 1) {
+            pageSize = defaultPageSize;
+        }
+
+        int start = (page - 1) * pageSize;
+        query.setFirstResult(start);
+        query.setMaxResults(pageSize);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public Long countWorkspacesByOwnerId(int ownerId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<Long> q = b.createQuery(Long.class);
+        Root<Workspace> root = q.from(Workspace.class);
+
+        q.select(b.count(root));
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(b.equal(root.get("ownerId").get("id"), ownerId));
+
+        if (!predicates.isEmpty()) {
+            q.where(predicates.toArray(new Predicate[0]));
+        }
+
+        return s.createQuery(q).getSingleResult();
     }
 
     @Override
@@ -81,32 +155,73 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
         Root<Workspace> root = q.from(Workspace.class);
         q.select(root);
 
-        if (params != null) {
-            List<Predicate> predicates = new ArrayList<>();
+        List<Predicate> predicates = new ArrayList<>();
 
+        if (params != null) {
             String kw = params.get("kw");
             if (kw != null && !kw.isBlank()) {
-                predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw)));
+                predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw.trim())));
             }
+        }
 
-            if (!predicates.isEmpty()) {
-                q.where(predicates.toArray(new Predicate[0]));
-            }
+        if (!predicates.isEmpty()) {
+            q.where(predicates.toArray(new Predicate[0]));
         }
 
         q.orderBy(b.desc(root.get("id")));
         Query<Workspace> query = s.createQuery(q);
+
+        int defaultPageSize = Integer.parseInt(this.env.getProperty("workspace.page_size", "10"));
+        int pageSize = defaultPageSize;
+        int page = 1;
         if (params != null) {
-            int pageSize = this.env.getProperty("workspace.page_size", Integer.class);
-            int page = Integer.parseInt(params.getOrDefault("page", "1"));
-            int start = (page - 1) * pageSize;
-
-            query.setMaxResults(pageSize);
-            query.setFirstResult(start);
-
+            try {
+                page = Integer.parseInt(params.getOrDefault("page", "1"));
+            } catch (NumberFormatException ignored) {
+                page = 1;
+            }
+            try {
+                pageSize = Integer.parseInt(params.getOrDefault("size", String.valueOf(defaultPageSize)));
+            } catch (NumberFormatException ignored) {
+                pageSize = defaultPageSize;
+            }
+        }
+        if (page < 1) {
+            page = 1;
+        }
+        if (pageSize < 1) {
+            pageSize = defaultPageSize;
         }
 
+        int start = (page - 1) * pageSize;
+        query.setMaxResults(pageSize);
+        query.setFirstResult(start);
+
         return query.getResultList();
+    }
+
+    @Override
+    public Long countWorkspaces(Map<String, String> params) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<Long> q = b.createQuery(Long.class);
+        Root<Workspace> root = q.from(Workspace.class);
+
+        q.select(b.count(root));
+
+        List<Predicate> predicates = new ArrayList<>();
+        if (params != null) {
+            String kw = params.get("kw");
+            if (kw != null && !kw.isBlank()) {
+                predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw.trim())));
+            }
+        }
+
+        if (!predicates.isEmpty()) {
+            q.where(predicates.toArray(new Predicate[0]));
+        }
+
+        return s.createQuery(q).getSingleResult();
     }
 
     @Override
@@ -133,17 +248,15 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
         return q.getSingleResult();
     }
 
-    @Override
-    public boolean isAdminOfThisWorkspace(int workspaceId, String username) {
-        Session s = this.factory.getObject().getCurrentSession();
-        Query<Long> q = s.createQuery(
-                "SELECT COUNT(uw.id) FROM UserWorkspace uw WHERE uw.workspaceId.id = :wsId AND uw.userId.username = :username", Long.class);
-        q.setParameter("wsId", workspaceId);
-        q.setParameter("username", username);
-
-        return q.uniqueResult() > 0;
-    }
-
+    // @Override
+    // public boolean isAdminOfThisWorkspace(int workspaceId, String username) {
+    //     Session s = this.factory.getObject().getCurrentSession();
+    //     Query<Long> q = s.createQuery(
+    //             "SELECT COUNT(uw.id) FROM UserWorkspace uw WHERE uw.workspaceId.id = :wsId AND uw.userId.username = :username", Long.class);
+    //     q.setParameter("wsId", workspaceId);
+    //     q.setParameter("username", username);
+    //     return q.uniqueResult() > 0;
+    // }
     @Override
     public Long countMembersByWorkspaceId(int workspaceId) {
         Session s = this.factory.getObject().getCurrentSession();

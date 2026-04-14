@@ -1,32 +1,23 @@
 import { Button, Form, Input, message, Upload } from "antd";
-import { use, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Apis, { endpoints } from "../utils/Apis";
 import { MailOutlined, LockOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons";
 
-
-
-
 const Register = () => {
 
-    const [user, setUser] = useState({});
     const [loading, setLoading] = useState(false);
 
     const nav = useNavigate();
 
     const register = async (values) => {
-        const formData = new FormData();
-        formData.append('name', values.name);
-        formData.append('email', values.email);
-        formData.append('username', values.username);
-        formData.append('password', values.password);
-        // if (values.avatar && values.avatar.length > 0) {
-        //     formData.append('avatar', values.avatar[0].originFileObj);
-        // }
-
         try {
             setLoading(true);
-            const res = await Apis.post(endpoints['register'], formData);
+            const res = await Apis.post(endpoints['register'], {
+                email: values.email,
+                username: values.username,
+                password: values.password,
+            });
 
             if (res.status === 201) {
                 message.success('Đăng ký thành công!');

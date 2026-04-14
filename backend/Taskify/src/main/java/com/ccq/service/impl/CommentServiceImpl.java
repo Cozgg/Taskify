@@ -46,8 +46,7 @@ public class CommentServiceImpl implements CommentService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy Card");
         }
 
-//        int workspaceId = resolveWorkspaceId(ca);
-//        permissionService.requireWorkspaceMember(workspaceId);
+        permissionService.requireCardAccess(cardId);
 
         c.setUserId(u);
         c.setCardId(ca);
@@ -74,6 +73,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteComment(int id) {
+        permissionService.requireCommentDeletePermission(id);
         this.commRepo.deleteComment(id);
     }
 }

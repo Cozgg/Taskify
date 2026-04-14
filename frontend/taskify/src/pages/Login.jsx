@@ -3,7 +3,7 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useContext, useState } from "react";
 import Apis, { endpoints } from "../utils/Apis";
 import cookies from "react-cookies";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MyContext } from "../utils/context/MyContext";
 import "./Login.css";
 
@@ -24,6 +24,7 @@ const Login = () => {
             if (respone.status === 200) {
                 cookies.save('token', respone.data.data.token);
                 cookies.save('refreshToken', respone.data.data.refreshToken);
+                cookies.save('userdata', respone.data);
 
                 dispatch({
                     'type': 'login',
@@ -32,7 +33,8 @@ const Login = () => {
                     }
                 })
                 message.success('Đăng nhập thành công');
-                nav('/');
+                const role = respone?.data?.data?.role;
+                nav(role === 'ADMIN' ? '/admin/dashboard' : '/home');
             }
 
         } catch (err) {
@@ -58,7 +60,7 @@ const Login = () => {
                     name="login_form"
                     layout="vertical"
                     onFinish={login}
-                    requiredMark={false} // Ẩn dấu * đỏ của antd cho giống Trello
+                    requiredMark={false}
                 >
                     <Form.Item
                         label={<span className="trello-label">Tên đăng nhập</span>}
@@ -98,6 +100,12 @@ const Login = () => {
                             Đăng nhập
                         </Button>
                     </Form.Item>
+
+                    <div style={{ textAlign: 'center', fontSize: '14px', marginTop: 12 }}>
+                        <Link to="/register" style={{ color: '#0052CC', fontWeight: 500 }}>
+                            Chưa có tài khoản? Đăng ký ngay
+                        </Link>
+                    </div>
                 </Form>
             </div>
         </div>
