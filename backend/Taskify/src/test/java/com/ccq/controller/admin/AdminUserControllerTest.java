@@ -14,12 +14,14 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.ccq.pojo.User;
 import com.ccq.pojo.request.ReqAdminUserDTO;
-import com.ccq.pojo.response.ResUserDTO;
+import com.ccq.pojo.response.ResUserPageDTO;
+import com.ccq.pojo.response.RestResponse;
 import com.ccq.service.UserService;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,6 +29,9 @@ class AdminUserControllerTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private Environment env;
 
     @InjectMocks
     private AdminUserController controller;
@@ -40,13 +45,19 @@ class AdminUserControllerTest {
         user.setRole("ADMIN");
 
         when(userService.getUsers(any())).thenReturn(List.of(user));
+        when(userService.countUsers(any())).thenReturn(1L);
+        when(env.getProperty("user.page_size", "10")).thenReturn("10");
 
-        ResponseEntity<List<ResUserDTO>> response = controller.getUsers(Map.of());
+        ResponseEntity<RestResponse<ResUserPageDTO>> response = controller.getUsers(Map.of());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().size());
-        assertEquals("admin", response.getBody().get(0).getUsername());
+        RestResponse<ResUserPageDTO> body = response.getBody();
+        assertNotNull(body);
+        ResUserPageDTO page = body.getData();
+        assertNotNull(page);
+        assertNotNull(page.getItems());
+        assertEquals(1, page.getItems().size());
+        assertEquals("admin", page.getItems().get(0).getUsername());
     }
 
     @Test

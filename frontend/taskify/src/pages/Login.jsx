@@ -24,6 +24,7 @@ const Login = () => {
             if (respone.status === 200) {
                 cookies.save('token', respone.data.data.token);
                 cookies.save('refreshToken', respone.data.data.refreshToken);
+                cookies.save('userdata', respone.data);
 
                 dispatch({
                     'type': 'login',
@@ -32,7 +33,8 @@ const Login = () => {
                     }
                 })
                 message.success('Đăng nhập thành công');
-                nav('/');
+                const role = respone?.data?.data?.role;
+                nav(role === 'ADMIN' ? '/admin/dashboard' : '/home');
             }
 
         } catch (err) {
@@ -58,7 +60,7 @@ const Login = () => {
                     name="login_form"
                     layout="vertical"
                     onFinish={login}
-                    requiredMark={false} // Ẩn dấu * đỏ của antd cho giống Trello
+                    requiredMark={false}
                 >
                     <Form.Item
                         label={<span className="trello-label">Tên đăng nhập</span>}

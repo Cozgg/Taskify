@@ -1,11 +1,14 @@
 package com.ccq.controller.client;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ccq.pojo.Board;
@@ -23,15 +28,13 @@ import com.ccq.pojo.response.ResBoardDTO;
 import com.ccq.pojo.response.ResUserDTO;
 import com.ccq.pojo.response.ResUserWorkspaceDTO;
 import com.ccq.pojo.response.ResWorkspaceDTO;
+import com.ccq.pojo.response.ResWorkspacePageDTO;
 import com.ccq.pojo.response.RestResponse;
 import com.ccq.service.UserService;
 import com.ccq.service.WorkspaceService;
 import com.ccq.utils.DTOMapper;
 
 import jakarta.validation.Valid;
-import java.util.Map;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
 @RequestMapping("/api")
@@ -44,19 +47,44 @@ public class WorkspaceController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private Environment env;
+
     @GetMapping("/workspace/owner/{ownerId}")
-    public ResponseEntity<RestResponse<ResWorkspaceDTO>> getWorkspaceByOwner(@PathVariable("ownerId") int ownerId) {
-        Workspace workspace = this.workspaceService.getWorkspaceByOwnerId(ownerId);
-        if (workspace == null) {
-            RestResponse<ResWorkspaceDTO> err = new RestResponse<>();
-            err.setStatusCode(HttpStatus.NOT_FOUND.value());
-            err.setError("Người dùng chưa có workspace");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+    public ResponseEntity<RestResponse<ResWorkspacePageDTO>> getWorkspaceByOwner(
+            @PathVariable("ownerId") int ownerId,
+            @RequestParam(required = false) Map<String, String> params) {
+
+        List<Workspace> workspaces = this.workspaceService.getWorkspacesByOwnerId(ownerId, params);
+
+        Long totalItems = this.workspaceService.countWorkspacesByOwnerId(ownerId);
+
+        int page = 1;
+        int pageSize = Integer.parseInt(this.env.getProperty("workspace.page_size", "10"));
+        if (params != null) {
+            try {
+                page = Integer.parseInt(params.getOrDefault("page", "1"));
+            } catch (NumberFormatException ignored) {
+                page = 1;
+            }
+            try {
+                pageSize = Integer.parseInt(params.getOrDefault("size", String.valueOf(pageSize)));
+            } catch (NumberFormatException ignored) {
+                // keep default from configs
+            }
         }
-        ResWorkspaceDTO dto = DTOMapper.toWorkspaceDTO(workspace);
-        RestResponse<ResWorkspaceDTO> res = new RestResponse<>();
+        if (page < 1) {
+            page = 1;
+        }
+        if (pageSize < 1) {
+            pageSize = Integer.parseInt(this.env.getProperty("workspace.page_size", "10"));
+        }
+
+        ResWorkspacePageDTO pageDto = DTOMapper.toWorkspacePageDTO(workspaces, totalItems, page, pageSize);
+
+        RestResponse<ResWorkspacePageDTO> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.OK.value());
-        res.setData(dto);
+        res.setData(pageDto);
         return ResponseEntity.ok(res);
     }
 
@@ -111,7 +139,6 @@ public class WorkspaceController {
             err.setError("Không tìm thấy workspace");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
         }
-        // Cập nhật trường name từ request sang bản ghi hiện tại trong DB
         if (workspaceReq.getName() != null) {
             existing.setName(workspaceReq.getName());
         }
@@ -165,11 +192,12 @@ public class WorkspaceController {
             return ResponseEntity.badRequest().body(err);
         }
     }
+
     @PostMapping("/workspaces/{workspaceId}/users")
-    public ResponseEntity<ResUserWorkspaceDTO> inviteUser(@PathVariable("workspaceId") int workspaceId, @RequestBody Map<String, String> params){
+    public ResponseEntity<ResUserWorkspaceDTO> inviteUser(@PathVariable("workspaceId") int workspaceId, @RequestBody Map<String, String> params) {
         User u = this.userService.getUserById(Integer.parseInt(params.get("userId")));
         UserWorkspace uw = this.workspaceService.addUserIntoWorkspace(workspaceId, u.getId());
         ResUserWorkspaceDTO dto = DTOMapper.toUserWorkspaceDTO(uw);
-        return new ResponseEntity(dto, HttpStatus.CREATED);
+        return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 }

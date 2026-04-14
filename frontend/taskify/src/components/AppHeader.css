@@ -1,0 +1,136 @@
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 0 32px;
+    height: 56px;
+    border-bottom: 1px solid #e8eaf0;
+    box-shadow: 0 1px 4px rgba(9, 30, 66, 0.06);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* Left: brand */
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.header-brand .brand-icon {
+    font-size: 22px;
+    line-height: 1;
+}
+
+.header-brand .brand-name {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+    color: #0052cc;
+    letter-spacing: -0.5px;
+}
+
+/* Center: nav */
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 32px;
+}
+
+.header-nav a {
+    color: #42526e;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+
+.header-nav a:hover {
+    background: #f4f5f7;
+    color: #172b4d;
+}
+
+/* Left group */
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+/* Right: auth actions */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.header-signin-link {
+    color: #42526e;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background 0.15s, color 0.15s;
+}
+
+.header-signin-link:hover {
+    background: #f4f5f7;
+    color: #172b4d;
+}
+
+.header-signup-btn {
+    background: #0052cc !important;
+    border: none !important;
+    border-radius: 24px !important;
+    padding: 0 20px !important;
+    height: 36px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(0, 82, 204, 0.25) !important;
+    transition: background 0.15s, transform 0.15s !important;
+}
+
+.header-signup-btn:hover {
+    background: #0047b3 !important;
+    transform: translateY(-1px) !important;
+}
+
+.header-logout-btn {
+    border-radius: 24px !important;
+    padding: 0 20px !important;
+    height: 36px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+}
+
+/* Logged-in user info */
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.header-username {
+    font-size: 14px;
+    font-weight: 600;
+    color: #172b4d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-nav {
+        display: none;
+    }
+    .app-header {
+        padding: 0 16px;
+    }
+}

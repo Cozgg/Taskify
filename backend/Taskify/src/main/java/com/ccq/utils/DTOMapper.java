@@ -21,8 +21,10 @@ import com.ccq.pojo.response.ResChecklistItemDTO;
 import com.ccq.pojo.response.ResCommentDTO;
 import com.ccq.pojo.response.ResListDTO;
 import com.ccq.pojo.response.ResUserDTO;
+import com.ccq.pojo.response.ResUserPageDTO;
 import com.ccq.pojo.response.ResUserWorkspaceDTO;
 import com.ccq.pojo.response.ResWorkspaceDTO;
+import com.ccq.pojo.response.ResWorkspacePageDTO;
 
 public class DTOMapper {
 
@@ -33,6 +35,21 @@ public class DTOMapper {
         return new ResUserDTO(user.getId(), user.getUsername(), user.getEmail(), user.getAvatar(), user.getRole(), user.getCreatedDate());
     }
 
+    public static ResUserPageDTO toUserPageDTO(
+            java.util.List<User> users,
+            Long totalItems,
+            Integer page,
+            Integer pageSize) {
+        ResUserPageDTO dto = new ResUserPageDTO();
+        if (users != null) {
+            dto.setItems(users.stream().map(DTOMapper::toUserDTO).collect(Collectors.toList()));
+        }
+        dto.setTotalItems(totalItems);
+        dto.setPage(page);
+        dto.setPageSize(pageSize);
+        return dto;
+    }
+
     public static ResWorkspaceDTO toWorkspaceDTO(Workspace workspace) {
         if (workspace == null) {
             return null;
@@ -41,6 +58,23 @@ public class DTOMapper {
         dto.setId(workspace.getId());
         dto.setName(workspace.getName());
         dto.setOwner(toUserDTO(workspace.getOwnerId()));
+        dto.setBoardCount(workspace.getBoardSet() == null ? 0 : workspace.getBoardSet().size());
+        dto.setMemberCount(workspace.getUserWorkspaceSet() == null ? 0 : workspace.getUserWorkspaceSet().size());
+        return dto;
+    }
+
+    public static ResWorkspacePageDTO toWorkspacePageDTO(
+            java.util.List<Workspace> workspaces,
+            Long totalItems,
+            Integer page,
+            Integer pageSize) {
+        ResWorkspacePageDTO dto = new ResWorkspacePageDTO();
+        if (workspaces != null) {
+            dto.setItems(workspaces.stream().map(DTOMapper::toWorkspaceDTO).collect(Collectors.toList()));
+        }
+        dto.setTotalItems(totalItems);
+        dto.setPage(page);
+        dto.setPageSize(pageSize);
         return dto;
     }
 

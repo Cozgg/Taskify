@@ -24,9 +24,15 @@ public interface WorkspaceRepository {
 
     List<Workspace> getWorkspaces(Map<String, String> params);
 
+    Long countWorkspaces(Map<String, String> params);
+
     Workspace getWorkspaceById(int workspaceId);
 
-    Workspace getWorkspaceByOwnerId(int ownerId);
+    List<Workspace> getWorkspaceByOwnerId(int ownerId);
+
+    List<Workspace> getWorkspacesByOwnerId(int ownerId, Map<String, String> params);
+
+    Long countWorkspacesByOwnerId(int ownerId);
 
     List<User> getMembersByWorkspaceId(int workspaceId);
 

@@ -82,6 +82,7 @@ public class BoardController {
     }
 
     //da test, chua phan quyen
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/boards/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable("boardId") int boardId) {
         try {

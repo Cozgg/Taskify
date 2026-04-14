@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -21,7 +22,8 @@ import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
 import com.ccq.pojo.Workspace;
 import com.ccq.pojo.request.ReqAdminWorkspaceDTO;
-import com.ccq.pojo.response.ResWorkspaceDTO;
+import com.ccq.pojo.response.ResWorkspacePageDTO;
+import com.ccq.pojo.response.RestResponse;
 import com.ccq.service.WorkspaceService;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,6 +31,9 @@ class AdminWorkspaceControllerTest {
 
     @Mock
     private WorkspaceService workspaceService;
+
+    @Mock
+    private Environment env;
 
     @InjectMocks
     private AdminWorkspaceController controller;
@@ -74,6 +79,7 @@ class AdminWorkspaceControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         Map<?, ?> payload = (Map<?, ?>) response.getBody();
+        assertNotNull(payload);
         assertEquals(1, payload.get("totalMembers"));
         assertEquals(1, payload.get("totalBoards"));
     }
@@ -104,11 +110,19 @@ class AdminWorkspaceControllerTest {
 
         when(workspaceService.getWorkspaces(any())).thenReturn(List.of(workspace));
 
-        ResponseEntity<List<ResWorkspaceDTO>> response = controller.getAllWorkspaces(Map.of());
+        when(workspaceService.countWorkspaces(any())).thenReturn(1L);
+        when(env.getProperty("workspace.page_size", "10")).thenReturn("10");
+
+        ResponseEntity<RestResponse<ResWorkspacePageDTO>> response = controller.getAllWorkspaces(Map.of());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().size());
-        assertEquals("WS", response.getBody().get(0).getName());
+        RestResponse<ResWorkspacePageDTO> body = response.getBody();
+        assertNotNull(body);
+
+        ResWorkspacePageDTO page = body.getData();
+        assertNotNull(page);
+        assertNotNull(page.getItems());
+        assertEquals(1, page.getItems().size());
+        assertEquals("WS", page.getItems().get(0).getName());
     }
 }

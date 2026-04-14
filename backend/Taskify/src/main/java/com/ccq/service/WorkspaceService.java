@@ -10,6 +10,7 @@ import java.util.Map;
 import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
 import com.ccq.pojo.UserWorkspace;
+
 import com.ccq.pojo.Workspace;
 
 /**
@@ -22,13 +23,19 @@ public interface WorkspaceService {
 
     void delete(int id);
 
-    Workspace getWorkspaceByOwnerId(int ownerId);
+    List<Workspace> getWorkspaceByOwnerId(int ownerId);
+
+    List<Workspace> getWorkspacesByOwnerId(int ownerId, Map<String, String> params);
+
+    Long countWorkspacesByOwnerId(int ownerId);
 
     boolean hasWorkspace(int ownerId);
 
     Workspace getWorkspaceById(int workspaceId);
 
     List<Workspace> getWorkspaces(Map<String, String> params);
+
+    Long countWorkspaces(Map<String, String> params);
 
     List<Board> getBoardsByWorkspaceId(int wsId);
 
@@ -37,6 +44,6 @@ public interface WorkspaceService {
     Long countUserInWorkspace(int workspaceId);
 
     Long countBoardInWorkspace(int workspaceId);
-    
+
     UserWorkspace addUserIntoWorkspace(int workspaceId, int userId);
 }

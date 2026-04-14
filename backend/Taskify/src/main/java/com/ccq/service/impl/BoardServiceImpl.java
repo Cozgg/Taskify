@@ -79,6 +79,14 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public Long countBoards(Map<String, String> params) {
+        if (params != null && params.containsKey("workspaceId")) {
+            permissionService.requireWorkspaceAccess(Integer.parseInt(params.get("workspaceId")));
+        }
+        return this.boardRepo.countBoards(params);
+    }
+
+    @Override
     public Board createBoardInWorkspace(int workspaceId, Board board) {
         permissionService.requireWorkspaceAccess(workspaceId);
         Workspace ws = this.wsRepo.getWorkspaceById(workspaceId);

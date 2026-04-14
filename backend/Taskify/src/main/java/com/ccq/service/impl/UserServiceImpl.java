@@ -30,6 +30,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Long countUsers(Map<String, String> params) {
+        return this.userRepo.countUsers(params);
+    }
+
+    @Override
     public void addOrUpdateUser(User u) {
         this.userRepo.addOrUpdateUser(u);
     }

@@ -50,7 +50,7 @@ public class SecurityConfiguration {
                 ).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/api/auth/login")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/api/auth/register")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("api/auth/refresh-token")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/auth/refresh-token")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/api/admin/**")).hasRole("ADMIN")
                 .anyRequest().authenticated()
                 )
