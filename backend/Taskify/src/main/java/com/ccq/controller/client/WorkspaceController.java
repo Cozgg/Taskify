@@ -164,7 +164,6 @@ public class WorkspaceController {
             return ResponseEntity.badRequest().body(err);
         }
     }
-    @PreAuthorize("@securityCustom.isAdminOfThisWorkspace(#p0, authentication.name)")
     @PostMapping("/workspaces/{workspaceId}/users")
     public ResponseEntity<ResUserWorkspaceDTO> inviteUser(@PathVariable("workspaceId") int workspaceId, @RequestBody Map<String, String> params){
         User u = this.userService.getUserById(Integer.parseInt(params.get("userId")));

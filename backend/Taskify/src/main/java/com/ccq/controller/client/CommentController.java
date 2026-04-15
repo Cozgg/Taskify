@@ -55,7 +55,7 @@ public class CommentController {
         }
     }
     
-    @PreAuthorize("hasRole('ADMIN') or @securityCustom.isWorkspaceAdminOfThisComment(#p0, authentication.name) or @securityCustom.isCommentOwner(#p0, authentication.name)")
+    
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable("commentId") int commentId){
         this.commSer.deleteComment(commentId);

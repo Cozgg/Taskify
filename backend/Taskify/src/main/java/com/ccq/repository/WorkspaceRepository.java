@@ -39,4 +39,6 @@ public interface WorkspaceRepository {
     void addUserIntoWorkspace(UserWorkspace uw);
     
     boolean isAdminOfThisWorkspace(int workspaceId, String username);
+    
+    boolean isUserExistInWorkspace(int workspaceId, int userId);
 }

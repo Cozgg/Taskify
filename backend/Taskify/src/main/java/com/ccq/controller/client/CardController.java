@@ -104,7 +104,6 @@ public class CardController {
         }
     }
 
-    @PreAuthorize("@securityCustom.isWorkspaceAdminOfThisCard(#p0, authentication.name)")
     @PostMapping("/cards/{cardId}/assign")
     public ResponseEntity<?> assignUserToCard(@PathVariable("cardId") int cardId) {
 

@@ -14,6 +14,7 @@ import com.ccq.repository.UserRepository;
 import com.ccq.repository.WorkspaceRepository;
 import com.ccq.service.PermissionService;
 import com.ccq.service.WorkspaceService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -135,9 +136,20 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     public UserWorkspace addUserIntoWorkspace(int workspaceId, int userId) {
+                
         UserWorkspace uw = new UserWorkspace();
         Workspace w = workspaceRepo.getWorkspaceById(workspaceId);
+        if (w == null){
+            throw new IllegalArgumentException("Workspace ko tồn tại");
+        }
         User u = userRepo.findUserById(userId);
+        if(u == null){
+            throw new UsernameNotFoundException("User ko tìm thấy");
+        }
+        
+        if(this.workspaceRepo.isUserExistInWorkspace(workspaceId, userId)){
+            throw new IllegalArgumentException("User đã tồn tại");
+        }
         
         uw.setUserId(u);
         uw.setWorkspaceId(w);

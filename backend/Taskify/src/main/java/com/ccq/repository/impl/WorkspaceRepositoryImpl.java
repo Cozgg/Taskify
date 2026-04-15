@@ -137,10 +137,9 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     public boolean isAdminOfThisWorkspace(int workspaceId, String username) {
         Session s = this.factory.getObject().getCurrentSession();
         Query<Long> q = s.createQuery(
-                "SELECT COUNT(uw.id) FROM UserWorkspace uw WHERE uw.workspaceId.id = :wsId AND uw.userId.username = :username", Long.class);
+                "SELECT COUNT(w.id) FROM Workspace w WHERE w.id = :wsId AND w.ownerId.username = :username", Long.class);
         q.setParameter("wsId", workspaceId);
         q.setParameter("username", username);
-
         return q.uniqueResult() > 0;
     }
 
@@ -157,6 +156,16 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     public void addUserIntoWorkspace(UserWorkspace uw) {
         Session s = this.factory.getObject().getCurrentSession();
         s.persist(uw);
+    }
+
+    @Override
+    public boolean isUserExistInWorkspace(int workspaceId, int userId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query<Long> q = s.createNamedQuery("select count(uw.id) from UserWorkspace uw"
+                + " where uw.workspaceId.id = :wsId and uw.userId.id = :userId", Long.class);
+        q.setParameter("wsId", workspaceId);
+        q.setParameter("userId", userId);
+        return q.uniqueResult() > 0;
     }
 
 }
