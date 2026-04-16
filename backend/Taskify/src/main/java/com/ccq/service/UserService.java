@@ -6,8 +6,10 @@ import java.util.Map;
 import com.ccq.pojo.User;
 
 public interface UserService {
-    
+
     List<User> getUsers(Map<String, String> params);
+
+    Long countUsers(Map<String, String> params);
 
     void addOrUpdateUser(User u);
 

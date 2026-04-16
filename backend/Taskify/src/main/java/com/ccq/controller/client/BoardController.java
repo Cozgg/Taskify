@@ -30,6 +30,7 @@ import com.ccq.service.BoardService;
  */
 @RestController
 @RequestMapping("/api")
+@PreAuthorize("isAuthenticated()")
 public class BoardController {
 
     @Autowired
@@ -47,7 +48,6 @@ public class BoardController {
     }
 
     @GetMapping("/boards/{boardId}")
-    @PreAuthorize("@securityCustom.canAccessBoard(authentication.name, #boardId)")
     public ResponseEntity<?> getBoardById(@PathVariable("boardId") int boardId) {
         Board board = this.boardService.getById(boardId);
         if (board != null) {
@@ -69,7 +69,6 @@ public class BoardController {
     }
 
     @PutMapping("/boards/{boardId}")
-    @PreAuthorize("@securityCustom.canAccessBoard(authentication.name, #boardId)")
     public ResponseEntity<?> updateBoard(
             @PathVariable("boardId") int boardId,
             @RequestBody Board board) {

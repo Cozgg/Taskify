@@ -23,5 +23,7 @@ public interface BoardService {
 
     List<Board> getBoards(Map<String, String> params);
 
+    Long countBoards(Map<String, String> params);
+
     Board createBoardInWorkspace(int workspaceId, Board board);
 }

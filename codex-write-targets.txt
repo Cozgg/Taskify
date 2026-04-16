@@ -1,0 +1,13 @@
+$files = @(
+  'backend/Taskify/src/main/java/com/ccq/service/WorkspaceService.java',
+  'backend/Taskify/src/main/java/com/ccq/repository/WorkspaceRepository.java',
+  'backend/Taskify/src/main/java/com/ccq/repository/impl/WorkspaceRepositoryImpl.java',
+  'backend/Taskify/src/main/java/com/ccq/service/impl/WorkspaceServiceImpl.java',
+  'backend/Taskify/src/main/java/com/ccq/controller/admin/AdminWorkspaceController.java',
+  'backend/Taskify/src/main/java/com/ccq/controller/client/WorkspaceController.java',
+  'frontend/taskify/src/utils/Apis.jsx',
+  'frontend/taskify/src/pages/admin/AdminWorkspaces.jsx',
+  'frontend/taskify/src/pages/admin/AdminWorkspaceDetail.jsx',
+  'frontend/taskify/src/pages/WorkspaceOverview.jsx'
+)
+$files | ForEach-Object { $_ }

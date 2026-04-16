@@ -17,6 +17,8 @@ public interface UserRepository {
 
     List<User> getUsers(Map<String, String> params);
 
+    Long countUsers(Map<String, String> params);
+
     User findUserById(int id);
 
     User findUserByEmail(String email);

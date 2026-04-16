@@ -4,24 +4,27 @@
  */
 package com.ccq.repository.impl;
 
-import com.ccq.pojo.Activity;
-import com.ccq.pojo.Board;
-import com.ccq.pojo.Boardlist;
-import com.ccq.pojo.Card;
-import com.ccq.pojo.User;
-import com.ccq.repository.StatRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Root;
 import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.ccq.pojo.Activity;
+import com.ccq.pojo.Board;
+import com.ccq.pojo.Boardlist;
+import com.ccq.pojo.Card;
+import com.ccq.pojo.User;
+import com.ccq.repository.StatRepository;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Root;
 
 /**
  *
@@ -70,11 +73,11 @@ public class StatRepositoryImpl implements StatRepository {
                 listJoin.get("status"),
                 b.count(cardJoin.get("id"))
         );
-        
+
         q.where(b.equal(listJoin.get("boardId").get("id"), id));
-        
+
         q.groupBy(root.get("id"), root.get("username"), listJoin.get("status"));
-        
+
         Query query = session.createQuery(q);
         return query.getResultList();
     }

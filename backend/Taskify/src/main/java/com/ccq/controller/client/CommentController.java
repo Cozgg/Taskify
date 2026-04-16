@@ -4,12 +4,18 @@
  */
 package com.ccq.controller.client;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ccq.pojo.Comment;
@@ -18,11 +24,6 @@ import com.ccq.pojo.response.ResCommentDTO;
 import com.ccq.service.CommentService;
 import com.ccq.service.UserService;
 import com.ccq.utils.DTOMapper;
-import java.util.Map;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  *
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @RestController
 @RequestMapping("/api")
+@PreAuthorize("isAuthenticated()")
 public class CommentController {
 
     @Autowired
@@ -55,7 +57,6 @@ public class CommentController {
         }
     }
     
-    @PreAuthorize("hasRole('ADMIN') or @securityCustom.isWorkspaceAdminOfThisComment(#p0, authentication.name) or @securityCustom.isCommentOwner(#p0, authentication.name)")
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable("commentId") int commentId){
         this.commSer.deleteComment(commentId);

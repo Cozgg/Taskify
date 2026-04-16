@@ -1,6 +1,5 @@
 package com.ccq.configs;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -29,14 +30,14 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http    
+        http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ).exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException)
                 -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Lỗi 401: Chưa xác thực Token!")
-                ))
+        ))
                 .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                         new AntPathRequestMatcher("/swagger-ui/**"),
@@ -47,9 +48,10 @@ public class SecurityConfiguration {
                         new AntPathRequestMatcher("/webjars/**"),
                         new AntPathRequestMatcher("/")
                 ).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/register")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/refresh-token")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/auth/login")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/auth/register")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/auth/refresh-token")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/admin/**")).hasRole("ADMIN")
                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

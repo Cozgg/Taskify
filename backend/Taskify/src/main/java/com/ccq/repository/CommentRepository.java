@@ -11,9 +11,14 @@ import com.ccq.pojo.Comment;
  * @author Admin
  */
 public interface CommentRepository {
+
     void addComment(Comment c);
+
     void deleteComment(int id);
+
     Comment getCommentById(int id);
-    boolean isCommentOwner(int commentId, String username);
-    boolean isWorkspaceAdminOfThisComment(int commentId, String username);
+
+    // boolean isCommentOwner(int commentId, String username);
+
+    // boolean isWorkspaceAdminOfThisComment(int commentId, String username);
 }
