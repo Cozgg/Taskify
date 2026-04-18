@@ -43,6 +43,7 @@ public class CardController {
     private UserService userService;
 
     @GetMapping("/lists/{listId}/cards")
+    @PreAuthorize("@securityCustom.canAccessList(authentication.name, #listId)")
     public ResponseEntity<?> getCards(@PathVariable("listId") int listId, @RequestParam Map<String, String> params) {
         params.put("listId", String.valueOf(listId));
         List<Card> cards = this.cardService.getCard(params);
@@ -54,6 +55,7 @@ public class CardController {
     }
 
     @PostMapping("/lists/{listId}/cards")
+    @PreAuthorize("@securityCustom.canAccessList(authentication.name, #listId)")
     public ResponseEntity<?> createCard(
             @PathVariable("listId") int listId,
             @RequestBody Card c) {
@@ -69,6 +71,7 @@ public class CardController {
     }
 
     @PutMapping("/cards/{cardId}")
+    @PreAuthorize("@securityCustom.canAccessCard(authentication.name, #cardId)")
     public ResponseEntity<?> updateCard(@PathVariable("cardId") int cardId, @RequestBody Card c) {
         try {
             c.setId(cardId);
@@ -85,6 +88,7 @@ public class CardController {
     }
 
     @DeleteMapping("/cards/{cardId}")
+    @PreAuthorize("@securityCustom.canAccessCard(authentication.name, #cardId)")
     public ResponseEntity<?> deleteCard(@PathVariable("cardId") int cardId) {
         try {
             this.cardService.delete(cardId);
@@ -95,6 +99,7 @@ public class CardController {
     }
 
     @PatchMapping("/cards/{cardId}/move")
+    @PreAuthorize("@securityCustom.canAccessCard(authentication.name, #cardId)")
     public ResponseEntity<?> moveCard(
             @PathVariable("cardId") int cardId,
             @RequestBody Map<String, Integer> payload) {
@@ -114,6 +119,7 @@ public class CardController {
     }
 
     @PostMapping("/cards/{cardId}/assign")
+    @PreAuthorize("@securityCustom.canAccessCard(authentication.name, #cardId)")
     public ResponseEntity<?> assignUserToCard(@PathVariable("cardId") int cardId) {
 
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
