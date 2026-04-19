@@ -11,6 +11,8 @@ import com.ccq.pojo.Comment;
  * @author Admin
  */
 public interface CommentService {
+
     Comment addComment(Comment c, int userId, int cardId);
+
     void deleteComment(int id);
 }

@@ -4,12 +4,9 @@
  */
 package com.ccq.controller.client;
 
-
-
-import com.ccq.pojo.Board;
-import com.ccq.service.BoardService;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,37 +18,44 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.ccq.pojo.Board;
+import com.ccq.pojo.response.ResBoardDTO;
+import com.ccq.service.BoardService;
+import com.ccq.utils.DTOMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author nguye
  */
 @RestController
-@RequestMapping("/api") 
+@RequestMapping("/api")
+@PreAuthorize("isAuthenticated()")
 public class BoardController {
+
     @Autowired
     private BoardService boardService;
 
-    @GetMapping("/workspaces/{workspaceId}/boards")
-    public ResponseEntity<?> getBoardsByWorkspace(
-            @PathVariable("workspaceId") int workspaceId,
-            @RequestParam Map<String, String> params) {
-        
-        params.put("workspaceId", String.valueOf(workspaceId));
-        
-        List<Board> boards = this.boardService.getBoards(params);
-        return new ResponseEntity<>(boards, HttpStatus.OK);
-    }
-
+//    @GetMapping("/workspaces/{workspaceId}/boards")
+//    public ResponseEntity<?> getBoardsByWorkspace(
+//            @PathVariable("workspaceId") int workspaceId,
+//            @RequestParam Map<String, String> params) {
+//
+//        params.put("workspaceId", String.valueOf(workspaceId));
+//
+//        List<Board> boards = this.boardService.getBoards(params);
+//        return new ResponseEntity<>(boards, HttpStatus.OK);
+//    }
+    @Transactional
     @GetMapping("/boards/{boardId}")
-    public ResponseEntity<?> getBoardById(@PathVariable("boardId") int boardId) {
+    public ResponseEntity<?> getBoardDetails(@PathVariable("boardId") int boardId) {
         Board board = this.boardService.getById(boardId);
         if (board != null) {
-            return new ResponseEntity<>(board, HttpStatus.OK);
+            ResBoardDTO dto = DTOMapper.toBoardDTO(board);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
         }
         return new ResponseEntity<>("Không tìm thấy Bảng", HttpStatus.NOT_FOUND);
     }

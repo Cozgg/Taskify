@@ -9,5 +9,5 @@ package com.ccq.pojo.response;
  * @author Admin
  */
 public class ResCardUserDTO {
-    
+
 }

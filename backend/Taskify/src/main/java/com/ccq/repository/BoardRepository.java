@@ -23,5 +23,7 @@ public interface BoardRepository {
 
     List<Board> getBoards(Map<String, String> params);
 
+    Long countBoards(Map<String, String> params);
+
     Long count();
 }

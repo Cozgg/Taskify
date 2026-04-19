@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ccq.pojo.User;
@@ -18,6 +19,7 @@ import com.ccq.pojo.UserRole;
 import com.ccq.pojo.request.ReqLoginDTO;
 import com.ccq.pojo.request.ReqRegisterDTO;
 import com.ccq.pojo.response.ResLoginDTO;
+import com.ccq.pojo.response.ResRegisterDTO;
 import com.ccq.pojo.response.RestResponse;
 import com.ccq.service.UserService;
 import com.ccq.utils.JwtUtil;
@@ -26,6 +28,7 @@ import com.ccq.utils.error.IdInvalidException;
 import jakarta.validation.Valid;
 
 @RestController
+@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
@@ -64,7 +67,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RestResponse<ResLoginDTO>> register(@Valid @RequestBody ReqRegisterDTO request)
+    public ResponseEntity<RestResponse<ResRegisterDTO>> register(@Valid @RequestBody ReqRegisterDTO request)
             throws IdInvalidException {
 
         if (userService.existsByUsername(request.getUsername())) {
@@ -85,16 +88,12 @@ public class AuthController {
 
         User saved = userService.getUserByUsername(request.getUsername());
 
-        String accessToken = jwtUtil.generateToken(saved.getUsername());
-        String refreshToken = jwtUtil.generateRefreshToken(saved.getUsername());
+        ResRegisterDTO resRegister = new ResRegisterDTO(saved.getId(), saved.getUsername(), saved.getRole());
 
-        ResLoginDTO resLogin = new ResLoginDTO(accessToken, saved.getId(), saved.getUsername(), saved.getRole());
-        resLogin.setRefreshToken(refreshToken);
-
-        RestResponse<ResLoginDTO> res = new RestResponse<>();
+        RestResponse<ResRegisterDTO> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.CREATED.value());
         res.setMessage("Register thành công");
-        res.setData(resLogin);
+        res.setData(resRegister);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }

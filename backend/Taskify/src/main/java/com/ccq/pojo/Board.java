@@ -4,6 +4,7 @@
  */
 package com.ccq.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,6 +40,7 @@ import java.util.Set;
     @NamedQuery(name = "Board.findByName", query = "SELECT b FROM Board b WHERE b.name = :name"),
     @NamedQuery(name = "Board.findByCreatedDate", query = "SELECT b FROM Board b WHERE b.createdDate = :createdDate"),
     @NamedQuery(name = "Board.findByIsPublic", query = "SELECT b FROM Board b WHERE b.isPublic = :isPublic")})
+@JsonIgnoreProperties({"boardlistSet"})
 public class Board implements Serializable {
 
     private static final long serialVersionUID = 1L;

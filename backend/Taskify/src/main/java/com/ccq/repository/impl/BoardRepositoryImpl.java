@@ -95,19 +95,53 @@ public class BoardRepositoryImpl implements BoardRepository {
 
         Query<Board> query = s.createQuery(q);
 
+        int pageSize = Integer.parseInt(this.env.getProperty("board.page_size", "8"));
+        int page = 1;
         if (params != null) {
-            String pageStr = params.get("page");
-            if (pageStr != null && !pageStr.isEmpty()) {
-                int pageSize = this.env.getProperty("workspace.page_size", Integer.class);
-                int page = Integer.parseInt(pageStr);
-                int start = (page - 1) * pageSize;
-
-                query.setMaxResults(pageSize);
-                query.setFirstResult(start);
+            try {
+                page = Integer.parseInt(params.getOrDefault("page", "1"));
+            } catch (NumberFormatException ignored) {
+                page = 1;
             }
         }
 
+        if (page < 1) {
+            page = 1;
+        }
+
+        int start = (page - 1) * pageSize;
+        query.setMaxResults(pageSize);
+        query.setFirstResult(start);
+
         return query.getResultList();
+    }
+
+    @Override
+    public Long countBoards(Map<String, String> params) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<Long> q = b.createQuery(Long.class);
+        Root<Board> root = q.from(Board.class);
+        q.select(b.count(root));
+
+        if (params != null) {
+            List<Predicate> predicates = new ArrayList<>();
+            String workspaceId = params.get("workspaceId");
+            if (workspaceId != null && !workspaceId.isBlank()) {
+                predicates.add(b.equal(root.get("workspaceId").get("id"), Integer.parseInt(workspaceId)));
+            }
+
+            String kw = params.get("kw");
+            if (kw != null && !kw.isBlank()) {
+                predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw.trim())));
+            }
+
+            if (!predicates.isEmpty()) {
+                q.where(predicates.toArray(new Predicate[0]));
+            }
+        }
+
+        return s.createQuery(q).getSingleResult();
     }
 
     @Override
