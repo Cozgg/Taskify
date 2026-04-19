@@ -40,18 +40,17 @@ public class BoardController {
     private BoardService boardService;
 
 
-
-    @GetMapping("/workspaces/{workspaceId}/boards")
-    @PreAuthorize("@securityCustom.canAccessWorkspace(authentication.name, #workspaceId)")
-    public ResponseEntity<?> getBoardsByWorkspace(
-            @PathVariable("workspaceId") int workspaceId,
-            @RequestParam Map<String, String> params) {
-
-        params.put("workspaceId", String.valueOf(workspaceId));
-
-        List<Board> boards = this.boardService.getBoards(params);
-        return new ResponseEntity<>(boards, HttpStatus.OK);
-    }
+//    @GetMapping("/workspaces/{workspaceId}/boards")
+//    @PreAuthorize("@securityCustom.canAccessWorkspace(authentication.name, #workspaceId)")
+//    public ResponseEntity<?> getBoardsByWorkspace(
+//            @PathVariable("workspaceId") int workspaceId,
+//            @RequestParam Map<String, String> params) {
+//
+//        params.put("workspaceId", String.valueOf(workspaceId));
+//
+//        List<Board> boards = this.boardService.getBoards(params);
+//        return new ResponseEntity<>(boards, HttpStatus.OK);
+//    }
 
     @GetMapping("/boards/{boardId}")
     @PreAuthorize("@securityCustom.canAccessBoard(authentication.name, #boardId)")
