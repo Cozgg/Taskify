@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Typography,
@@ -50,8 +50,10 @@ const WorkspaceOverview = () => {
     const [boardTotalItems, setBoardTotalItems] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [inviteValue, setInviteValue] = useState('');
+    const [isBoardModalVisible, setIsBoardModalVisible] = useState(false);
+    const [newBoardName, setNewBoardName] = useState('');
 
-    const loadWorkspaceContext = async () => {
+    const loadWorkspaceContext = useCallback(async () => {
         try {
             setLoadingWorkspace(true);
             const token = cookies.load('token');
@@ -72,9 +74,9 @@ const WorkspaceOverview = () => {
         } finally {
             setLoadingWorkspace(false);
         }
-    };
+    }, [workspaceId]);
 
-    const loadBoards = async (pageNum = 1, kw = committedBoardKw) => {
+    const loadBoards = useCallback(async (pageNum = 1, kw = committedBoardKw) => {
         try {
             setLoadingBoards(true);
             const token = cookies.load('token');
@@ -106,7 +108,7 @@ const WorkspaceOverview = () => {
         } finally {
             setLoadingBoards(false);
         }
-    };
+    }, [workspaceId, committedBoardKw]);
 
     useEffect(() => {
         setBoardPage(1);
@@ -114,7 +116,43 @@ const WorkspaceOverview = () => {
         setCommittedBoardKw('');
         loadWorkspaceContext();
         loadBoards(1, '');
-    }, [workspaceId]);
+    }, [workspaceId, loadWorkspaceContext, loadBoards]);
+
+    const openBoardModal = () => {
+        setNewBoardName('');
+        setIsBoardModalVisible(true);
+    };
+
+    const handleCreateBoard = async () => {
+        const boardName = newBoardName.trim();
+        if (!boardName) {
+            message.warning('Vui lòng nhập tên board mới.');
+            return;
+        }
+
+        if (boards.some((board) => board.name?.trim().toLowerCase() === boardName.toLowerCase())) {
+            message.warning('Board này đã tồn tại trong workspace.');
+            return;
+        }
+
+        try {
+            const token = cookies.load('token');
+            const api = authApis(token);
+            const payload = { name: boardName };
+            const res = await api.post(endpoints['create-board'](workspaceId), payload);
+            if (res.status === 201 || res.status === 200) {
+                message.success('Tạo board mới thành công.');
+                setIsBoardModalVisible(false);
+                setNewBoardName('');
+                loadBoards(boardPage, committedBoardKw);
+            }
+        } catch (err) {
+            message.error(
+                'Lỗi tạo board: ' +
+                (err.response?.data?.error || err.response?.data?.message || err.message)
+            );
+        }
+    };
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -127,7 +165,7 @@ const WorkspaceOverview = () => {
 
     useEffect(() => {
         loadBoards(boardPage, committedBoardKw);
-    }, [boardPage, committedBoardKw]);
+    }, [boardPage, committedBoardKw, loadBoards]);
 
     const handleInvite = async () => {
         try {
@@ -215,7 +253,7 @@ const WorkspaceOverview = () => {
 
                     {!committedBoardKw && (
                         <Col xs={24} sm={12} md={8} lg={6}>
-                            <Card hoverable className="board-card create-board-card">
+                            <Card hoverable className="board-card create-board-card" onClick={openBoardModal}>
                                 <div className="create-board-content">
                                     <Text><PlusOutlined /> Tạo bảng mới</Text>
                                 </div>
@@ -335,6 +373,22 @@ const WorkspaceOverview = () => {
                     placeholder="VD: user@gmail.com"
                     value={inviteValue}
                     onChange={(e) => setInviteValue(e.target.value)}
+                    size="large"
+                />
+            </Modal>
+
+            <Modal
+                title="Tạo board mới"
+                open={isBoardModalVisible}
+                onOk={handleCreateBoard}
+                onCancel={() => setIsBoardModalVisible(false)}
+                okText="Tạo"
+                cancelText="Hủy"
+            >
+                <Input
+                    placeholder="Tên board"
+                    value={newBoardName}
+                    onChange={(e) => setNewBoardName(e.target.value)}
                     size="large"
                 />
             </Modal>

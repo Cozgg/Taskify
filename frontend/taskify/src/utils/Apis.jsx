@@ -16,18 +16,29 @@ export let endpoints = {
 
     // card api
     'cards': listId => `/api/lists/${listId}/cards`,
+    'create-card': listId => `/api/lists/${listId}/cards`,
     'card-detail': cardId => `/api/cards/${cardId}`,
+    'update-card': cardId => `/api/cards/${cardId}`,
+    'delete-card': cardId => `/api/cards/${cardId}`,
     'assign-card': cardId => `/api/cards/${cardId}/assign`,
     'move-card': cardId => `/api/cards/${cardId}/move`,
     // list api
+    'create-list': boardId => `/api/boards/${boardId}/lists`,
     'lists': boardId => `/api/boards/${boardId}/lists`,
     'list-detail': listId => `/api/lists/${listId}`,
+    'update-list': listId => `/api/lists/${listId}`,
+    'delete-list': listId => `/api/lists/${listId}`,
     // workspace api
     'create-workspace': '/api/workspaces',
     'workspaces': '/api/workspaces/owner',
     'workspace-detail': workspaceId => `/api/workspaces/${workspaceId}`,
     'workspace-member': workspaceId => `/api/workspaces/${workspaceId}/members`,
     'workspace-board': workspaceId => `/api/workspaces/${workspaceId}/boards`,
+
+    'create-board': workspaceId => `/api/workspaces/${workspaceId}/boards`,
+    'board-detail': boardId => `/api/boards/${boardId}`,
+    'update-board': boardId => `/api/boards/${boardId}`,
+    'delete-board': boardId => `/api/boards/${boardId}`,
     'invite-member': workspaceId => `/api/workspaces/${workspaceId}/users`,
 }
 
@@ -78,4 +89,42 @@ export const authApis = (token) => {
     );
 
     return instance;
+};
+
+// Board API functions
+export const updateBoard = async (token, boardId, boardData) => {
+    const api = authApis(token);
+    return api.put(endpoints['update-board'](boardId), boardData);
+};
+
+export const deleteBoard = async (token, boardId) => {
+    const api = authApis(token);
+    return api.delete(endpoints['delete-board'](boardId));
+};
+
+// List API functions
+export const updateList = async (token, listId, listData) => {
+    const api = authApis(token);
+    return api.put(endpoints['update-list'](listId), listData);
+};
+
+export const deleteList = async (token, listId) => {
+    const api = authApis(token);
+    return api.delete(endpoints['delete-list'](listId));
+};
+
+// Card API functions
+export const createCard = async (token, listId, cardData) => {
+    const api = authApis(token);
+    return api.post(endpoints['create-card'](listId), cardData);
+};
+
+export const updateCard = async (token, cardId, cardData) => {
+    const api = authApis(token);
+    return api.put(endpoints['update-card'](cardId), cardData);
+};
+
+export const deleteCard = async (token, cardId) => {
+    const api = authApis(token);
+    return api.delete(endpoints['delete-card'](cardId));
 };
