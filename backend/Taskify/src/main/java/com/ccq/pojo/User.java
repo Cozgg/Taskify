@@ -5,6 +5,7 @@
 package com.ccq.pojo;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,6 +19,8 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -28,6 +31,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "user")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
@@ -35,7 +39,8 @@ import java.util.Set;
     @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
     @NamedQuery(name = "User.findByCreatedDate", query = "SELECT u FROM User u WHERE u.createdDate = :createdDate"),
-    @NamedQuery(name = "User.findByAvatar", query = "SELECT u FROM User u WHERE u.avatar = :avatar")})
+    @NamedQuery(name = "User.findByAvatar", query = "SELECT u FROM User u WHERE u.avatar = :avatar"),
+    @NamedQuery(name = "User.findByRole", query = "SELECT u FROM User u WHERE u.role = :role")})
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,7 +51,7 @@ public class User implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 255)
     @Column(name = "username")
     private String username;
     @Basic(optional = false)
@@ -57,7 +62,7 @@ public class User implements Serializable {
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 255)
     @Column(name = "email")
     private String email;
     @Column(name = "created_date")
@@ -66,14 +71,21 @@ public class User implements Serializable {
     @Size(max = 255)
     @Column(name = "avatar")
     private String avatar;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 5)
+    @Column(name = "role")
+    private String role;
     @OneToMany(mappedBy = "ownerId")
     private Set<Workspace> workspaceSet;
     @OneToMany(mappedBy = "userId")
     private Set<Activity> activitySet;
     @OneToMany(mappedBy = "userId")
     private Set<Comment> commentSet;
-    @OneToMany(mappedBy = "userId")
-    private Set<Thamgia> thamgiaSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<UserWorkspace> userWorkspaceSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<CardUser> cardUserSet;
 
     public User() {
     }
@@ -82,11 +94,12 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String username, String password, String email) {
+    public User(Integer id, String username, String password, String email, String role) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
+        this.role = role;
     }
 
     public Integer getId() {
@@ -137,6 +150,15 @@ public class User implements Serializable {
         this.avatar = avatar;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    @XmlTransient
     public Set<Workspace> getWorkspaceSet() {
         return workspaceSet;
     }
@@ -145,6 +167,7 @@ public class User implements Serializable {
         this.workspaceSet = workspaceSet;
     }
 
+    @XmlTransient
     public Set<Activity> getActivitySet() {
         return activitySet;
     }
@@ -153,6 +176,7 @@ public class User implements Serializable {
         this.activitySet = activitySet;
     }
 
+    @XmlTransient
     public Set<Comment> getCommentSet() {
         return commentSet;
     }
@@ -161,12 +185,22 @@ public class User implements Serializable {
         this.commentSet = commentSet;
     }
 
-    public Set<Thamgia> getThamgiaSet() {
-        return thamgiaSet;
+    @XmlTransient
+    public Set<UserWorkspace> getUserWorkspaceSet() {
+        return userWorkspaceSet;
     }
 
-    public void setThamgiaSet(Set<Thamgia> thamgiaSet) {
-        this.thamgiaSet = thamgiaSet;
+    public void setUserWorkspaceSet(Set<UserWorkspace> userWorkspaceSet) {
+        this.userWorkspaceSet = userWorkspaceSet;
+    }
+
+    @XmlTransient
+    public Set<CardUser> getCardUserSet() {
+        return cardUserSet;
+    }
+
+    public void setCardUserSet(Set<CardUser> cardUserSet) {
+        this.cardUserSet = cardUserSet;
     }
 
     @Override
