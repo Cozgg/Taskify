@@ -4,6 +4,7 @@
  */
 package com.ccq.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,6 +21,8 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -30,12 +33,14 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "board")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Board.findAll", query = "SELECT b FROM Board b"),
     @NamedQuery(name = "Board.findById", query = "SELECT b FROM Board b WHERE b.id = :id"),
     @NamedQuery(name = "Board.findByName", query = "SELECT b FROM Board b WHERE b.name = :name"),
     @NamedQuery(name = "Board.findByCreatedDate", query = "SELECT b FROM Board b WHERE b.createdDate = :createdDate"),
     @NamedQuery(name = "Board.findByIsPublic", query = "SELECT b FROM Board b WHERE b.isPublic = :isPublic")})
+@JsonIgnoreProperties({"boardlistSet"})
 public class Board implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,7 +51,7 @@ public class Board implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 255)
     @Column(name = "name")
     private String name;
     @Column(name = "created_date")
@@ -55,7 +60,7 @@ public class Board implements Serializable {
     @Column(name = "is_public")
     private Boolean isPublic;
     @OneToMany(mappedBy = "boardId")
-    private Set<List> listSet;
+    private Set<Boardlist> boardlistSet;
     @JoinColumn(name = "workspace_id", referencedColumnName = "id")
     @ManyToOne
     private Workspace workspaceId;
@@ -104,12 +109,13 @@ public class Board implements Serializable {
         this.isPublic = isPublic;
     }
 
-    public Set<List> getListSet() {
-        return listSet;
+    @XmlTransient
+    public Set<Boardlist> getBoardlistSet() {
+        return boardlistSet;
     }
 
-    public void setListSet(Set<List> listSet) {
-        this.listSet = listSet;
+    public void setBoardlistSet(Set<Boardlist> boardlistSet) {
+        this.boardlistSet = boardlistSet;
     }
 
     public Workspace getWorkspaceId() {

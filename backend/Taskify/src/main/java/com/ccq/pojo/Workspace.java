@@ -5,6 +5,7 @@
 package com.ccq.pojo;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,6 +19,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -27,6 +30,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "workspace")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Workspace.findAll", query = "SELECT w FROM Workspace w"),
     @NamedQuery(name = "Workspace.findById", query = "SELECT w FROM Workspace w WHERE w.id = :id"),
@@ -41,16 +45,16 @@ public class Workspace implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 255)
     @Column(name = "name")
     private String name;
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     @ManyToOne
     private User ownerId;
     @OneToMany(mappedBy = "workspaceId")
-    private Set<Thamgia> thamgiaSet;
-    @OneToMany(mappedBy = "workspaceId")
     private Set<Board> boardSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "workspaceId")
+    private Set<UserWorkspace> userWorkspaceSet;
 
     public Workspace() {
     }
@@ -88,20 +92,22 @@ public class Workspace implements Serializable {
         this.ownerId = ownerId;
     }
 
-    public Set<Thamgia> getThamgiaSet() {
-        return thamgiaSet;
-    }
-
-    public void setThamgiaSet(Set<Thamgia> thamgiaSet) {
-        this.thamgiaSet = thamgiaSet;
-    }
-
+    @XmlTransient
     public Set<Board> getBoardSet() {
         return boardSet;
     }
 
     public void setBoardSet(Set<Board> boardSet) {
         this.boardSet = boardSet;
+    }
+
+    @XmlTransient
+    public Set<UserWorkspace> getUserWorkspaceSet() {
+        return userWorkspaceSet;
+    }
+
+    public void setUserWorkspaceSet(Set<UserWorkspace> userWorkspaceSet) {
+        this.userWorkspaceSet = userWorkspaceSet;
     }
 
     @Override

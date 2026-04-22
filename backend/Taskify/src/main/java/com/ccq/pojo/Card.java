@@ -4,16 +4,15 @@
  */
 package com.ccq.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -23,6 +22,8 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -33,15 +34,18 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "card")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Card.findAll", query = "SELECT c FROM Card c"),
     @NamedQuery(name = "Card.findById", query = "SELECT c FROM Card c WHERE c.id = :id"),
     @NamedQuery(name = "Card.findByName", query = "SELECT c FROM Card c WHERE c.name = :name"),
+    @NamedQuery(name = "Card.findByDescription", query = "SELECT c FROM Card c WHERE c.description = :description"),
     @NamedQuery(name = "Card.findByCreatedDate", query = "SELECT c FROM Card c WHERE c.createdDate = :createdDate"),
     @NamedQuery(name = "Card.findByIsActive", query = "SELECT c FROM Card c WHERE c.isActive = :isActive"),
     @NamedQuery(name = "Card.findByDueDate", query = "SELECT c FROM Card c WHERE c.dueDate = :dueDate"),
     @NamedQuery(name = "Card.findByReminderDate", query = "SELECT c FROM Card c WHERE c.reminderDate = :reminderDate"),
     @NamedQuery(name = "Card.findByPosition", query = "SELECT c FROM Card c WHERE c.position = :position")})
+@JsonIgnoreProperties({"checklistItemSet", "activitySet", "attachmentSet", "commentSet", "cardUserSet"})
 public class Card implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -55,8 +59,7 @@ public class Card implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "name")
     private String name;
-    @Lob
-    @Size(max = 65535)
+    @Size(max = 255)
     @Column(name = "description")
     private String description;
     @Column(name = "created_date")
@@ -72,11 +75,6 @@ public class Card implements Serializable {
     private Date reminderDate;
     @Column(name = "position")
     private Integer position;
-    @JoinTable(name = "card_label", joinColumns = {
-        @JoinColumn(name = "card_id", referencedColumnName = "id")}, inverseJoinColumns = {
-        @JoinColumn(name = "label_id", referencedColumnName = "id")})
-    @ManyToMany
-    private Set<Label> labelSet;
     @OneToMany(mappedBy = "cardId")
     private Set<ChecklistItem> checklistItemSet;
     @OneToMany(mappedBy = "cardId")
@@ -87,7 +85,9 @@ public class Card implements Serializable {
     private Set<Comment> commentSet;
     @JoinColumn(name = "list_id", referencedColumnName = "id")
     @ManyToOne
-    private List listId;
+    private Boardlist listId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cardId")
+    private Set<CardUser> cardUserSet;
 
     public Card() {
     }
@@ -165,14 +165,7 @@ public class Card implements Serializable {
         this.position = position;
     }
 
-    public Set<Label> getLabelSet() {
-        return labelSet;
-    }
-
-    public void setLabelSet(Set<Label> labelSet) {
-        this.labelSet = labelSet;
-    }
-
+    @XmlTransient
     public Set<ChecklistItem> getChecklistItemSet() {
         return checklistItemSet;
     }
@@ -181,6 +174,7 @@ public class Card implements Serializable {
         this.checklistItemSet = checklistItemSet;
     }
 
+    @XmlTransient
     public Set<Activity> getActivitySet() {
         return activitySet;
     }
@@ -189,6 +183,7 @@ public class Card implements Serializable {
         this.activitySet = activitySet;
     }
 
+    @XmlTransient
     public Set<Attachment> getAttachmentSet() {
         return attachmentSet;
     }
@@ -197,6 +192,7 @@ public class Card implements Serializable {
         this.attachmentSet = attachmentSet;
     }
 
+    @XmlTransient
     public Set<Comment> getCommentSet() {
         return commentSet;
     }
@@ -205,12 +201,21 @@ public class Card implements Serializable {
         this.commentSet = commentSet;
     }
 
-    public List getListId() {
+    public Boardlist getListId() {
         return listId;
     }
 
-    public void setListId(List listId) {
+    public void setListId(Boardlist listId) {
         this.listId = listId;
+    }
+
+    @XmlTransient
+    public Set<CardUser> getCardUserSet() {
+        return cardUserSet;
+    }
+
+    public void setCardUserSet(Set<CardUser> cardUserSet) {
+        this.cardUserSet = cardUserSet;
     }
 
     @Override

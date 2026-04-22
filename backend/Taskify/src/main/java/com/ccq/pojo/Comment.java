@@ -11,7 +11,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -20,6 +19,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,9 +29,11 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "comment")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Comment.findAll", query = "SELECT c FROM Comment c"),
     @NamedQuery(name = "Comment.findById", query = "SELECT c FROM Comment c WHERE c.id = :id"),
+    @NamedQuery(name = "Comment.findByComment", query = "SELECT c FROM Comment c WHERE c.comment = :comment"),
     @NamedQuery(name = "Comment.findByCreatedDate", query = "SELECT c FROM Comment c WHERE c.createdDate = :createdDate")})
 public class Comment implements Serializable {
 
@@ -43,8 +45,7 @@ public class Comment implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Lob
-    @Size(min = 1, max = 65535)
+    @Size(min = 1, max = 255)
     @Column(name = "comment")
     private String comment;
     @Column(name = "created_date")
@@ -63,7 +64,11 @@ public class Comment implements Serializable {
     public Comment(Integer id) {
         this.id = id;
     }
-
+    
+    public Comment(String comment) {
+        this.comment = comment;
+    }
+    
     public Comment(Integer id, String comment) {
         this.id = id;
         this.comment = comment;

@@ -1,6 +1,7 @@
 
 /backend/Taskify/target/
 
+
 .vscode/
 .idea/
 *.iml
