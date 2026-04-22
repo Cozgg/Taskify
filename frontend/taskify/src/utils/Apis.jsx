@@ -29,16 +29,17 @@ export let endpoints = {
     'update-list': listId => `/api/lists/${listId}`,
     'delete-list': listId => `/api/lists/${listId}`,
     // workspace api
-    'create-workspace': '/api/workspace',
-    'workspaces': userId => `/api/workspace/owner/${userId}`,
-    'workspace-detail': workspaceId => `/api/workspace/${workspaceId}`,
-    'workspace-member': workspaceId => `/api/workspace/${workspaceId}/members`,
+    'create-workspace': '/api/workspaces',
+    'workspaces': '/api/workspaces/owner',
+    'workspace-detail': workspaceId => `/api/workspaces/${workspaceId}`,
+    'workspace-member': workspaceId => `/api/workspaces/${workspaceId}/members`,
     'workspace-board': workspaceId => `/api/workspaces/${workspaceId}/boards`,
+
     'create-board': workspaceId => `/api/workspaces/${workspaceId}/boards`,
     'board-detail': boardId => `/api/boards/${boardId}`,
     'update-board': boardId => `/api/boards/${boardId}`,
     'delete-board': boardId => `/api/boards/${boardId}`,
-    'invite-member': workspaceId => `/api/workspace/${workspaceId}/users`,
+    'invite-member': workspaceId => `/api/workspaces/${workspaceId}/users`,
 }
 
 

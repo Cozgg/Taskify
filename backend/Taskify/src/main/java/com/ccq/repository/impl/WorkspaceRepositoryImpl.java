@@ -21,12 +21,14 @@ import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
 import com.ccq.pojo.UserWorkspace;
 import com.ccq.pojo.Workspace;
+import com.ccq.repository.UserRepository;
 import com.ccq.repository.WorkspaceRepository;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Repository
 @PropertySource("classpath:configs.properties")
@@ -38,6 +40,9 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     @Autowired
     private LocalSessionFactoryBean factory;
+    
+    @Autowired
+    private UserRepository userRepo;
 
     @Override
     public Workspace getWorkspaceById(int id) {
@@ -63,9 +68,10 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
             s.remove(w);
         }
     }
-
+    
+    
     @Override
-    public List<Workspace> getWorkspaceByOwnerId(int ownerId) {
+    public List<Workspace> getWorkspacesByOwner(int ownerId) {
         Session s = this.factory.getObject().getCurrentSession();
         Query<Workspace> q = s.createQuery(
                 "FROM Workspace w WHERE w.ownerId.id = :ownerId", Workspace.class);
@@ -73,14 +79,15 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
         return q.getResultList();
     }
 
+
     @Override
-    public List<Workspace> getWorkspacesByOwnerId(int ownerId, Map<String, String> params) {
+    public List<Workspace> getWorkspacesByOwner(int ownerId, Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = s.getCriteriaBuilder();
         CriteriaQuery<Workspace> q = b.createQuery(Workspace.class);
         Root<Workspace> root = q.from(Workspace.class);
         q.select(root);
-
+        
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(b.equal(root.get("ownerId").get("id"), ownerId));
 
@@ -248,15 +255,6 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
         return q.getSingleResult();
     }
 
-    // @Override
-    // public boolean isAdminOfThisWorkspace(int workspaceId, String username) {
-    //     Session s = this.factory.getObject().getCurrentSession();
-    //     Query<Long> q = s.createQuery(
-    //             "SELECT COUNT(uw.id) FROM UserWorkspace uw WHERE uw.workspaceId.id = :wsId AND uw.userId.username = :username", Long.class);
-    //     q.setParameter("wsId", workspaceId);
-    //     q.setParameter("username", username);
-    //     return q.uniqueResult() > 0;
-    // }
     @Override
     public Long countMembersByWorkspaceId(int workspaceId) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -270,6 +268,16 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     public void addUserIntoWorkspace(UserWorkspace uw) {
         Session s = this.factory.getObject().getCurrentSession();
         s.persist(uw);
+    }
+
+    @Override
+    public boolean isUserExistInWorkspace(int workspaceId, int userId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query<Long> q = s.createQuery("select count(uw.id) from UserWorkspace uw"
+                + " where uw.workspaceId.id = :wsId and uw.userId.id = :userId", Long.class);
+        q.setParameter("wsId", workspaceId);
+        q.setParameter("userId", userId);
+        return q.uniqueResult() > 0;
     }
 
 }

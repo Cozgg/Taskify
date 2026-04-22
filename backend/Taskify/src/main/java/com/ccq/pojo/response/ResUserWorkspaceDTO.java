@@ -4,47 +4,49 @@
  */
 package com.ccq.pojo.response;
 
+import com.ccq.pojo.User;
+import com.ccq.pojo.Workspace;
+
 /**
  *
  * @author Admin
  */
 public class ResUserWorkspaceDTO {
-    private int userId;
-    private int workspaceId;
+    private ResUserDTO user;
+    private ResWorkspaceDTO workspace;
 
-    public ResUserWorkspaceDTO(int userId, int workspaceId) {
-        this.userId = userId;
-        this.workspaceId = workspaceId;
+    public ResUserWorkspaceDTO(ResUserDTO user, ResWorkspaceDTO workspace) {
+        this.user = user;
+        this.workspace = workspace;
     }
 
     /**
-     * @return the userId
+     * @return the user
      */
-    public int getUserId() {
-        return userId;
+    public ResUserDTO getUser() {
+        return user;
     }
 
     /**
-     * @param userId the userId to set
+     * @param user the user to set
      */
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUser(ResUserDTO user) {
+        this.user = user;
     }
 
     /**
-     * @return the workspaceId
+     * @return the workspace
      */
-    public int getWorkspaceId() {
-        return workspaceId;
+    public ResWorkspaceDTO getWorkspace() {
+        return workspace;
     }
 
     /**
-     * @param workspaceId the workspaceId to set
+     * @param workspace the workspace to set
      */
-    public void setWorkspaceId(int workspaceId) {
-        this.workspaceId = workspaceId;
+    public void setWorkspace(ResWorkspaceDTO workspace) {
+        this.workspace = workspace;
     }
-    
     
     
 }

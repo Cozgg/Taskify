@@ -4,6 +4,7 @@
  */
 package com.ccq.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -44,6 +45,7 @@ import java.util.Set;
     @NamedQuery(name = "Card.findByDueDate", query = "SELECT c FROM Card c WHERE c.dueDate = :dueDate"),
     @NamedQuery(name = "Card.findByReminderDate", query = "SELECT c FROM Card c WHERE c.reminderDate = :reminderDate"),
     @NamedQuery(name = "Card.findByPosition", query = "SELECT c FROM Card c WHERE c.position = :position")})
+@JsonIgnoreProperties({"checklistItemSet", "activitySet", "attachmentSet", "commentSet", "cardUserSet"})
 public class Card implements Serializable {
 
     private static final long serialVersionUID = 1L;

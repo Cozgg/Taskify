@@ -23,6 +23,7 @@ const Login = () => {
 
             if (respone.status === 200) {
                 cookies.save('token', respone.data.data.token);
+                console.log('Token saved:', respone.data.data.token);
                 cookies.save('refreshToken', respone.data.data.refreshToken);
                 cookies.save('userdata', respone.data);
 

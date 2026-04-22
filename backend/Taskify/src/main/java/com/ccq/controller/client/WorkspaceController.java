@@ -50,14 +50,12 @@ public class WorkspaceController {
     @Autowired
     private Environment env;
 
-    @GetMapping("/workspace/owner/{ownerId}")
+    @GetMapping("/workspaces/owner")
     public ResponseEntity<RestResponse<ResWorkspacePageDTO>> getWorkspaceByOwner(
-            @PathVariable("ownerId") int ownerId,
             @RequestParam(required = false) Map<String, String> params) {
 
-        List<Workspace> workspaces = this.workspaceService.getWorkspacesByOwnerId(ownerId, params);
-
-        Long totalItems = this.workspaceService.countWorkspacesByOwnerId(ownerId);
+        List<Workspace> workspaces = this.workspaceService.getWorkspacesByOwner(params);
+        Long totalItems = this.workspaceService.countWorkspacesByOwnerId();
 
         int page = 1;
         int pageSize = Integer.parseInt(this.env.getProperty("workspace.page_size", "10"));
@@ -88,8 +86,7 @@ public class WorkspaceController {
         return ResponseEntity.ok(res);
     }
 
-    //da test, chua check quyen
-    @GetMapping("/workspace/{id}")
+    @GetMapping("/workspaces/{id}")
     public ResponseEntity<RestResponse<ResWorkspaceDTO>> getWorkspaceById(@PathVariable("id") int id) {
         Workspace workspace = this.workspaceService.getWorkspaceById(id);
         if (workspace == null) {
@@ -105,8 +102,7 @@ public class WorkspaceController {
         return ResponseEntity.ok(res);
     }
 
-    //da test, chua check quyen
-    @GetMapping("/workspace/{id}/members")
+    @GetMapping("/workspaces/{id}/members")
     public ResponseEntity<?> getMembers(@PathVariable("id") int id) {
         Workspace workspace = this.workspaceService.getWorkspaceById(id);
         if (workspace == null) {
@@ -117,7 +113,7 @@ public class WorkspaceController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/workspace/{id}/boards")
+    @GetMapping("/workspaces/{id}/boards")
     public ResponseEntity<?> getBoardsInWorkspace(@PathVariable("id") int id) {
         Workspace workspace = this.workspaceService.getWorkspaceById(id);
         if (workspace == null) {
@@ -128,7 +124,7 @@ public class WorkspaceController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/workspace/{id}")
+    @PutMapping("/workspaces/{id}")
     public ResponseEntity<RestResponse<ResWorkspaceDTO>> updateWorkspace(
             @PathVariable("id") int id,
             @Valid @RequestBody Workspace workspaceReq) {
@@ -151,7 +147,7 @@ public class WorkspaceController {
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/workspace")
+    @PostMapping("/workspaces")
     public ResponseEntity<RestResponse<ResWorkspaceDTO>> createWorkspace(
             @Valid @RequestBody Workspace workspaceReq) {
         try {
@@ -180,7 +176,7 @@ public class WorkspaceController {
     }
 
     // Xóa workspace theo id
-    @DeleteMapping("/workspace/{id}")
+    @DeleteMapping("/workspaces/{id}")
     public ResponseEntity<?> deleteWorkspace(@PathVariable("id") int id) {
         try {
             this.workspaceService.delete(id);
@@ -192,10 +188,11 @@ public class WorkspaceController {
             return ResponseEntity.badRequest().body(err);
         }
     }
-
+    
+    
     @PostMapping("/workspaces/{workspaceId}/users")
     public ResponseEntity<ResUserWorkspaceDTO> inviteUser(@PathVariable("workspaceId") int workspaceId, @RequestBody Map<String, String> params) {
-        User u = this.userService.getUserById(Integer.parseInt(params.get("userId")));
+        User u = this.userService.getUserByEmail(params.get("email"));
         UserWorkspace uw = this.workspaceService.addUserIntoWorkspace(workspaceId, u.getId());
         ResUserWorkspaceDTO dto = DTOMapper.toUserWorkspaceDTO(uw);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);

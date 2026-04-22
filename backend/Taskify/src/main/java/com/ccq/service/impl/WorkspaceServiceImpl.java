@@ -15,6 +15,10 @@ import com.ccq.repository.UserRepository;
 import com.ccq.repository.WorkspaceRepository;
 import com.ccq.service.PermissionService;
 import com.ccq.service.WorkspaceService;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+
 
 @Service
 public class WorkspaceServiceImpl implements WorkspaceService {
@@ -70,12 +74,13 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Workspace> getWorkspaceByOwnerId(int ownerId) {
-        if (ownerId <= 0) {
+    public List<Workspace> getWorkspacesByOwner() {
+        User u = this.userRepo.getUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        if (u.getId() <= 0) {
             throw new IllegalArgumentException("Owner ID phải là số dương");
         }
-        permissionService.requireUserSelfOrAdmin(ownerId);
-        List<Workspace> workspaces = this.workspaceRepo.getWorkspaceByOwnerId(ownerId);
+        permissionService.requireUserSelfOrAdmin(u.getId());
+        List<Workspace> workspaces = this.workspaceRepo.getWorkspacesByOwner(u.getId());
         if (workspaces != null) {
             workspaces.forEach(this::initializeWorkspaceCollections);
         }
@@ -84,12 +89,13 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Workspace> getWorkspacesByOwnerId(int ownerId, Map<String, String> params) {
-        if (ownerId <= 0) {
+    public List<Workspace> getWorkspacesByOwner(Map<String, String> params) {
+        User u = this.userRepo.getUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        if (u.getId() <= 0) {
             throw new IllegalArgumentException("Owner ID phải là số dương");
         }
-        permissionService.requireUserSelfOrAdmin(ownerId);
-        List<Workspace> workspaces = this.workspaceRepo.getWorkspacesByOwnerId(ownerId, params);
+        permissionService.requireUserSelfOrAdmin(u.getId());
+        List<Workspace> workspaces = this.workspaceRepo.getWorkspacesByOwner(u.getId(), params);
         if (workspaces != null) {
             workspaces.forEach(this::initializeWorkspaceCollections);
         }
@@ -98,12 +104,13 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     @Transactional(readOnly = true)
-    public Long countWorkspacesByOwnerId(int ownerId) {
-        if (ownerId <= 0) {
+    public Long countWorkspacesByOwnerId() {
+        User u = this.userRepo.getUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        if (u.getId() <= 0) {
             throw new IllegalArgumentException("Owner ID phải là số dương");
         }
-        permissionService.requireUserSelfOrAdmin(ownerId);
-        return this.workspaceRepo.countWorkspacesByOwnerId(ownerId);
+        permissionService.requireUserSelfOrAdmin(u.getId());
+        return this.workspaceRepo.countWorkspacesByOwnerId(u.getId());
     }
 
     @Override
@@ -112,7 +119,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (ownerId <= 0) {
             throw new IllegalArgumentException("Owner ID phải là số dương");
         }
-        return !this.workspaceRepo.getWorkspaceByOwnerId(ownerId).isEmpty();
+        return !this.workspaceRepo.getWorkspacesByOwner(ownerId).isEmpty();
     }
 
     @Override
@@ -220,6 +227,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     @Override
     @Transactional
     public UserWorkspace addUserIntoWorkspace(int workspaceId, int userId) {
+
         if (workspaceId <= 0 || userId <= 0) {
             throw new IllegalArgumentException("workspaceId vA userId phai la so duong");
         }
@@ -227,15 +235,19 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
         UserWorkspace uw = new UserWorkspace();
         Workspace w = workspaceRepo.getWorkspaceById(workspaceId);
+        if (w == null){
+            throw new IllegalArgumentException("Workspace ko tồn tại");
+        }
         User u = userRepo.findUserById(userId);
 
-        if (w == null) {
-            throw new IllegalArgumentException("Khong tim thay workspace voi ID: " + workspaceId);
+        if(u == null){
+            throw new UsernameNotFoundException("User ko tìm thấy");
         }
-        if (u == null) {
-            throw new IllegalArgumentException("Khong tim thay user voi ID: " + userId);
+        
+        if(this.workspaceRepo.isUserExistInWorkspace(workspaceId, userId)){
+            throw new IllegalArgumentException("User đã tồn tại");
         }
-
+        
         uw.setUserId(u);
         uw.setWorkspaceId(w);
 

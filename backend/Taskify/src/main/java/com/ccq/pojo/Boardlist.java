@@ -4,6 +4,7 @@
  */
 package com.ccq.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -60,6 +61,7 @@ public class Boardlist implements Serializable {
     @ManyToOne
     private Board boardId;
     @OneToMany(mappedBy = "listId")
+    @JsonIgnore
     private Set<Card> cardSet;
 
     public Boardlist() {
