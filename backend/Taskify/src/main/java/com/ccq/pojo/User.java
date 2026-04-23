@@ -43,12 +43,6 @@ import java.util.Set;
     @NamedQuery(name = "User.findByRole", query = "SELECT u FROM User u WHERE u.role = :role")})
 public class User implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -65,9 +59,6 @@ public class User implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "email")
     private String email;
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
     @Size(max = 255)
     @Column(name = "avatar")
     private String avatar;
@@ -76,10 +67,20 @@ public class User implements Serializable {
     @Size(min = 1, max = 5)
     @Column(name = "role")
     private String role;
+    @OneToMany(mappedBy = "userId")
+    private Set<Card> cardSet;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
+    @Column(name = "created_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
     @OneToMany(mappedBy = "ownerId")
     private Set<Workspace> workspaceSet;
-    @OneToMany(mappedBy = "userId")
-    private Set<Activity> activitySet;
     @OneToMany(mappedBy = "userId")
     private Set<Comment> commentSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
@@ -110,29 +111,6 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public Date getCreatedDate() {
         return createdDate;
@@ -142,21 +120,6 @@ public class User implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 
     @XmlTransient
     public Set<Workspace> getWorkspaceSet() {
@@ -166,16 +129,6 @@ public class User implements Serializable {
     public void setWorkspaceSet(Set<Workspace> workspaceSet) {
         this.workspaceSet = workspaceSet;
     }
-
-    @XmlTransient
-    public Set<Activity> getActivitySet() {
-        return activitySet;
-    }
-
-    public void setActivitySet(Set<Activity> activitySet) {
-        this.activitySet = activitySet;
-    }
-
     @XmlTransient
     public Set<Comment> getCommentSet() {
         return commentSet;
@@ -226,6 +179,55 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.ccq.pojo.User[ id=" + id + " ]";
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    @XmlTransient
+    public Set<Card> getCardSet() {
+        return cardSet;
+    }
+
+    public void setCardSet(Set<Card> cardSet) {
+        this.cardSet = cardSet;
     }
     
 }

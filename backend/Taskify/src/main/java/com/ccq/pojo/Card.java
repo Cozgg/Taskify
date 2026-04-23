@@ -48,12 +48,6 @@ import java.util.Set;
 @JsonIgnoreProperties({"checklistItemSet", "activitySet", "attachmentSet", "commentSet", "cardUserSet"})
 public class Card implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -62,6 +56,16 @@ public class Card implements Serializable {
     @Size(max = 255)
     @Column(name = "description")
     private String description;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
+    private User userId;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
@@ -77,8 +81,6 @@ public class Card implements Serializable {
     private Integer position;
     @OneToMany(mappedBy = "cardId")
     private Set<ChecklistItem> checklistItemSet;
-    @OneToMany(mappedBy = "cardId")
-    private Set<Activity> activitySet;
     @OneToMany(mappedBy = "cardId")
     private Set<Attachment> attachmentSet;
     @OneToMany(mappedBy = "cardId")
@@ -109,21 +111,6 @@ public class Card implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public Date getCreatedDate() {
         return createdDate;
@@ -174,14 +161,6 @@ public class Card implements Serializable {
         this.checklistItemSet = checklistItemSet;
     }
 
-    @XmlTransient
-    public Set<Activity> getActivitySet() {
-        return activitySet;
-    }
-
-    public void setActivitySet(Set<Activity> activitySet) {
-        this.activitySet = activitySet;
-    }
 
     @XmlTransient
     public Set<Attachment> getAttachmentSet() {
@@ -241,6 +220,30 @@ public class Card implements Serializable {
     @Override
     public String toString() {
         return "com.ccq.pojo.Card[ id=" + id + " ]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
     }
     
 }

@@ -1,6 +1,5 @@
 package com.ccq.service.impl;
 
-import com.ccq.pojo.Activity;
 import com.ccq.pojo.Boardlist;
 import com.ccq.pojo.Card;
 import com.ccq.pojo.CardUser;
