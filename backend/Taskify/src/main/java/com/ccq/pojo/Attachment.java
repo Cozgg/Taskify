@@ -37,6 +37,13 @@ import java.util.Date;
     @NamedQuery(name = "Attachment.findByUrl", query = "SELECT a FROM Attachment a WHERE a.url = :url")})
 public class Attachment implements Serializable {
 
+    @Size(max = 255)
+    @Column(name = "filename")
+    private String filename;
+    @Size(max = 255)
+    @Column(name = "url")
+    private String url;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,12 +53,6 @@ public class Attachment implements Serializable {
     @Column(name = "update_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateDate;
-    @Size(max = 255)
-    @Column(name = "filename")
-    private String filename;
-    @Size(max = 255)
-    @Column(name = "url")
-    private String url;
     @JoinColumn(name = "card_id", referencedColumnName = "id")
     @ManyToOne
     private Card cardId;
@@ -79,21 +80,6 @@ public class Attachment implements Serializable {
         this.updateDate = updateDate;
     }
 
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
 
     public Card getCardId() {
         return cardId;
@@ -126,6 +112,22 @@ public class Attachment implements Serializable {
     @Override
     public String toString() {
         return "com.ccq.pojo.Attachment[ id=" + id + " ]";
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
     
 }
