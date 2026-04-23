@@ -3,27 +3,18 @@ package com.ccq.configs;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableWebMvc
-@EnableTransactionManagement
-@ComponentScan(
-        basePackages = {
-            "com.ccq.controller",
-            "com.ccq.repository",
-            "com.ccq.service",
-            "com.ccq.utils",
-            "com.ccq.configs",
-            "org.springdoc"
-        }
-)
+@ComponentScan(basePackages = {
+    "com.ccq.controller",
+    "com.ccq.repository",
+    "com.ccq.service"
+})
 public class WebAppContextConfigs implements WebMvcConfigurer {
 
     @Override
@@ -45,7 +36,7 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Áp dụng cho mọi URL
-                .allowedOrigins("http://localhost:3000") // Chỉ cho phép React gọi
+                .allowedOrigins("http://localhost:3000", "http://localhost:3002") // Chỉ cho phép React gọi
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
