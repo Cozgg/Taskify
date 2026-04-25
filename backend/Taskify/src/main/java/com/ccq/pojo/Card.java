@@ -24,6 +24,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -153,6 +154,7 @@ public class Card implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public Set<ChecklistItem> getChecklistItemSet() {
         return checklistItemSet;
     }
@@ -161,8 +163,18 @@ public class Card implements Serializable {
         this.checklistItemSet = checklistItemSet;
     }
 
+    @XmlTransient
+    @JsonIgnore
+    public Set<Activity> getActivitySet() {
+        return activitySet;
+    }
+
+    public void setActivitySet(Set<Activity> activitySet) {
+        this.activitySet = activitySet;
+    }
 
     @XmlTransient
+    @JsonIgnore
     public Set<Attachment> getAttachmentSet() {
         return attachmentSet;
     }
@@ -172,6 +184,7 @@ public class Card implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public Set<Comment> getCommentSet() {
         return commentSet;
     }
@@ -189,6 +202,7 @@ public class Card implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public Set<CardUser> getCardUserSet() {
         return cardUserSet;
     }

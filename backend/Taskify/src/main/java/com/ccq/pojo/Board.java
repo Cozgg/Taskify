@@ -23,6 +23,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -104,6 +105,7 @@ public class Board implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public Set<Boardlist> getBoardlistSet() {
         return boardlistSet;
     }
