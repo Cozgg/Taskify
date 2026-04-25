@@ -18,12 +18,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ccq.pojo.Board;
+import com.ccq.pojo.Boardlist;
 import com.ccq.repository.BoardRepository;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.hibernate.Hibernate;
 
 /**
  *
@@ -42,8 +44,21 @@ public class BoardRepositoryImpl implements BoardRepository {
 
     @Override
     public Board getById(int id) {
+//        Session s = this.factory.getObject().getCurrentSession();
+//        return s.get(Board.class, id);
         Session s = this.factory.getObject().getCurrentSession();
-        return s.get(Board.class, id);
+        Board board = s.get(Board.class, id);
+
+        if (board != null) {
+            Hibernate.initialize(board.getBoardlistSet());
+            if (board.getBoardlistSet() != null) {
+                for (Boardlist list : board.getBoardlistSet()) {
+                    Hibernate.initialize(list.getCardSet());
+                }
+            }
+        }
+
+        return board;
     }
 
     @Override
