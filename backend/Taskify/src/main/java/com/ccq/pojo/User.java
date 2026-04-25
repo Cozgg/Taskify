@@ -71,6 +71,7 @@ public class User implements Serializable {
     @Column(name = "role")
     private String role;
     @OneToMany(mappedBy = "userId")
+    @JsonIgnore
     private Set<Card> cardSet;
 
     private static final long serialVersionUID = 1L;
@@ -89,6 +90,7 @@ public class User implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Set<UserWorkspace> userWorkspaceSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    @JsonIgnore
     private Set<CardUser> cardUserSet;
 
     public User() {

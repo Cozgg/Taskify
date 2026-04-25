@@ -12,6 +12,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Map;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-
 /**
  *
  * @author nguye
@@ -29,17 +29,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @PropertySource("classpath:configs.properties")
 @Transactional
-public class ListRepositoryImpl implements ListRepository{
+public class ListRepositoryImpl implements ListRepository {
 
     @Autowired
     private Environment env;
-    
+
     @Autowired
     private LocalSessionFactoryBean factory;
+
     @Override
     public Boardlist getById(int id) {
+//        Session s = this.factory.getObject().getCurrentSession();
+//        return s.get(Boardlist.class, id);
         Session s = this.factory.getObject().getCurrentSession();
-        return s.get(Boardlist.class, id);
+        Boardlist list = s.get(Boardlist.class, id);
+
+        if (list != null) {
+            Hibernate.initialize(list.getCardSet());
+        }
+
+        return list;
     }
 
     @Override
@@ -50,14 +59,14 @@ public class ListRepositoryImpl implements ListRepository{
         } else {
             s.persist(l);
         }
-        
+
     }
 
     @Override
     public void delete(int id) {
         Session s = this.factory.getObject().getCurrentSession();
         Boardlist l = this.getById(id);
-        if(s != null){
+        if (s != null) {
             s.remove(l);
         }
     }
@@ -96,13 +105,13 @@ public class ListRepositoryImpl implements ListRepository{
                 int pageSize = this.env.getProperty("workspace.page_size", Integer.class);
                 int page = Integer.parseInt(pageStr);
                 int start = (page - 1) * pageSize;
-                
+
                 query.setMaxResults(pageSize);
                 query.setFirstResult(start);
             }
         }
-        
+
         return query.getResultList();
     }
-    
+
 }
