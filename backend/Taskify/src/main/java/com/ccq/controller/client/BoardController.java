@@ -39,11 +39,10 @@ public class BoardController {
     @Autowired
     private BoardService boardService;
 
-    @GetMapping("/workspaces/{workspaceId}/boards")
-    public ResponseEntity<?> getBoardsByWorkspace(
-            @PathVariable("workspaceId") int workspaceId,
-            @RequestParam Map<String, String> params) {
-
+//    @GetMapping("/workspaces/{workspaceId}/boards")
+//    public ResponseEntity<?> getBoardsByWorkspace(
+//            @PathVariable("workspaceId") int workspaceId,
+//            @RequestParam Map<String, String> params) {
 //    @GetMapping("/workspaces/{workspaceId}/boards")
 //    @PreAuthorize("@securityCustom.canAccessWorkspace(authentication.name, #workspaceId)")
 //    public ResponseEntity<?> getBoardsByWorkspace(
@@ -55,12 +54,11 @@ public class BoardController {
 //        List<Board> boards = this.boardService.getBoards(params);
 //        return new ResponseEntity<>(boards, HttpStatus.OK);
 //    }
-
-    @GetMapping("/boards/{boardId}") 
+    @GetMapping("/boards/{boardId}")
     public ResponseEntity<?> getBoardById(@PathVariable("boardId") int boardId) {
-        Board board = this.boardService.getById(boardId);
-        if (board != null) {
-            ResBoardDTO dto = DTOMapper.toBoardDTO(board);
+        ResBoardDTO dto = this.boardService.getBoardDTOById(boardId);
+
+        if (dto != null) {
             return new ResponseEntity<>(dto, HttpStatus.OK);
         }
         return new ResponseEntity<>("Không tìm thấy Bảng", HttpStatus.NOT_FOUND);

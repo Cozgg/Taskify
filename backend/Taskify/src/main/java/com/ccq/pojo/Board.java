@@ -49,6 +49,8 @@ public class Board implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "name")
     private String name;
+    @OneToMany(mappedBy = "boardId")
+    private Set<Boardlist> boardlistSet;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -61,8 +63,6 @@ public class Board implements Serializable {
     private Date createdDate;
     @Column(name = "is_public")
     private Boolean isPublic;
-    @OneToMany(mappedBy = "boardId")
-    private Set<Boardlist> boardlistSet;
     @JoinColumn(name = "workspace_id", referencedColumnName = "id")
     @ManyToOne
     private Workspace workspaceId;
@@ -146,6 +146,8 @@ public class Board implements Serializable {
     public String toString() {
         return "com.ccq.pojo.Board[ id=" + id + " ]";
     }
+
+
 
     public String getName() {
         return name;

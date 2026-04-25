@@ -55,6 +55,8 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -69,6 +71,7 @@ public class User implements Serializable {
     @Column(name = "role")
     private String role;
     @OneToMany(mappedBy = "userId")
+    @JsonIgnore
     private Set<Card> cardSet;
 
     private static final long serialVersionUID = 1L;
@@ -87,6 +90,7 @@ public class User implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Set<UserWorkspace> userWorkspaceSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    @JsonIgnore
     private Set<CardUser> cardUserSet;
     @OneToMany(mappedBy = "userId")
     private Set<Card> cardSet;
@@ -133,7 +137,6 @@ public class User implements Serializable {
     public void setWorkspaceSet(Set<Workspace> workspaceSet) {
         this.workspaceSet = workspaceSet;
     }
-
 
     @XmlTransient
     @JsonIgnore
@@ -199,6 +202,13 @@ public class User implements Serializable {
     public String toString() {
         return "com.ccq.pojo.User[ id=" + id + " ]";
     }
+    @XmlTransient
+    public Set<Card> getCardSet() {
+        return cardSet;
+    }
+    public void setCardSet(Set<Card> cardSet) {
+        this.cardSet = cardSet;
+    }
 
     public String getUsername() {
         return username;
@@ -238,15 +248,6 @@ public class User implements Serializable {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    @XmlTransient
-    public Set<Card> getCardSet() {
-        return cardSet;
-    }
-
-    public void setCardSet(Set<Card> cardSet) {
-        this.cardSet = cardSet;
     }
     
 }

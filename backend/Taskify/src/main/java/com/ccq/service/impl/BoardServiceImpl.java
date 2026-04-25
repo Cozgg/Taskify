@@ -10,10 +10,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ccq.pojo.Board;
 import com.ccq.pojo.Workspace;
+import com.ccq.pojo.response.ResBoardDTO;
 import com.ccq.repository.BoardRepository;
 import com.ccq.repository.WorkspaceRepository;
 import com.ccq.service.BoardService;
 import com.ccq.service.PermissionService;
+import com.ccq.utils.DTOMapper;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,5 +100,15 @@ public class BoardServiceImpl implements BoardService {
         board.setWorkspaceId(ws);
         this.boardRepo.addOrUpdate(board);
         return board;
+    }
+
+    @Override
+    public ResBoardDTO getBoardDTOById(int id) {
+        Board board = this.boardRepo.getById(id);
+
+        if (board != null) {
+            return DTOMapper.toBoardDTO(board);
+        }
+        return null;
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ccq.pojo.Board;
+import com.ccq.pojo.response.ResBoardDTO;
 
 /**
  *
@@ -26,4 +27,6 @@ public interface BoardService {
     Long countBoards(Map<String, String> params);
 
     Board createBoardInWorkspace(int workspaceId, Board board);
+    
+    ResBoardDTO getBoardDTOById(int id);
 }
