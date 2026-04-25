@@ -30,6 +30,7 @@ import com.ccq.pojo.User;
 import com.ccq.pojo.response.ResCardDTO;
 import com.ccq.service.CardService;
 import com.ccq.service.UserService;
+import com.ccq.utils.DTOMapper;
 
 @RestController
 @RequestMapping("/api")
@@ -43,26 +44,24 @@ public class CardController {
     private UserService userService;
 
     @GetMapping("/lists/{listId}/cards")
-    @PreAuthorize("@securityCustom.canAccessList(authentication.name, #listId)")
     public ResponseEntity<?> getCards(@PathVariable("listId") int listId, @RequestParam Map<String, String> params) {
         params.put("listId", String.valueOf(listId));
         List<Card> cards = this.cardService.getCard(params);
-        List<ResCardDTO> cardDTOs = cards.stream().map(c
-                -> new ResCardDTO(c.getId(), c.getName(), c.getDescription(), c.getIsActive(), c.getDueDate(), c.getReminderDate(), c.getPosition(), c.getListId().getId())
-        ).collect(Collectors.toList());
+        List<ResCardDTO> cardDTOs = cards.stream()
+                .map(DTOMapper::toCardDTO)
+                .collect(Collectors.toList());
 
         return new ResponseEntity<>(cardDTOs, HttpStatus.OK);
     }
 
     @PostMapping("/lists/{listId}/cards")
-    @PreAuthorize("@securityCustom.canAccessList(authentication.name, #listId)")
     public ResponseEntity<?> createCard(
             @PathVariable("listId") int listId,
             @RequestBody Card c) {
         try {
             this.cardService.createCardInList(listId, c);
 
-            ResCardDTO dto = new ResCardDTO(c.getId(), c.getName(), c.getDescription(), c.getIsActive(), c.getDueDate(), c.getReminderDate(), c.getPosition(), listId);
+            ResCardDTO dto = DTOMapper.toCardDTO(c);
             return new ResponseEntity<>(dto, HttpStatus.CREATED);
 
         } catch (Exception e) {
@@ -71,7 +70,6 @@ public class CardController {
     }
 
     @PutMapping("/cards/{cardId}")
-    @PreAuthorize("@securityCustom.canAccessCard(authentication.name, #cardId)")
     public ResponseEntity<?> updateCard(@PathVariable("cardId") int cardId, @RequestBody Card c) {
         try {
             c.setId(cardId);
@@ -79,7 +77,7 @@ public class CardController {
 
             Card updatedCard = this.cardService.getById(cardId);
 
-            ResCardDTO dto = new ResCardDTO(updatedCard.getId(), updatedCard.getName(), updatedCard.getDescription(), updatedCard.getIsActive(), updatedCard.getDueDate(), updatedCard.getReminderDate(), updatedCard.getPosition(), updatedCard.getListId().getId());
+            ResCardDTO dto = DTOMapper.toCardDTO(updatedCard);
             return new ResponseEntity<>(dto, HttpStatus.OK);
 
         } catch (Exception e) {
@@ -88,7 +86,6 @@ public class CardController {
     }
 
     @DeleteMapping("/cards/{cardId}")
-    @PreAuthorize("@securityCustom.canAccessCard(authentication.name, #cardId)")
     public ResponseEntity<?> deleteCard(@PathVariable("cardId") int cardId) {
         try {
             this.cardService.delete(cardId);
@@ -99,7 +96,6 @@ public class CardController {
     }
 
     @PatchMapping("/cards/{cardId}/move")
-    @PreAuthorize("@securityCustom.canAccessCard(authentication.name, #cardId)")
     public ResponseEntity<?> moveCard(
             @PathVariable("cardId") int cardId,
             @RequestBody Map<String, Integer> payload) {
@@ -110,16 +106,16 @@ public class CardController {
             this.cardService.moveCard(cardId, newListId, newPosition);
             Card updateCard = this.cardService.getById(cardId);
 
-            ResCardDTO dto = new ResCardDTO(updateCard.getId(), updateCard.getName(), updateCard.getDescription(), updateCard.getIsActive(), updateCard.getDueDate(), updateCard.getReminderDate(), updateCard.getPosition(), updateCard.getListId().getId());
+            ResCardDTO dto = DTOMapper.toCardDTO(updateCard);
             return ResponseEntity.ok(dto);
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            String detail = e.getClass().getSimpleName() + ": " + e.getMessage();
+            return ResponseEntity.badRequest().body(detail);
         }
     }
 
     @PostMapping("/cards/{cardId}/assign")
-    @PreAuthorize("@securityCustom.canAccessCard(authentication.name, #cardId)")
     public ResponseEntity<?> assignUserToCard(@PathVariable("cardId") int cardId) {
 
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();

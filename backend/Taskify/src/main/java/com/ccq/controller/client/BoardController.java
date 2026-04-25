@@ -37,7 +37,6 @@ public class BoardController {
     private BoardService boardService;
 
     @GetMapping("/workspaces/{workspaceId}/boards")
-    @PreAuthorize("@securityCustom.canAccessWorkspace(authentication.name, #workspaceId)")
     public ResponseEntity<?> getBoardsByWorkspace(
             @PathVariable("workspaceId") int workspaceId,
             @RequestParam Map<String, String> params) {
@@ -48,8 +47,7 @@ public class BoardController {
         return new ResponseEntity<>(boards, HttpStatus.OK);
     }
 
-    @GetMapping("/boards/{boardId}")
-    @PreAuthorize("@securityCustom.canAccessBoard(authentication.name, #boardId)")
+    @GetMapping("/boards/{boardId}") 
     public ResponseEntity<?> getBoardById(@PathVariable("boardId") int boardId) {
         Board board = this.boardService.getById(boardId);
         if (board != null) {
@@ -59,7 +57,6 @@ public class BoardController {
     }
 
     @PostMapping("/workspaces/{workspaceId}/boards")
-    @PreAuthorize("@securityCustom.canAccessWorkspace(authentication.name, #workspaceId)")
     public ResponseEntity<?> createBoard(
             @PathVariable("workspaceId") int workspaceId,
             @RequestBody Board board) {
@@ -72,7 +69,6 @@ public class BoardController {
     }
 
     @PutMapping("/boards/{boardId}")
-    @PreAuthorize("@securityCustom.canAccessBoard(authentication.name, #boardId)")
     public ResponseEntity<?> updateBoard(
             @PathVariable("boardId") int boardId,
             @RequestBody Board board) {
@@ -85,8 +81,6 @@ public class BoardController {
         }
     }
 
-    //da test, chua phan quyen
-    @PreAuthorize("hasRole('ADMIN') and @securityCustom.canAccessBoard(authentication.name, #boardId)")
     @DeleteMapping("/boards/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable("boardId") int boardId) {
         try {

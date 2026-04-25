@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Card, Typography, Select, Input, Modal, Tag, Spin, message } from 'antd';
-import { PlusOutlined, MoreOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { Button, Card, Typography, Select, Input, Modal, Tag, Spin, message, Dropdown, Popconfirm } from 'antd';
+import { PlusOutlined, MoreOutlined, ArrowLeftOutlined, CloseOutlined } from '@ant-design/icons';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { CardDetailModal } from './CardDetailModal';
 import cookies from 'react-cookies';
 import { authApis, endpoints } from '../utils/Apis';
 import './BoardDetail.css';
@@ -23,11 +25,15 @@ const BoardDetail = () => {
     const [board, setBoard] = useState(null);
     const [columns, setColumns] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isColModalOpen, setIsColModalOpen] = useState(false);
-    const [selectedStatus, setSelectedStatus] = useState(null);
+    const [isAddingList, setIsAddingList] = useState(false);
+    const [newListName, setNewListName] = useState('');
     const [isCardModalOpen, setIsCardModalOpen] = useState(false);
     const [activeColId, setActiveColId] = useState(null);
     const [newCardTitle, setNewCardTitle] = useState('');
+    const [editingListId, setEditingListId] = useState(null);
+    const [listNameEdit, setListNameEdit] = useState('');
+    const [selectedCard, setSelectedCard] = useState(null);
+    const [isCardDetailModalOpen, setIsCardDetailModalOpen] = useState(false);
 
     const loadBoardAndLists = useCallback(async () => {
         try {
@@ -98,11 +104,8 @@ const BoardDetail = () => {
     }, [boardId, loadBoardAndLists]);
 
     const handleAddColumn = async () => {
-        if (!selectedStatus) return;
-        const statusObj = MOCK_STATUSES.find((s) => s.value === selectedStatus);
-
-        if (columns.some((col) => col.status === selectedStatus)) {
-            message.warning('Danh sách này đã tồn tại trong bảng.');
+        if (!newListName.trim()) {
+            setIsAddingList(false);
             return;
         }
 
@@ -110,21 +113,21 @@ const BoardDetail = () => {
             const token = cookies.load('token');
             const api = authApis(token);
             const payload = {
-                name: statusObj.label,
-                status: statusObj.value,
+                name: newListName.trim(),
+                status: 'TODO',
                 position: columns.length + 1,
             };
             const res = await api.post(endpoints['create-list'](boardId), payload);
             const created = res.data?.data ?? res.data;
             const newCol = {
                 id: created.id,
-                title: created.name || statusObj.label,
-                status: created.status || statusObj.value,
+                title: created.name,
+                status: created.status,
                 cards: [],
             };
             setColumns([...columns, newCol]);
-            setIsColModalOpen(false);
-            setSelectedStatus(null);
+            setNewListName('');
+            setIsAddingList(false);
             message.success('Đã tạo danh sách mới.');
         } catch (err) {
             message.error(
@@ -170,6 +173,124 @@ const BoardDetail = () => {
         }
     };
 
+    const onDragEnd = async (result) => {
+        const { destination, source, type, draggableId } = result;
+
+        if (!destination) return;
+        if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+
+        if (type === 'card') {
+            const sourceCol = columns.find(col => col.id.toString() === source.droppableId);
+            const destCol = columns.find(col => col.id.toString() === destination.droppableId);
+            const cardId = parseInt(draggableId);
+            const newListId = parseInt(destination.droppableId);
+
+            if (sourceCol === destCol) {
+                const newCards = Array.from(sourceCol.cards);
+                const [removed] = newCards.splice(source.index, 1);
+                newCards.splice(destination.index, 0, removed);
+
+                setColumns(columns.map(col => col.id === sourceCol.id ? { ...col, cards: newCards } : col));
+            } else {
+                const sourceCards = Array.from(sourceCol.cards);
+                const destCards = Array.from(destCol.cards);
+                const [removed] = sourceCards.splice(source.index, 1);
+                destCards.splice(destination.index, 0, removed);
+
+                setColumns(columns.map(col => {
+                    if (col.id === sourceCol.id) return { ...col, cards: sourceCards };
+                    if (col.id === destCol.id) return { ...col, cards: destCards };
+                    return col;
+                }));
+            }
+
+            try {
+                const token = cookies.load('token');
+                const api = authApis(token);
+                const payload = {
+                    newListId: newListId,
+                    newPosition: destination.index
+                };
+                await api.patch(endpoints['move-card'](cardId), payload);
+            } catch (err) {
+                message.error("Lỗi khi lưu vị trí thẻ: " + (err.response?.data?.error || err.response?.data || err.message));
+            }
+        }
+    };
+
+    const handleRenameList = async (listId) => {
+        try {
+            const currentList = columns.find(col => col.id === listId);
+            if (!currentList) return;
+            const token = cookies.load('token');
+            const api = authApis(token);
+
+            const payload = {
+                name: listNameEdit,
+                status: currentList.status,
+            };
+
+            await api.put(endpoints['update-list'](listId), payload);
+
+            setColumns(columns.map(col => col.id === listId ? { ...col, title: listNameEdit } : col));
+            setEditingListId(null);
+            message.success("Đổi tên danh sách thành công!");
+        } catch (err) {
+            message.error("Lỗi đổi tên danh sách: " + (err.response?.data?.error || err.message));
+        }
+    };
+
+    const handleDeleteList = async (listId) => {
+        try {
+            const token = cookies.load('token');
+            const api = authApis(token);
+            await api.delete(endpoints['delete-list'](listId));
+
+            setColumns(columns.filter(col => col.id !== listId));
+            message.success("Đã xóa danh sách!");
+        } catch (err) {
+            message.error("Lỗi xóa danh sách: " + (err.response?.data?.error || err.message));
+        }
+    };
+
+    const handleUpdateCard = async (cardId, newData) => {
+        try {
+            const token = cookies.load('token');
+            const api = authApis(token);
+            const payload = {
+                name: newData.title,
+                description: newData.description
+            };
+            await api.put(endpoints['update-card'](cardId), payload);
+
+            setColumns(columns.map(col => ({
+                ...col,
+                cards: col.cards.map(card => card.id === cardId ? { ...card, ...newData } : card)
+            })));
+            setIsCardDetailModalOpen(false);
+            message.success("Cập nhật thẻ thành công!");
+        } catch (err) {
+            message.error("Lỗi cập nhật thẻ: " + (err.response?.data?.error || err.message));
+        }
+    };
+
+    const handleDeleteCard = async (cardId, listId) => {
+        try {
+            const token = cookies.load('token');
+            const api = authApis(token);
+            await api.delete(endpoints['delete-card'](cardId));
+
+            setColumns(columns.map(col => col.id === listId ? {
+                ...col,
+                cards: col.cards.filter(c => c.id !== cardId)
+            } : col));
+            setIsCardDetailModalOpen(false);
+            message.success("Đã xóa thẻ!");
+        } catch (err) {
+            message.error("Lỗi xóa thẻ: " + (err.response?.data?.error || err.message));
+        }
+    };
+
     return (
         <div className="board-detail-wrapper">
             {/* Header Bảng */}
@@ -187,74 +308,147 @@ const BoardDetail = () => {
                     <div className="board-loading">
                         <Spin size="large" />
                     </div>
-                ) : columns.length === 0 ? (
-                    <div className="board-empty">
-                        Hiện chưa có danh sách nào. Thêm danh sách mới để bắt đầu.
-                    </div>
                 ) : (
-                    <>
-                        {columns.map((col) => (
-                            <div className="kanban-column" key={col.id}>
-                                <div className="kanban-column-header">
-                                    <Text strong>{col.title}</Text>
-                                    <Button type="text" icon={<MoreOutlined />} size="small" />
-                                </div>
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', height: '100%' }}>
+                            {columns.map((col) => (
+                                <div className="kanban-column" key={col.id}>
+                                    <div className="kanban-column-header">
+                                        {editingListId === col.id ? (
+                                            <Input
+                                                autoFocus
+                                                value={listNameEdit}
+                                                onChange={(e) => setListNameEdit(e.target.value)}
+                                                onBlur={() => handleRenameList(col.id)}
+                                                onPressEnter={() => handleRenameList(col.id)}
+                                            />
+                                        ) : (
+                                            <>
+                                                <Text strong className="kanban-column-header-title">{col.title}</Text>
+                                                <Dropdown
+                                                    menu={{
+                                                        items: [
+                                                            {
+                                                                key: 'rename',
+                                                                label: 'Đổi tên',
+                                                                onClick: () => { setEditingListId(col.id); setListNameEdit(col.title); }
+                                                            },
+                                                            {
+                                                                key: 'delete',
+                                                                label: (
+                                                                    <Popconfirm title="Xóa danh sách này?" onConfirm={() => handleDeleteList(col.id)} okText="Xóa" cancelText="Hủy">
+                                                                        <span style={{ color: 'red' }}>Xóa danh sách</span>
+                                                                    </Popconfirm>
+                                                                )
+                                                            }
+                                                        ]
+                                                    }}
+                                                    trigger={['click']}
+                                                >
+                                                    <Button type="text" icon={<MoreOutlined />} size="small" />
+                                                </Dropdown>
+                                            </>
+                                        )}
+                                    </div>
 
-                                <div className="kanban-cards-list">
-                                    {col.cards.map((card) => (
-                                        <Card key={card.id} className="kanban-card" size="small" hoverable>
-                                            {card.description && (
-                                                <Tag color="blue" style={{ marginBottom: 8 }}>
-                                                    {card.description}
-                                                </Tag>
-                                            )}
-                                            <div className="card-title">{card.title}</div>
-                                        </Card>
-                                    ))}
-                                </div>
+                                    <Droppable droppableId={col.id.toString()} type="card">
+                                        {(provided, snapshot) => (
+                                            <div
+                                                className="kanban-cards-list"
+                                                ref={provided.innerRef}
+                                                {...provided.droppableProps}
+                                                style={{
+                                                    minHeight: col.cards.length === 0 ? '80px' : undefined,
+                                                    backgroundColor: snapshot.isDraggingOver ? 'rgba(0,121,191,0.08)' : undefined,
+                                                    borderRadius: '4px',
+                                                    transition: 'background-color 0.15s ease',
+                                                }}
+                                            >
+                                                {col.cards.map((card, cardIndex) => (
+                                                    <Draggable draggableId={card.id.toString()} index={cardIndex} key={card.id}>
+                                                        {(provided) => (
+                                                            <div
+                                                                ref={provided.innerRef}
+                                                                {...provided.draggableProps}
+                                                                {...provided.dragHandleProps}
+                                                                style={{
+                                                                    ...provided.draggableProps.style,
+                                                                    marginBottom: '8px'
+                                                                }}
+                                                            >
+                                                                <Card
+                                                                    className="kanban-card"
+                                                                    size="small"
+                                                                    hoverable
+                                                                    onClick={() => {
+                                                                        setSelectedCard({ ...card, listId: col.id });
+                                                                        setIsCardDetailModalOpen(true);
+                                                                    }}
+                                                                >
+                                                                    {card.description && (
+                                                                        <Tag color="blue" style={{ marginBottom: 8 }}>
+                                                                            {card.description}
+                                                                        </Tag>
+                                                                    )}
+                                                                    <div className="card-title">{card.title}</div>
+                                                                </Card>
+                                                            </div>
+                                                        )}
+                                                    </Draggable>
+                                                ))}
+                                                {provided.placeholder}
+                                            </div>
+                                        )}
+                                    </Droppable>
 
-                                <div className="kanban-column-footer">
+                                    <div className="kanban-column-footer">
+                                        <Button
+                                            type="text"
+                                            icon={<PlusOutlined />}
+                                            block
+                                            style={{ textAlign: 'left', color: '#5e6c84' }}
+                                            onClick={() => {
+                                                setActiveColId(col.id);
+                                                setIsCardModalOpen(true);
+                                            }}
+                                        >
+                                            Thêm thẻ
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+
+                            <div className="add-column-wrapper">
+                                {isAddingList ? (
+                                    <div className="add-column-form">
+                                        <Input
+                                            autoFocus
+                                            placeholder="Nhập tiêu đề danh sách..."
+                                            value={newListName}
+                                            onChange={(e) => setNewListName(e.target.value)}
+                                            onPressEnter={handleAddColumn}
+                                        />
+                                        <div style={{ marginTop: '8px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                            <Button type="primary" onClick={handleAddColumn}>Thêm danh sách</Button>
+                                            <Button icon={<CloseOutlined />} type="text" onClick={() => { setIsAddingList(false); setNewListName(''); }} />
+                                        </div>
+                                    </div>
+                                ) : (
                                     <Button
-                                        type="text"
+                                        className="add-column-btn"
                                         icon={<PlusOutlined />}
-                                        block
-                                        style={{ textAlign: 'left', color: '#5e6c84' }}
-                                        onClick={() => {
-                                            setActiveColId(col.id);
-                                            setIsCardModalOpen(true);
-                                        }}
+                                        onClick={() => setIsAddingList(true)}
                                     >
-                                        Thêm thẻ
+                                        {columns.length === 0 ? "Thêm danh sách" : "Thêm danh sách khác"}
                                     </Button>
-                                </div>
+                                )}
                             </div>
-                        ))}
-
-                        <div className="add-column-wrapper">
-                            <Button
-                                type="primary"
-                                ghost
-                                icon={<PlusOutlined />}
-                                className="add-column-btn"
-                                onClick={() => setIsColModalOpen(true)}
-                            >
-                                Thêm danh sách khác
-                            </Button>
                         </div>
-                    </>
+                    </DragDropContext>
                 )}
             </div>
 
-            <Modal title="Thêm danh sách mới" open={isColModalOpen} onOk={handleAddColumn} onCancel={() => setIsColModalOpen(false)} okText="Thêm" cancelText="Hủy">
-                <p>Chọn trạng thái cho cột mới:</p>
-                <Select
-                    style={{ width: '100%' }}
-                    placeholder="Chọn trạng thái..."
-                    options={MOCK_STATUSES}
-                    value={selectedStatus}
-                    onChange={setSelectedStatus}
-                />
-            </Modal>
+
 
             <Modal title="Thêm thẻ mới" open={isCardModalOpen} onOk={handleAddCard} onCancel={() => setIsCardModalOpen(false)} okText="Thêm thẻ" cancelText="Hủy">
                 <Input.TextArea
@@ -264,6 +458,14 @@ const BoardDetail = () => {
                     onChange={(e) => setNewCardTitle(e.target.value)}
                 />
             </Modal>
+
+            <CardDetailModal
+                open={isCardDetailModalOpen}
+                card={selectedCard}
+                onClose={() => { setIsCardDetailModalOpen(false); setSelectedCard(null); }}
+                onUpdate={handleUpdateCard}
+                onDelete={handleDeleteCard}
+            />
         </div>
     );
 };

@@ -41,7 +41,6 @@ public class ListController {
     private UserService userSer;
 
     @GetMapping("/boards/{boardId}/lists")
-    @PreAuthorize("@securityCustom.canAccessBoard(authentication.name, #boardId)")
     public ResponseEntity<?> getLists(@PathVariable("boardId") int boardId, @RequestParam Map<String, String> params) {
         params.put("boardId", String.valueOf(boardId));
         List<Boardlist> lists = this.listSer.getList(params);
@@ -49,7 +48,6 @@ public class ListController {
     }
 
     @PostMapping("/boards/{boardId}/lists")
-    @PreAuthorize("@securityCustom.canAccessBoard(authentication.name, #boardId)")
     public ResponseEntity<?> createList(
             @PathVariable("boardId") int boardId,
             @RequestBody Boardlist list) {
@@ -63,7 +61,6 @@ public class ListController {
     }
 
     @PutMapping("/lists/{listId}")
-    @PreAuthorize("@securityCustom.canAccessList(authentication.name, #listId)")
     public ResponseEntity<?> updateList(
             @PathVariable("listId") int listId,
             @RequestBody Boardlist list) {
@@ -78,7 +75,6 @@ public class ListController {
     }
 
     @DeleteMapping("/lists/{listId}")
-    @PreAuthorize("@securityCustom.canAccessList(authentication.name, #listId)")
     public ResponseEntity<?> deleteList(@PathVariable("listId") int listId) {
         try {
             this.listSer.delete(listId);

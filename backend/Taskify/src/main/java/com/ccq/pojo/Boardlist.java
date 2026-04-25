@@ -20,6 +20,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -28,7 +29,7 @@ import java.util.Set;
  * @author Admin
  */
 @Entity
-@Table(name = "boardlist")
+@Table(name = "list")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Boardlist.findAll", query = "SELECT b FROM Boardlist b"),
@@ -116,6 +117,7 @@ public class Boardlist implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public Set<Card> getCardSet() {
         return cardSet;
     }

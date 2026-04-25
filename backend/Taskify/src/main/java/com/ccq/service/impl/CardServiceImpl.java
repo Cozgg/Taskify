@@ -89,7 +89,6 @@ public class CardServiceImpl implements CardService {
     @Transactional
     public String moveCard(int cardId, int newListId, int newPosition) {
         permissionService.requireCardWritePermission(cardId);
-        permissionService.requireListWritePermission(newListId);
 
         Card card = this.cardRepo.getById(cardId);
         if (card == null) {
@@ -97,57 +96,16 @@ public class CardServiceImpl implements CardService {
                     "Không tìm thấy thẻ cần di chuyển!");
         }
 
-        Boardlist oldList = card.getListId();
-        int oldPosition = card.getPosition();
-        String msg = "";
-
-        if (oldList == null || oldList.getId() != newListId) {
-            Boardlist newList = this.listRepo.getById(newListId);
-            if (newList == null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Không tìm thấy cột đích!");
-            }
-
-            CardState newState = switch (newList.getStatus().toString()) {
-                case "IN_PROGRESS" ->
-                    new InProgressState();
-                case "DONE" ->
-                    new DoneState();
-                default ->
-                    new ToDoState();
-            };
-
-            if (oldList != null) {
-                updatePositionsInList(oldList.getId(), oldPosition + 1, Integer.MAX_VALUE, -1);
-            }
-
-            updatePositionsInList(newListId, newPosition, Integer.MAX_VALUE, 1);
-
-            card.setListId(newList);
-        } else {
-            if (oldPosition < newPosition) {
-                updatePositionsInList(newListId, oldPosition + 1, newPosition, -1);
-            } else if (oldPosition > newPosition) {
-                updatePositionsInList(newListId, newPosition, oldPosition - 1, 1);
-            }
+        Boardlist newList = this.listRepo.getById(newListId);
+        if (newList == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Không tìm thấy cột đích!");
         }
 
+        card.setListId(newList);
         card.setPosition(newPosition);
         this.cardRepo.addOrUpdate(card);
-        return msg;
-    }
-
-    private void updatePositionsInList(int listId, int startPos, int endPos, int offset) {
-        Map<String, String> params = new java.util.HashMap<>();
-        params.put("listId", String.valueOf(listId));
-
-        java.util.List<Card> cards = this.cardRepo.getCard(params);
-        for (Card c : cards) {
-            if (c.getPosition() >= startPos && c.getPosition() <= endPos) {
-                c.setPosition(c.getPosition() + offset);
-                this.cardRepo.addOrUpdate(c);
-            }
-        }
+        return "";
     }
     
     @Override
