@@ -3,18 +3,27 @@ package com.ccq.configs;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@ComponentScan(basePackages = {
-    "com.ccq.controller",
-    "com.ccq.repository",
-    "com.ccq.service"
-})
+@EnableWebMvc
+@EnableTransactionManagement
+@ComponentScan(
+        basePackages = {
+            "com.ccq.controller",
+            "com.ccq.repository",
+            "com.ccq.service",
+            "com.ccq.utils",
+            "com.ccq.configs",
+            "org.springdoc"
+        }
+)
 public class WebAppContextConfigs implements WebMvcConfigurer {
 
     @Override
