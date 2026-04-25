@@ -89,6 +89,9 @@ public class Card implements Serializable {
     @JoinColumn(name = "list_id", referencedColumnName = "id")
     @ManyToOne
     private Boardlist listId;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
+    private User userId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cardId")
     private Set<CardUser> cardUserSet;
 
@@ -199,6 +202,14 @@ public class Card implements Serializable {
 
     public void setCardUserSet(Set<CardUser> cardUserSet) {
         this.cardUserSet = cardUserSet;
+    }
+
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
     }
 
     @Override

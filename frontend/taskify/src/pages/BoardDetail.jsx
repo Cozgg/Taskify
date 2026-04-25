@@ -74,6 +74,7 @@ const BoardDetail = () => {
                                     id: card.id,
                                     title: card.name,
                                     description: card.description || '',
+                                    user: card.user,
                                 }))
                                 : [],
                         };

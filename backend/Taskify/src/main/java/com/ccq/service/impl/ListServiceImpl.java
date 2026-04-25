@@ -17,11 +17,14 @@ import com.ccq.repository.ListRepository;
 import com.ccq.service.ListService;
 import com.ccq.service.PermissionService;
 
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  *
  * @author nguye
  */
 @Service
+@Transactional
 public class ListServiceImpl implements ListService{
 
     @Autowired

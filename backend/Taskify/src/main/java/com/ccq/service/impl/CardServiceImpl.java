@@ -25,7 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-
+@Transactional
 public class CardServiceImpl implements CardService {
 
     @Autowired
@@ -129,6 +129,16 @@ public class CardServiceImpl implements CardService {
         ac.setAssignedDate(new Date());
         this.cardRepo.assignUserForCard(ac);
         return ac;
+    }
+
+    @Override
+    public void removeUserFromCard(int userId, int cardId) {
+        permissionService.requireCardWritePermission(cardId);
+        boolean isUserValid = this.cardRepo.isUserInCard(userId, cardId);
+        if(!isUserValid){
+            throw  new ResponseStatusException(HttpStatusCode.valueOf(404), "User không tồn tại trong card");
+        }
+        this.cardRepo.removeUserFromCard(userId, cardId);
     }
 
 }

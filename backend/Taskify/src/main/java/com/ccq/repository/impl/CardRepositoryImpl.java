@@ -138,4 +138,14 @@ public class CardRepositoryImpl implements CardRepository{
     //     Query<Long> q = s.createQuery(sql, Long.class);
     //     return q.getSingleResult() > 0;
     // }
+
+    @Override
+    public void removeUserFromCard(int userId, int cardId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        String sql = "delete from CardUser cu " + "where cu.userId.id = :userId and cu.cardId.id = :cardId";
+        Query q = s.createQuery(sql);
+        q.setParameter("userId", userId);
+        q.setParameter("cardId", cardId);
+        q.executeUpdate();
+    }
 }

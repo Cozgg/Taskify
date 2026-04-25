@@ -92,6 +92,8 @@ public class User implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     @JsonIgnore
     private Set<CardUser> cardUserSet;
+    @OneToMany(mappedBy = "userId")
+    private Set<Card> cardSet;
 
     public User() {
     }
@@ -164,6 +166,16 @@ public class User implements Serializable {
 
     public void setCardUserSet(Set<CardUser> cardUserSet) {
         this.cardUserSet = cardUserSet;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Set<Card> getCardSet() {
+        return cardSet;
+    }
+
+    public void setCardSet(Set<Card> cardSet) {
+        this.cardSet = cardSet;
     }
 
     @Override
