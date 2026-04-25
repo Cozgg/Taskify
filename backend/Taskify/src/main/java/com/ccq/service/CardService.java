@@ -29,4 +29,6 @@ public interface CardService {
     public String moveCard(int cardId, int newListId, int newPosition);
 
     CardUser assignUserForCard(int userId, int cardId);
+
+    public void removeUserFromCard(int userId, int cardId);
 }

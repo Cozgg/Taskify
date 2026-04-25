@@ -13,7 +13,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ccq.pojo.Activity;
+import com.ccq.pojo.CardUser;
 import com.ccq.pojo.Board;
 import com.ccq.pojo.Boardlist;
 import com.ccq.pojo.Card;
@@ -63,9 +63,9 @@ public class StatRepositoryImpl implements StatRepository {
         CriteriaQuery<Object[]> q = b.createQuery(Object[].class);
 
         Root root = q.from(User.class);
-        Join<User, Activity> activityJoin = root.join("activitySet", JoinType.INNER);
-        Join<Activity, Card> cardJoin = root.join("cardId", JoinType.INNER);
-        Join<Card, Boardlist> listJoin = root.join("listId", JoinType.INNER);
+        Join<User, CardUser> cardUserJoin = root.join("cardUserSet", JoinType.INNER);
+        Join<CardUser, Card> cardJoin = cardUserJoin.join("cardId", JoinType.INNER);
+        Join<Card, Boardlist> listJoin = cardJoin.join("listId", JoinType.INNER);
 
         q.multiselect(
                 root.get("id"),

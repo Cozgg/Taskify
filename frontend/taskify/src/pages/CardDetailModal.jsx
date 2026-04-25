@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Input, Button, Popconfirm, message } from 'antd';
+import { Modal, Input, Button, Popconfirm, message, Avatar, Tag, Typography } from 'antd';
+const { Text } = Typography;
 
 export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete }) => {
     const [title, setTitle] = useState('');
@@ -43,6 +44,15 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete }) => 
                         onChange={(e) => setDescription(e.target.value)} 
                     />
                 </div>
+                {card?.user && (
+                    <div>
+                        <div style={{ marginBottom: 4, fontWeight: 500 }}>Người phụ trách</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Avatar size="small">{card.user.username?.charAt(0).toUpperCase()}</Avatar>
+                            <Text>{card.user.username}</Text>
+                        </div>
+                    </div>
+                )}
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16 }}>
                     <Popconfirm
                         title="Xóa thẻ này?"

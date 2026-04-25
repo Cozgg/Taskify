@@ -29,7 +29,7 @@ import java.util.Set;
  * @author Admin
  */
 @Entity
-@Table(name = "list")
+@Table(name = "boardlist")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Boardlist.findAll", query = "SELECT b FROM Boardlist b"),

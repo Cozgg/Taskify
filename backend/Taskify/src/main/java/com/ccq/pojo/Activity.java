@@ -25,14 +25,7 @@ import java.util.Date;
  *
  * @author Admin
  */
-@Entity
-@Table(name = "activity")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Activity.findAll", query = "SELECT a FROM Activity a"),
-    @NamedQuery(name = "Activity.findById", query = "SELECT a FROM Activity a WHERE a.id = :id"),
-    @NamedQuery(name = "Activity.findByActivity", query = "SELECT a FROM Activity a WHERE a.activity = :activity"),
-    @NamedQuery(name = "Activity.findByCreatedDate", query = "SELECT a FROM Activity a WHERE a.createdDate = :createdDate")})
 public class Activity implements Serializable {
 
     private static final long serialVersionUID = 1L;
