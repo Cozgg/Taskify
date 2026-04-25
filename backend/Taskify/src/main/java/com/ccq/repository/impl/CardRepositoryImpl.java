@@ -76,13 +76,11 @@ public class CardRepositoryImpl implements CardRepository{
         if (params != null) {
             List<Predicate> predicates = new ArrayList<>();
 
-            // Filter theo listId
             String listId = params.get("listId");
             if (listId != null && !listId.isEmpty()) {
-                predicates.add(b.equal(root.get("boardList").get("id"), Integer.parseInt(listId)));
+                predicates.add(b.equal(root.get("listId").get("id"), Integer.parseInt(listId)));
             }
 
-            // Filter theo keyword tên card
             String kw = params.get("kw");
             if (kw != null && !kw.isEmpty()) {
                 predicates.add(b.like(root.get("name"), String.format("%%%s%%", kw)));

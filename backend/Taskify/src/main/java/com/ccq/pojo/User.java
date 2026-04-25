@@ -21,6 +21,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -53,6 +54,8 @@ public class User implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "password")
     private String password;
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
@@ -122,6 +125,7 @@ public class User implements Serializable {
 
 
     @XmlTransient
+    @JsonIgnore
     public Set<Workspace> getWorkspaceSet() {
         return workspaceSet;
     }
@@ -129,7 +133,9 @@ public class User implements Serializable {
     public void setWorkspaceSet(Set<Workspace> workspaceSet) {
         this.workspaceSet = workspaceSet;
     }
+
     @XmlTransient
+    @JsonIgnore
     public Set<Comment> getCommentSet() {
         return commentSet;
     }
@@ -139,6 +145,7 @@ public class User implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public Set<UserWorkspace> getUserWorkspaceSet() {
         return userWorkspaceSet;
     }
@@ -148,6 +155,7 @@ public class User implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public Set<CardUser> getCardUserSet() {
         return cardUserSet;
     }
@@ -179,6 +187,13 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.ccq.pojo.User[ id=" + id + " ]";
+    }
+    @XmlTransient
+    public Set<Card> getCardSet() {
+        return cardSet;
+    }
+    public void setCardSet(Set<Card> cardSet) {
+        this.cardSet = cardSet;
     }
 
     public String getUsername() {
@@ -219,15 +234,6 @@ public class User implements Serializable {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    @XmlTransient
-    public Set<Card> getCardSet() {
-        return cardSet;
-    }
-
-    public void setCardSet(Set<Card> cardSet) {
-        this.cardSet = cardSet;
     }
     
 }

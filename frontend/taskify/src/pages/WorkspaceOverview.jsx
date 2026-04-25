@@ -78,7 +78,9 @@ const WorkspaceOverview = () => {
 
     const loadBoards = useCallback(async (pageNum = 1, kw = committedBoardKw) => {
         try {
-            setLoadingBoards(true);
+            if (!kw && pageNum === 1 && boards.length === 0) {
+                setLoadingBoards(true);
+            }
             const token = cookies.load('token');
             const api = authApis(token);
 
@@ -86,7 +88,8 @@ const WorkspaceOverview = () => {
             if (kw) url += `&kw=${encodeURIComponent(kw)}`;
 
             const res = await api.get(url);
-            const raw = res.data;
+            const raw = res.data?.data ?? res.data;
+
 
             if (raw?.items) {
                 setBoards(raw.items);
@@ -108,7 +111,7 @@ const WorkspaceOverview = () => {
         } finally {
             setLoadingBoards(false);
         }
-    }, [workspaceId, committedBoardKw]);
+    }, [workspaceId, committedBoardKw, boards.length]);
 
     useEffect(() => {
         setBoardPage(1);
@@ -228,14 +231,27 @@ const WorkspaceOverview = () => {
                     <Spin size="large" />
                 </div>
             ) : boards.length === 0 ? (
-                <Empty
-                    className="workspace-empty"
-                    description={
-                        committedBoardKw
-                            ? `Không tìm thấy board nào cho "${committedBoardKw}".`
-                            : 'Workspace này chưa có board nào.'
-                    }
-                />
+                <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                    <Empty
+                        className="workspace-empty"
+                        description={
+                            committedBoardKw
+                                ? `Không tìm thấy board nào cho "${committedBoardKw}".`
+                                : 'Workspace này chưa có board nào.'
+                        }
+                    />
+                    {!committedBoardKw && (
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            onClick={openBoardModal}
+                            style={{ marginTop: 16 }}
+                            size="large"
+                        >
+                            Tạo bảng mới
+                        </Button>
+                    )}
+                </div>
             ) : (
                 <Row gutter={[16, 16]} style={{ marginTop: '16px' }}>
                     {boards.map((board) => (
