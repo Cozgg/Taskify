@@ -165,16 +165,6 @@ public class Card implements Serializable {
 
     @XmlTransient
     @JsonIgnore
-    public Set<Activity> getActivitySet() {
-        return activitySet;
-    }
-
-    public void setActivitySet(Set<Activity> activitySet) {
-        this.activitySet = activitySet;
-    }
-
-    @XmlTransient
-    @JsonIgnore
     public Set<Attachment> getAttachmentSet() {
         return attachmentSet;
     }
@@ -236,6 +226,15 @@ public class Card implements Serializable {
         return "com.ccq.pojo.Card[ id=" + id + " ]";
     }
 
+
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
+    }
+
     public String getName() {
         return name;
     }
@@ -250,14 +249,6 @@ public class Card implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public User getUserId() {
-        return userId;
-    }
-
-    public void setUserId(User userId) {
-        this.userId = userId;
     }
     
 }
