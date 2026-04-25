@@ -90,6 +90,7 @@ const WorkspaceOverview = () => {
             const res = await api.get(url);
             const raw = res.data?.data ?? res.data;
 
+
             if (raw?.items) {
                 setBoards(raw.items);
                 setBoardTotalItems(Number(raw.totalItems ?? raw.items.length));
@@ -169,8 +170,26 @@ const WorkspaceOverview = () => {
         loadBoards(boardPage, committedBoardKw);
     }, [boardPage, committedBoardKw, loadBoards]);
 
-    const handleInvite = () => {
-        message.info(`Chức năng mời thành viên sẽ xử lý sau: ${inviteValue || 'chưa nhập dữ liệu'}`);
+    const handleInvite = async () => {
+        try {
+            const token = cookies.load('token');
+            const res = await authApis(token).post(endpoints['invite-member'](workspaceId), {
+                'email': inviteValue.trim(),
+            });
+
+            console.log('Invite API response:', res.data);
+
+            if (res.data) {
+                message.success('Lời mời đã được gửi thành công!');
+                setMembers([...members, res.data.user]);
+
+            } else {
+                message.error('Không thể gửi lời mời: ' + (res.data?.message || 'Lỗi không xác định'));
+            }
+
+        } catch (err) {
+            message.error('Lỗi khi mời thành viên: ' + err.message);
+        }
         setIsModalVisible(false);
         setInviteValue('');
     };
@@ -365,9 +384,9 @@ const WorkspaceOverview = () => {
                 okText="Gửi lời mời"
                 cancelText="Hủy"
             >
-                <p>Nhập email hoặc ID của người dùng bạn muốn mời:</p>
+                <p>Nhập email của người dùng bạn muốn mời:</p>
                 <Input
-                    placeholder="VD: user@gmail.com hoặc user_id"
+                    placeholder="VD: user@gmail.com"
                     value={inviteValue}
                     onChange={(e) => setInviteValue(e.target.value)}
                     size="large"

@@ -23,11 +23,11 @@ public interface WorkspaceService {
 
     void delete(int id);
 
-    List<Workspace> getWorkspaceByOwnerId(int ownerId);
+    List<Workspace> getWorkspacesByOwner();
 
-    List<Workspace> getWorkspacesByOwnerId(int ownerId, Map<String, String> params);
+    List<Workspace> getWorkspacesByOwner(Map<String, String> params);
 
-    Long countWorkspacesByOwnerId(int ownerId);
+    Long countWorkspacesByOwnerId();
 
     boolean hasWorkspace(int ownerId);
 

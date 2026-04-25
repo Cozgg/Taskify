@@ -13,7 +13,6 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ccq.pojo.Activity;
 import com.ccq.pojo.Board;
 import com.ccq.pojo.Boardlist;
 import com.ccq.pojo.Card;
@@ -43,14 +42,14 @@ public class StatRepositoryImpl implements StatRepository {
         CriteriaBuilder b = session.getCriteriaBuilder();
         CriteriaQuery<Object[]> q = b.createQuery(Object[].class);
 
-        Root root = q.from(Board.class);
-        Join<Board, Boardlist> listJoin = root.join("boardlistSet", JoinType.INNER);
+        Root root = q.from(Boardlist.class);
+        Join<Boardlist, Board> boardJoin = root.join("boardId", JoinType.INNER);
         Join<Boardlist, Card> cardJoin = root.join("cardSet", JoinType.LEFT);
-        q.multiselect(listJoin.get("status"),
+        q.multiselect(root.get("status"),
                 b.count(cardJoin.get("id")));
 
-        q.where(b.equal(root.get("id"), id));
-        q.groupBy(listJoin.get("status"));
+        q.where(b.equal(boardJoin.get("id"), id));
+        q.groupBy(root.get("status"));
 
         Query query = session.createQuery(q);
         return query.getResultList();
@@ -63,16 +62,16 @@ public class StatRepositoryImpl implements StatRepository {
         CriteriaQuery<Object[]> q = b.createQuery(Object[].class);
 
         Root root = q.from(User.class);
-        Join<User, Activity> activityJoin = root.join("activitySet", JoinType.INNER);
-        Join<Activity, Card> cardJoin = root.join("cardId", JoinType.INNER);
+//        Join<User, Activity> activityJoin = root.join("activitySet", JoinType.INNER);
+//        Join<Activity, Card> cardJoin = root.join("cardId", JoinType.INNER);
         Join<Card, Boardlist> listJoin = root.join("listId", JoinType.INNER);
 
-        q.multiselect(
-                root.get("id"),
-                root.get("username"),
-                listJoin.get("status"),
-                b.count(cardJoin.get("id"))
-        );
+//        q.multiselect(
+//                root.get("id"),
+//                root.get("username"),
+//                listJoin.get("status"),
+//                b.count(cardJoin.get("id"))
+//        );
 
         q.where(b.equal(listJoin.get("boardId").get("id"), id));
 

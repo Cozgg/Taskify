@@ -2,7 +2,6 @@ package com.ccq.utils;
 
 import java.util.stream.Collectors;
 
-import com.ccq.pojo.Activity;
 import com.ccq.pojo.Attachment;
 import com.ccq.pojo.Board;
 import com.ccq.pojo.Boardlist;
@@ -13,7 +12,6 @@ import com.ccq.pojo.ListStatus;
 import com.ccq.pojo.User;
 import com.ccq.pojo.UserWorkspace;
 import com.ccq.pojo.Workspace;
-import com.ccq.pojo.response.ResActivityDTO;
 import com.ccq.pojo.response.ResAttachmentDTO;
 import com.ccq.pojo.response.ResBoardDTO;
 import com.ccq.pojo.response.ResCardDTO;
@@ -58,8 +56,8 @@ public class DTOMapper {
         dto.setId(workspace.getId());
         dto.setName(workspace.getName());
         dto.setOwner(toUserDTO(workspace.getOwnerId()));
-        dto.setBoardCount(workspace.getBoardSet() == null ? 0 : workspace.getBoardSet().size());
-        dto.setMemberCount(workspace.getUserWorkspaceSet() == null ? 0 : workspace.getUserWorkspaceSet().size());
+        dto.setBoardCount(0);
+        dto.setMemberCount(0);
         return dto;
     }
 
@@ -78,17 +76,6 @@ public class DTOMapper {
         return dto;
     }
 
-    public static ResActivityDTO toActivityDTO(Activity activity) {
-        if (activity == null) {
-            return null;
-        }
-        return new ResActivityDTO(
-                activity.getId(),
-                activity.getActivity(),
-                activity.getCreatedDate(),
-                toUserDTO(activity.getUserId())
-        );
-    }
 
     public static ResAttachmentDTO toAttachmentDTO(Attachment attachment) {
         if (attachment == null) {
@@ -188,7 +175,11 @@ public class DTOMapper {
         if (uw == null) {
             return null;
         }
-        ResUserWorkspaceDTO dto = new ResUserWorkspaceDTO(uw.getUserId().getId(), uw.getWorkspaceId().getId());
+        ResUserDTO userDto = DTOMapper.toUserDTO(uw.getUserId());
+        
+        ResWorkspaceDTO workspaceDto = DTOMapper.toWorkspaceDTO(uw.getWorkspaceId());
+        
+        ResUserWorkspaceDTO dto = new ResUserWorkspaceDTO(userDto, workspaceDto);
         return dto;
     }
 }

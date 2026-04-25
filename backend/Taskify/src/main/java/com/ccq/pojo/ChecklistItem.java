@@ -34,15 +34,16 @@ import java.io.Serializable;
     @NamedQuery(name = "ChecklistItem.findByPosition", query = "SELECT c FROM ChecklistItem c WHERE c.position = :position")})
 public class ChecklistItem implements Serializable {
 
+    @Size(max = 255)
+    @Column(name = "name")
+    private String name;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Size(max = 255)
-    @Column(name = "name")
-    private String name;
     @Column(name = "is_checked")
     private Boolean isChecked;
     @Column(name = "position")
@@ -66,13 +67,6 @@ public class ChecklistItem implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Boolean getIsChecked() {
         return isChecked;
@@ -121,6 +115,14 @@ public class ChecklistItem implements Serializable {
     @Override
     public String toString() {
         return "com.ccq.pojo.ChecklistItem[ id=" + id + " ]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
     
 }

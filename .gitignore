@@ -1,3 +1,43 @@
-/backend/Taskify/target/
-/backend/Taskify/nbproject/
-node_modules/
+# --- IDEs & Editors ---
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+.settings/
+.classpath
+.project
+.factorypath
+bin/
+out/
+.nb-conf/
+nb-configuration.xml
+
+# --- OS rác ---
+.DS_Store
+Thumbs.db
+
+# --- Backend (Java / Maven / Gradle) ---
+**/target/
+**/build/
+**/.gradle/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+backend/Taskify/query
+backend/Taskify/response.json
+backend/Taskify/response.txt
+
+# --- Frontend (Node / React) ---
+**/node_modules/
+**/build/
+frontend/taskify/.env
+frontend/taskify/.env.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Docker ---
+.docker/
