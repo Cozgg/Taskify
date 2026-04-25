@@ -47,8 +47,7 @@ const Home = () => {
         try {
             setLoading(true);
             const token = cookies.load('token');
-
-            let url = `${endpoints['workspaces'](user.userdata.data.userId)}?page=${pageNum}`;
+            let url = `${endpoints['workspaces']}?page=${pageNum}`;
             if (q) url += `&kw=${encodeURIComponent(q)}`;
             const res = await authApis(token).get(url);
 

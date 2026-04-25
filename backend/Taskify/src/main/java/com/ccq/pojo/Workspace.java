@@ -38,17 +38,18 @@ import java.util.Set;
     @NamedQuery(name = "Workspace.findByName", query = "SELECT w FROM Workspace w WHERE w.name = :name")})
 public class Workspace implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "name")
+    private String name;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "name")
-    private String name;
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     @ManyToOne
     private User ownerId;
@@ -77,13 +78,6 @@ public class Workspace implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public User getOwnerId() {
         return ownerId;
@@ -136,6 +130,14 @@ public class Workspace implements Serializable {
     @Override
     public String toString() {
         return "com.ccq.pojo.Workspace[ id=" + id + " ]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
     
 }

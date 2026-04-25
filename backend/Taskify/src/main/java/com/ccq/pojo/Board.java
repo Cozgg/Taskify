@@ -4,6 +4,7 @@
  */
 package com.ccq.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,7 +41,14 @@ import java.util.Set;
     @NamedQuery(name = "Board.findByName", query = "SELECT b FROM Board b WHERE b.name = :name"),
     @NamedQuery(name = "Board.findByCreatedDate", query = "SELECT b FROM Board b WHERE b.createdDate = :createdDate"),
     @NamedQuery(name = "Board.findByIsPublic", query = "SELECT b FROM Board b WHERE b.isPublic = :isPublic")})
+@JsonIgnoreProperties({"boardlistSet"})
 public class Board implements Serializable {
+
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "name")
+    private String name;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -48,11 +56,6 @@ public class Board implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "name")
-    private String name;
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
@@ -84,13 +87,6 @@ public class Board implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Date getCreatedDate() {
         return createdDate;
@@ -149,6 +145,14 @@ public class Board implements Serializable {
     @Override
     public String toString() {
         return "com.ccq.pojo.Board[ id=" + id + " ]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
     
 }

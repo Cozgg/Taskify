@@ -56,8 +56,8 @@ public class DTOMapper {
         dto.setId(workspace.getId());
         dto.setName(workspace.getName());
         dto.setOwner(toUserDTO(workspace.getOwnerId()));
-        dto.setBoardCount(workspace.getBoardSet() == null ? 0 : workspace.getBoardSet().size());
-        dto.setMemberCount(workspace.getUserWorkspaceSet() == null ? 0 : workspace.getUserWorkspaceSet().size());
+        dto.setBoardCount(0);
+        dto.setMemberCount(0);
         return dto;
     }
 
@@ -176,7 +176,11 @@ public class DTOMapper {
         if (uw == null) {
             return null;
         }
-        ResUserWorkspaceDTO dto = new ResUserWorkspaceDTO(uw.getUserId().getId(), uw.getWorkspaceId().getId());
+        ResUserDTO userDto = DTOMapper.toUserDTO(uw.getUserId());
+        
+        ResWorkspaceDTO workspaceDto = DTOMapper.toWorkspaceDTO(uw.getWorkspaceId());
+        
+        ResUserWorkspaceDTO dto = new ResUserWorkspaceDTO(userDto, workspaceDto);
         return dto;
     }
 }

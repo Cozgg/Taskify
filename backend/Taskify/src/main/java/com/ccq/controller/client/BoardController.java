@@ -22,7 +22,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ccq.pojo.Board;
+import com.ccq.pojo.response.ResBoardDTO;
 import com.ccq.service.BoardService;
+import com.ccq.utils.DTOMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -41,17 +44,24 @@ public class BoardController {
             @PathVariable("workspaceId") int workspaceId,
             @RequestParam Map<String, String> params) {
 
-        params.put("workspaceId", String.valueOf(workspaceId));
-
-        List<Board> boards = this.boardService.getBoards(params);
-        return new ResponseEntity<>(boards, HttpStatus.OK);
-    }
+//    @GetMapping("/workspaces/{workspaceId}/boards")
+//    @PreAuthorize("@securityCustom.canAccessWorkspace(authentication.name, #workspaceId)")
+//    public ResponseEntity<?> getBoardsByWorkspace(
+//            @PathVariable("workspaceId") int workspaceId,
+//            @RequestParam Map<String, String> params) {
+//
+//        params.put("workspaceId", String.valueOf(workspaceId));
+//
+//        List<Board> boards = this.boardService.getBoards(params);
+//        return new ResponseEntity<>(boards, HttpStatus.OK);
+//    }
 
     @GetMapping("/boards/{boardId}") 
     public ResponseEntity<?> getBoardById(@PathVariable("boardId") int boardId) {
         Board board = this.boardService.getById(boardId);
         if (board != null) {
-            return new ResponseEntity<>(board, HttpStatus.OK);
+            ResBoardDTO dto = DTOMapper.toBoardDTO(board);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
         }
         return new ResponseEntity<>("Không tìm thấy Bảng", HttpStatus.NOT_FOUND);
     }

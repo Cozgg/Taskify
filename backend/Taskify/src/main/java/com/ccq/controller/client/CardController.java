@@ -27,10 +27,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ccq.pojo.Card;
 import com.ccq.pojo.CardUser;
 import com.ccq.pojo.User;
+import com.ccq.pojo.response.ResAttachmentDTO;
 import com.ccq.pojo.response.ResCardDTO;
+import com.ccq.service.AttachmentService;
 import com.ccq.service.CardService;
 import com.ccq.service.UserService;
 import com.ccq.utils.DTOMapper;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
@@ -42,6 +47,9 @@ public class CardController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private AttachmentService attachService;
 
     @GetMapping("/lists/{listId}/cards")
     public ResponseEntity<?> getCards(@PathVariable("listId") int listId, @RequestParam Map<String, String> params) {
@@ -125,6 +133,20 @@ public class CardController {
         }
         CardUser ac = this.cardService.assignUserForCard(currentUser.getId(), cardId);
         return new ResponseEntity<>(ac, HttpStatus.CREATED);
+    }
+    
+    @PostMapping(path = "/cards/{cardId}/attach", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, 
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResAttachmentDTO> attachFile(@PathVariable("cardId") int cardId,
+            @RequestParam Map<String, String> params, @RequestParam(value = "attachment") MultipartFile file){ 
+        ResAttachmentDTO dto = this.attachService.addFile(cardId, params, file);
+        return new ResponseEntity<>(dto, HttpStatus.CREATED);
+    }
+    
+    @DeleteMapping("/attachment/{attachId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAttach(@PathVariable("attachId") int attachId){
+        this.attachService.deleteFile(attachId);
     }
 
 }
