@@ -35,5 +35,4 @@ public interface CardRepository {
     
     void removeUserInCard(int userId, int cardId);
 
-    // boolean isWorkspaceAdminOfThisCard(int cardId, String username);
 }

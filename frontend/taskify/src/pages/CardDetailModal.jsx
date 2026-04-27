@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Modal, Input, Button, Popconfirm, message, Spin, Avatar, Tooltip, Divider, Space } from 'antd';
+import { Modal, Input, Button, Popconfirm, message, Spin, Avatar, Tooltip, Divider, Space, Typography } from 'antd';
 import cookies from "react-cookies"
 import { authApis, endpoints } from '../utils/Apis';
 import { AlignLeftOutlined, CommentOutlined, DeleteOutlined, PaperClipOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
 import AssignMemberModal from './AssignMemberModal';
-// Đảm bảo bạn đã import các thư viện authApis, endpoints, cookies ở đây
+const { Text } = Typography;
+
 
 export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, workspaceId }) => {
     const [title, setTitle] = useState('');
@@ -255,9 +256,36 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
 
                 {/* 2. MÔ TẢ */}
                 <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-                        <AlignLeftOutlined style={{ fontSize: 18 }} />
-                        <span style={{ fontWeight: 600, fontSize: 16 }}>Mô tả</span>
+                    <div style={{ marginBottom: 4, fontWeight: 500 }}>Mô tả</div>
+                    <Input.TextArea
+                        rows={4}
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                    />
+                </div>
+                {card?.user && (
+                    <div>
+                        <div style={{ marginBottom: 4, fontWeight: 500 }}>Người phụ trách</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Avatar size="small">{card.user.username?.charAt(0).toUpperCase()}</Avatar>
+                            <Text>{card.user.username}</Text>
+                        </div>
+                    </div>
+                )}
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16 }}>
+                    <Popconfirm
+                        title="Xóa thẻ này?"
+                        description="Hành động này không thể hoàn tác."
+                        onConfirm={() => onDelete(card.id, card.listId)}
+                        okText="Xóa"
+                        cancelText="Hủy"
+                        okButtonProps={{ danger: true }}
+                    >
+                        <Button danger>Xóa thẻ</Button>
+                    </Popconfirm>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                        <Button onClick={onClose}>Hủy</Button>
+                        <Button type="primary" onClick={handleSave}>Lưu cập nhật</Button>
                     </div>
                     <div style={{ marginLeft: 36 }}>
                         <Input.TextArea

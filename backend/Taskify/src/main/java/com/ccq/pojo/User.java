@@ -166,6 +166,16 @@ public class User implements Serializable {
         this.cardUserSet = cardUserSet;
     }
 
+    @XmlTransient
+    @JsonIgnore
+    public Set<Card> getCardSet() {
+        return cardSet;
+    }
+
+    public void setCardSet(Set<Card> cardSet) {
+        this.cardSet = cardSet;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -189,13 +199,6 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.ccq.pojo.User[ id=" + id + " ]";
-    }
-    @XmlTransient
-    public Set<Card> getCardSet() {
-        return cardSet;
-    }
-    public void setCardSet(Set<Card> cardSet) {
-        this.cardSet = cardSet;
     }
 
     public String getUsername() {

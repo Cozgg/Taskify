@@ -13,6 +13,8 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ccq.pojo.CardUser;
+
 import com.ccq.pojo.Board;
 import com.ccq.pojo.Boardlist;
 import com.ccq.pojo.Card;

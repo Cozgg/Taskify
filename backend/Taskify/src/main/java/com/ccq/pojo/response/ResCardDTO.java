@@ -16,8 +16,9 @@ public class ResCardDTO {
     private Date reminderDate;
     private int position;
     private int listId;
+    private ResUserDTO user;
 
-    public ResCardDTO(int id, String name, String description, boolean isActive, Date dueDate, Date reminderDate, int position, int listId) {
+    public ResCardDTO(int id, String name, String description, boolean isActive, Date dueDate, Date reminderDate, int position, int listId, ResUserDTO user) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -26,6 +27,7 @@ public class ResCardDTO {
         this.reminderDate = reminderDate;
         this.position = position;
         this.listId = listId;
+        this.user = user;
     }
 
     /**
@@ -138,5 +140,13 @@ public class ResCardDTO {
      */
     public void setListId(int listId) {
         this.listId = listId;
+    }
+
+    public ResUserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(ResUserDTO user) {
+        this.user = user;
     }
 }

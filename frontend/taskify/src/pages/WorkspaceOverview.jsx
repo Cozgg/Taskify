@@ -327,7 +327,7 @@ const WorkspaceOverview = () => {
     const tabItems = [
         { key: '1', label: <span><TableOutlined /> Bảng</span>, children: boardsTab },
         { key: '2', label: <span><TeamOutlined /> Thành viên</span>, children: membersTab },
-        { key: '3', label: <span><SettingOutlined /> Thống kê</span>, children: <p>Nội dung cài đặt workspace sẽ được bổ sung sau.</p> },
+        { key: '3', label: <span><SettingOutlined /> Cài đặt</span>, children: <p>Nội dung cài đặt workspace sẽ được bổ sung sau.</p> },
     ];
 
     if (loadingWorkspace) {

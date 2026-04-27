@@ -89,6 +89,7 @@ public class Card implements Serializable {
     @JoinColumn(name = "list_id", referencedColumnName = "id")
     @ManyToOne
     private Boardlist listId;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cardId")
     private Set<CardUser> cardUserSet;
 
@@ -201,6 +202,14 @@ public class Card implements Serializable {
         this.cardUserSet = cardUserSet;
     }
 
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -224,15 +233,6 @@ public class Card implements Serializable {
     @Override
     public String toString() {
         return "com.ccq.pojo.Card[ id=" + id + " ]";
-    }
-
-
-    public User getUserId() {
-        return userId;
-    }
-
-    public void setUserId(User userId) {
-        this.userId = userId;
     }
 
     public String getName() {

@@ -142,6 +142,7 @@ public class CardRepositoryImpl implements CardRepository {
     //     Query<Long> q = s.createQuery(sql, Long.class);
     //     return q.getSingleResult() > 0;
     // }
+
     @Override
     public List<User> getMemberInCard(int cardId) {
         Session s = this.factory.getObject().getCurrentSession();

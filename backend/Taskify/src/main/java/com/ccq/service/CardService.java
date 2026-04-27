@@ -34,4 +34,5 @@ public interface CardService {
     List<ResUserDTO> getMemberInCard(int cardId);
 
     void removeUserInCard(int userId, int cardId);
+
 }

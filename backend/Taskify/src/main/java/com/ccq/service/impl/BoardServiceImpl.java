@@ -17,7 +17,10 @@ import com.ccq.service.BoardService;
 import com.ccq.service.PermissionService;
 import com.ccq.utils.DTOMapper;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
+@Transactional
 public class BoardServiceImpl implements BoardService {
 
     @Autowired
@@ -59,14 +62,12 @@ public class BoardServiceImpl implements BoardService {
                     "Không tìm thấy Board với ID: " + id);
         }
 
-        // Lấy workspace chứa board để kiểm tra quyền xóa
         Workspace ws = board.getWorkspaceId();
         if (ws == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Board không thuộc Workspace nào");
         }
 
-        // Chỉ ADMIN hoặc owner workspace mới được xóa board
         permissionService.requireBoardDeletePermission(id);
 
         this.boardRepo.delete(id);

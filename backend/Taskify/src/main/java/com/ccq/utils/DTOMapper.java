@@ -133,7 +133,8 @@ public class DTOMapper {
                 card.getDueDate(),
                 card.getReminderDate(),
                 safePosition,
-                listId
+                listId,
+                toUserDTO(card.getUserId())
         );
     }
 
