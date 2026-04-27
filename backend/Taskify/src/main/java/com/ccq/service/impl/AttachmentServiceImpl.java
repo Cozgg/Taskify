@@ -94,4 +94,14 @@ public class AttachmentServiceImpl implements AttachmentService {
         this.attachRepo.deleteFile(id);
     }
 
+    @Override
+    public List<ResAttachmentDTO> getAttachments() {
+        return this.attachRepo.getAttachments();
+    }
+
+    @Override
+    public List<ResAttachmentDTO> getAttachments(int cardId) {
+        return this.attachRepo.getAttachments(cardId);
+    }
+
 }

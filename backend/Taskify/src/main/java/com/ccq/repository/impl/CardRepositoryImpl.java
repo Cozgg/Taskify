@@ -19,10 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ccq.pojo.Card;
 import com.ccq.pojo.CardUser;
+import com.ccq.pojo.User;
 import com.ccq.repository.CardRepository;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
@@ -33,13 +36,14 @@ import jakarta.persistence.criteria.Root;
 @Repository
 @PropertySource("classpath:configs.properties")
 @Transactional
-public class CardRepositoryImpl implements CardRepository{
+public class CardRepositoryImpl implements CardRepository {
+
     @Autowired
     private Environment env;
-    
+
     @Autowired
     private LocalSessionFactoryBean factory;
-    
+
     @Override
     public Card getById(int id) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -60,7 +64,7 @@ public class CardRepositoryImpl implements CardRepository{
     public void delete(int id) {
         Session s = this.factory.getObject().getCurrentSession();
         Card c = this.getById(id);
-        if(s != null){
+        if (s != null) {
             s.remove(c);
         }
     }
@@ -120,7 +124,7 @@ public class CardRepositoryImpl implements CardRepository{
         Session s = this.factory.getObject().getCurrentSession();
         s.persist(ac);
     }
-    
+
     @Override
     public boolean isUserInCard(int userId, int cardId) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -140,12 +144,38 @@ public class CardRepositoryImpl implements CardRepository{
     // }
 
     @Override
-    public void removeUserFromCard(int userId, int cardId) {
+    public List<User> getMemberInCard(int cardId) {
         Session s = this.factory.getObject().getCurrentSession();
-        String sql = "delete from CardUser cu " + "where cu.userId.id = :userId and cu.cardId.id = :cardId";
-        Query q = s.createQuery(sql);
-        q.setParameter("userId", userId);
-        q.setParameter("cardId", cardId);
-        q.executeUpdate();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<User> q = b.createQuery(User.class);
+        Root<CardUser> root = q.from(CardUser.class);
+        Join<CardUser, User> join = root.join("userId", JoinType.INNER);
+        q.select(join);
+
+        q.where(b.equal(root.get("cardId").get("id"), cardId));
+        Query<User> query = s.createQuery(q);
+        return query.getResultList();
+    }
+
+    @Override
+    public void removeUserInCard(int userId, int cardId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<CardUser> q = b.createQuery(CardUser.class);
+
+        Root<CardUser> root = q.from(CardUser.class);
+
+        q.select(root).where(
+                b.and(
+                        b.equal(root.get("userId").get("id"), userId),
+                        b.equal(root.get("cardId").get("id"), cardId)
+                )
+        );
+
+        CardUser cu = s.createQuery(q).uniqueResult();
+
+        if (cu != null) {
+            s.remove(cu);
+        }
     }
 }

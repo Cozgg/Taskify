@@ -52,7 +52,6 @@ const WorkspaceOverview = () => {
     const [inviteValue, setInviteValue] = useState('');
     const [isBoardModalVisible, setIsBoardModalVisible] = useState(false);
     const [newBoardName, setNewBoardName] = useState('');
-
     const loadWorkspaceContext = useCallback(async () => {
         try {
             setLoadingWorkspace(true);
@@ -260,7 +259,7 @@ const WorkspaceOverview = () => {
                                 hoverable
                                 className="board-card"
                                 style={{ backgroundColor: getBoardColor(board.id) }}
-                                onClick={() => nav(`/board/${board.id}`)}
+                                onClick={() => nav(`/board/${board.id}?workspaceId=${workspaceId}`)}
                             >
                                 <h3 className="board-title">{board.name}</h3>
                             </Card>

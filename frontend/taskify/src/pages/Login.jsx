@@ -26,6 +26,7 @@ const Login = () => {
                 console.log('Token saved:', respone.data.data.token);
                 cookies.save('refreshToken', respone.data.data.refreshToken);
                 cookies.save('userdata', respone.data);
+                console.log('Userdata saved:', respone.data);
 
                 dispatch({
                     'type': 'login',

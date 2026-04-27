@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ccq.pojo.Boardlist;
+import com.ccq.pojo.response.ResCommentDTO;
+import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -75,5 +77,10 @@ public class CommentServiceImpl implements CommentService {
     public void deleteComment(int id) {
         permissionService.requireCommentDeletePermission(id);
         this.commRepo.deleteComment(id);
+    }
+
+    @Override
+    public List<ResCommentDTO> getComments(int cardId) {
+        return this.commRepo.getComments(cardId);
     }
 }

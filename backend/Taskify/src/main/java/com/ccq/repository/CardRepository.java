@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.ccq.pojo.Card;
 import com.ccq.pojo.CardUser;
+import com.ccq.pojo.User;
 
 /**
  *
@@ -29,6 +30,9 @@ public interface CardRepository {
     void assignUserForCard(CardUser ac);
 
     boolean isUserInCard(int userId, int cardId);
+    
+    List<User> getMemberInCard(int cardId);
+    
+    void removeUserInCard(int userId, int cardId);
 
-    void removeUserFromCard(int userId, int cardId);
 }

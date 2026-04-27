@@ -11,7 +11,15 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ccq.pojo.Comment;
+import com.ccq.pojo.response.ResCommentDTO;
 import com.ccq.repository.CommentRepository;
+import com.ccq.utils.DTOMapper;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.hibernate.query.Query;
 
 /**
  *
@@ -43,22 +51,22 @@ public class CommentRepositoryImpl implements CommentRepository {
         return s.get(Comment.class, id);
     }
 
-    // @Override
-    // public boolean isCommentOwner(int commentId, String username) {
-    //     Session s = this.factory.getObject().getCurrentSession();
-    //     Query<Long> q = s.createQuery(
-    //             "SELECT COUNT(c.id) FROM Comment c WHERE c.id = :cId AND c.userId.username = :username", Long.class);
-    //     q.setParameter("cId", commentId);
-    //     q.setParameter("username", username);
-    //     return q.getSingleResult()> 0;
-    // }
-    // @Override
-    // public boolean isWorkspaceAdminOfThisComment(int commentId, String username) {
-    //     Session s = this.factory.getObject().getCurrentSession();
-    //     Query<Long> q = s.createQuery("select count(c.id) from Comment c " + "where c.id = :cId " + 
-    //             "and c.cardId.listId.boardId.workspaceId.ownerId.username = :username", Long.class);
-    //     q.setParameter("cId", commentId);
-    //     q.setParameter("username", username);
-    //     return q.getSingleResult() > 0;
-    // }
+    @Override
+    public List<ResCommentDTO> getComments(int cardId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<Comment> q = b.createQuery(Comment.class);
+
+        Root<Comment> root = q.from(Comment.class);
+
+        q.select(root);
+        q.where(b.equal(root.get("cardId").get("id"), cardId));
+
+        Query<Comment> query = s.createQuery(q);
+
+        return query.getResultList()
+                .stream()
+                .map(DTOMapper::toCommentDTO)
+                .collect(Collectors.toList());
+    }
 }

@@ -24,6 +24,8 @@ import com.ccq.pojo.response.ResCommentDTO;
 import com.ccq.service.CommentService;
 import com.ccq.service.UserService;
 import com.ccq.utils.DTOMapper;
+import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  *
@@ -39,6 +41,11 @@ public class CommentController {
 
     @Autowired
     private UserService userSer;
+    
+    @GetMapping("/cards/{cardId}/comments")
+    public ResponseEntity<List<ResCommentDTO>> getComments(@PathVariable("cardId") int cardId){
+        return new ResponseEntity<>(this.commSer.getComments(cardId), HttpStatus.OK);
+    }
 
     @PostMapping("/cards/{cardId}/comments")
     public ResponseEntity<?> addComment(@PathVariable("cardId") int cardId, @RequestBody Map<String, String> params) {

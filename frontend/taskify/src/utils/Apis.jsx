@@ -21,7 +21,15 @@ export let endpoints = {
     'update-card': cardId => `/api/cards/${cardId}`,
     'delete-card': cardId => `/api/cards/${cardId}`,
     'assign-card': cardId => `/api/cards/${cardId}/assign`,
+    'unassign-card': cardId => `/api/cards/${cardId}/unassign`,
     'move-card': cardId => `/api/cards/${cardId}/move`,
+    'card-attachments': cardId => `/api/cards/${cardId}/attachments`,
+    'attach-file': cardId => `/api/cards/${cardId}/attach`,
+    'delete-attachment': attachmentId => `/api/attachments/${attachmentId}`,
+    'add-comment': cardId => `/api/cards/${cardId}/comments`,
+    'delete-comment': commentId => `/api/comments/${commentId}`,
+    'comments': cardId => `/api/cards/${cardId}/comments`,
+    'card-members': cardId => `/api/cards/${cardId}/members`,
     // list api
     'create-list': boardId => `/api/boards/${boardId}/lists`,
     'lists': boardId => `/api/boards/${boardId}/lists`,
@@ -40,6 +48,10 @@ export let endpoints = {
     'update-board': boardId => `/api/boards/${boardId}`,
     'delete-board': boardId => `/api/boards/${boardId}`,
     'invite-member': workspaceId => `/api/workspaces/${workspaceId}/users`,
+
+    //stat api
+    'stat-board': boardId => `/api/stat-board-progress/${boardId}`,
+    'stat-member': boardId => `/api/stat-member-progress/${boardId}`
 }
 
 

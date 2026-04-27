@@ -1,23 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Button, Card, Typography, Select, Input, Modal, Tag, Spin, message, Dropdown, Popconfirm } from 'antd';
-import { PlusOutlined, MoreOutlined, ArrowLeftOutlined, CloseOutlined } from '@ant-design/icons';
+import { PlusOutlined, MoreOutlined, ArrowLeftOutlined, CloseOutlined, BarChartOutlined } from '@ant-design/icons';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { CardDetailModal } from './CardDetailModal';
 import cookies from 'react-cookies';
 import { authApis, endpoints } from '../utils/Apis';
 import './BoardDetail.css';
-
+import { useSearchParams } from 'react-router-dom';
+import { BoardStatistics } from './BoardStatistics';
 const { Title, Text } = Typography;
-
-// Mock Data
-const MOCK_STATUSES = [
-    { value: 'TODO', label: 'Cần làm (To Do)' },
-    { value: 'IN_PROGRESS', label: 'Đang làm (In Progress)' },
-    { value: 'REVIEW', label: 'Chờ duyệt (Review)' },
-    { value: 'DONE', label: 'Hoàn thành (Done)' },
-];
-
 const BoardDetail = () => {
     const { boardId } = useParams();
     const nav = useNavigate();
@@ -34,7 +26,14 @@ const BoardDetail = () => {
     const [listNameEdit, setListNameEdit] = useState('');
     const [selectedCard, setSelectedCard] = useState(null);
     const [isCardDetailModalOpen, setIsCardDetailModalOpen] = useState(false);
-
+    const [searchParams] = useSearchParams();
+    const workspaceId = searchParams.get('workspaceId');
+    const [isStatModalOpen, setIsStatModalOpen] = useState(false);
+    const statusColors = {
+        "To do": "#ebecf0",
+        "Doing": "#0079bf",
+        "Done": "#61bd4f"
+    };
     const loadBoardAndLists = useCallback(async () => {
         try {
             setLoading(true);
@@ -275,6 +274,8 @@ const BoardDetail = () => {
         }
     };
 
+
+
     const handleDeleteCard = async (cardId, listId) => {
         try {
             const token = cookies.load('token');
@@ -292,6 +293,7 @@ const BoardDetail = () => {
         }
     };
 
+
     return (
         <div className="board-detail-wrapper">
             {/* Header Bảng */}
@@ -302,6 +304,13 @@ const BoardDetail = () => {
                         {board?.name || `Kanban Board (ID: ${boardId})`}
                     </Title>
                 </div>
+                <Button
+                    type="primary"
+                    icon={<BarChartOutlined />}
+                    onClick={() => setIsStatModalOpen(true)}
+                >
+                    Thống kê
+                </Button>
             </div>
 
             <div className="board-canvas">
@@ -466,7 +475,17 @@ const BoardDetail = () => {
                 onClose={() => { setIsCardDetailModalOpen(false); setSelectedCard(null); }}
                 onUpdate={handleUpdateCard}
                 onDelete={handleDeleteCard}
+                workspaceId={workspaceId}
             />
+            <Modal
+                title={`Thống kê bảng: ${board?.name || ''}`}
+                open={isStatModalOpen}
+                onCancel={() => setIsStatModalOpen(false)}
+                footer={null}
+                width={700}
+            >
+                <BoardStatistics boardId={boardId} />
+            </Modal>
         </div>
     );
 };

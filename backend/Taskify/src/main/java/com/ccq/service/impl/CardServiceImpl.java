@@ -5,6 +5,7 @@ import com.ccq.pojo.Card;
 import com.ccq.pojo.CardUser;
 import com.ccq.pojo.User;
 import com.ccq.pojo.Workspace;
+import com.ccq.pojo.response.ResUserDTO;
 import com.ccq.repository.CardRepository;
 import com.ccq.repository.ListRepository;
 import com.ccq.repository.UserRepository;
@@ -14,9 +15,11 @@ import com.ccq.state.CardState;
 import com.ccq.state.DoneState;
 import com.ccq.state.InProgressState;
 import com.ccq.state.ToDoState;
+import com.ccq.utils.DTOMapper;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -26,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+
 public class CardServiceImpl implements CardService {
 
     @Autowired
@@ -132,13 +136,20 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public void removeUserFromCard(int userId, int cardId) {
+    public List<ResUserDTO> getMemberInCard(int cardId) {
+        return this.cardRepo.getMemberInCard(cardId).stream().map(DTOMapper::toUserDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public void removeUserInCard(int userId, int cardId) {
         permissionService.requireCardWritePermission(cardId);
         boolean isUserValid = this.cardRepo.isUserInCard(userId, cardId);
         if(!isUserValid){
             throw  new ResponseStatusException(HttpStatusCode.valueOf(404), "User không tồn tại trong card");
         }
-        this.cardRepo.removeUserFromCard(userId, cardId);
+        this.cardRepo.removeUserInCard(userId, cardId);
     }
+
+    
 
 }

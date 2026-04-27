@@ -29,6 +29,7 @@ import com.ccq.pojo.CardUser;
 import com.ccq.pojo.User;
 import com.ccq.pojo.response.ResAttachmentDTO;
 import com.ccq.pojo.response.ResCardDTO;
+import com.ccq.pojo.response.ResUserDTO;
 import com.ccq.service.AttachmentService;
 import com.ccq.service.CardService;
 import com.ccq.service.UserService;
@@ -47,7 +48,7 @@ public class CardController {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private AttachmentService attachService;
 
@@ -123,11 +124,19 @@ public class CardController {
         }
     }
 
-    @PostMapping("/cards/{cardId}/assign")
-    public ResponseEntity<?> assignUserToCard(@PathVariable("cardId") int cardId) {
+    @GetMapping("/cards/{cardId}/members")
+    public ResponseEntity<List<ResUserDTO>> getMembersInCard(@PathVariable("cardId") int cardId) {
+        return new ResponseEntity<>(this.cardService.getMemberInCard(cardId), HttpStatus.OK);
+    }
 
-        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        User currentUser = this.userService.getUserByUsername(currentUsername);
+    @PostMapping("/cards/{cardId}/assign")
+    public ResponseEntity<?> assignUserToCard(@PathVariable("cardId") int cardId, @RequestBody Map<String, Integer> payload) {
+        Integer userId = payload.get("userId");
+
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Thiếu thông tin userId!");
+        }
+        User currentUser = this.userService.getUserById(userId);
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không tìm thấy user!");
         }
@@ -135,18 +144,30 @@ public class CardController {
         return new ResponseEntity<>(ac, HttpStatus.CREATED);
     }
     
-    @PostMapping(path = "/cards/{cardId}/attach", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, 
+    @DeleteMapping("/cards/{cardId}/unassign")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeUserCard(@PathVariable("cardId") int cardId , @RequestBody Map<String, Integer> payload){
+        Integer userId = payload.get("userId");
+        this.cardService.removeUserInCard(userId, cardId);
+    }
+
+    @PostMapping(path = "/cards/{cardId}/attach", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResAttachmentDTO> attachFile(@PathVariable("cardId") int cardId,
-            @RequestParam Map<String, String> params, @RequestParam(value = "attachment") MultipartFile file){ 
+            @RequestParam Map<String, String> params, @RequestParam(value = "file") MultipartFile file) {
         ResAttachmentDTO dto = this.attachService.addFile(cardId, params, file);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
-    
-    @DeleteMapping("/attachment/{attachId}")
+
+    @DeleteMapping("/attachments/{attachId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAttach(@PathVariable("attachId") int attachId){
+    public void deleteAttach(@PathVariable("attachId") int attachId) {
         this.attachService.deleteFile(attachId);
+    }
+
+    @GetMapping("/cards/{cardId}/attachments")
+    public ResponseEntity<List<ResAttachmentDTO>> getAttachments(@PathVariable("cardId") int cardId) {
+        return new ResponseEntity<>(this.attachService.getAttachments(cardId), HttpStatus.OK);
     }
 
 }

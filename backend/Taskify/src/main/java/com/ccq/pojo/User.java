@@ -92,8 +92,6 @@ public class User implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     @JsonIgnore
     private Set<CardUser> cardUserSet;
-    @OneToMany(mappedBy = "userId")
-    private Set<Card> cardSet;
 
     public User() {
     }
@@ -201,13 +199,6 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.ccq.pojo.User[ id=" + id + " ]";
-    }
-    @XmlTransient
-    public Set<Card> getCardSet() {
-        return cardSet;
-    }
-    public void setCardSet(Set<Card> cardSet) {
-        this.cardSet = cardSet;
     }
 
     public String getUsername() {

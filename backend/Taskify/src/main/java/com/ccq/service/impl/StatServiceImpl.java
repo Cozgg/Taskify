@@ -28,7 +28,7 @@ public class StatServiceImpl implements StatService {
 
     @Override
     public List<Object[]> getMemberProgress(int id) {
-        return this.getMemberProgress(id);
+        return this.statRepo.getMemberProgress(id);
     }
     
 }
