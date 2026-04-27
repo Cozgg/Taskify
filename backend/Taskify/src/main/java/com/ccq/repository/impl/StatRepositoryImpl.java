@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ccq.pojo.Board;
 import com.ccq.pojo.Boardlist;
 import com.ccq.pojo.Card;
+import com.ccq.pojo.CardUser;
 import com.ccq.pojo.User;
 import com.ccq.repository.StatRepository;
 
@@ -41,43 +42,51 @@ public class StatRepositoryImpl implements StatRepository {
         Session session = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = session.getCriteriaBuilder();
         CriteriaQuery<Object[]> q = b.createQuery(Object[].class);
-
-        Root root = q.from(Boardlist.class);
-        Join<Boardlist, Board> boardJoin = root.join("boardId", JoinType.INNER);
+        Root<Boardlist> root = q.from(Boardlist.class);
         Join<Boardlist, Card> cardJoin = root.join("cardSet", JoinType.LEFT);
-        q.multiselect(root.get("status"),
-                b.count(cardJoin.get("id")));
-
-        q.where(b.equal(boardJoin.get("id"), id));
-        q.groupBy(root.get("status"));
-
-        Query query = session.createQuery(q);
-        return query.getResultList();
+        q.multiselect(
+                root.get("name"),
+                b.count(cardJoin.get("id"))
+        );
+        q.where(
+                b.equal(root.get("boardId").get("id"), id)
+        );
+        q.groupBy(
+                root.get("id"),
+                root.get("name")
+        );
+        q.orderBy(b.asc(root.get("position")));
+        return session.createQuery(q).getResultList();
     }
 
     @Override
-    public List<Object[]> getMemberProgress(int id) {
+    public List<Object[]> getMemberProgress(int boardId) {
         Session session = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = session.getCriteriaBuilder();
         CriteriaQuery<Object[]> q = b.createQuery(Object[].class);
 
-        Root root = q.from(User.class);
-//        Join<User, Activity> activityJoin = root.join("activitySet", JoinType.INNER);
-//        Join<Activity, Card> cardJoin = root.join("cardId", JoinType.INNER);
-        Join<Card, Boardlist> listJoin = root.join("listId", JoinType.INNER);
+        Root<CardUser> root = q.from(CardUser.class);
 
-//        q.multiselect(
-//                root.get("id"),
-//                root.get("username"),
-//                listJoin.get("status"),
-//                b.count(cardJoin.get("id"))
-//        );
+        Join<CardUser, User> userJoin = root.join("userId", JoinType.INNER);
+        Join<CardUser, Card> cardJoin = root.join("cardId", JoinType.INNER);
 
-        q.where(b.equal(listJoin.get("boardId").get("id"), id));
+        Join<Card, Boardlist> listJoin = cardJoin.join("listId", JoinType.INNER);
 
-        q.groupBy(root.get("id"), root.get("username"), listJoin.get("status"));
+        q.multiselect(
+                userJoin.get("username"),
+                listJoin.get("name"),
+                b.count(cardJoin.get("id"))
+        );
 
-        Query query = session.createQuery(q);
+        q.where(b.equal(listJoin.get("boardId").get("id"), boardId));
+
+        q.groupBy(
+                userJoin.get("id"),
+                userJoin.get("username"),
+                listJoin.get("name")
+        );
+
+        Query<Object[]> query = session.createQuery(q);
         return query.getResultList();
     }
 

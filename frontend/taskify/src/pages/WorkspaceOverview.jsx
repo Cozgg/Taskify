@@ -52,7 +52,6 @@ const WorkspaceOverview = () => {
     const [inviteValue, setInviteValue] = useState('');
     const [isBoardModalVisible, setIsBoardModalVisible] = useState(false);
     const [newBoardName, setNewBoardName] = useState('');
-
     const loadWorkspaceContext = useCallback(async () => {
         try {
             setLoadingWorkspace(true);
@@ -260,7 +259,7 @@ const WorkspaceOverview = () => {
                                 hoverable
                                 className="board-card"
                                 style={{ backgroundColor: getBoardColor(board.id) }}
-                                onClick={() => nav(`/board/${board.id}`)}
+                                onClick={() => nav(`/board/${board.id}?workspaceId=${workspaceId}`)}
                             >
                                 <h3 className="board-title">{board.name}</h3>
                             </Card>
@@ -328,7 +327,7 @@ const WorkspaceOverview = () => {
     const tabItems = [
         { key: '1', label: <span><TableOutlined /> Bảng</span>, children: boardsTab },
         { key: '2', label: <span><TeamOutlined /> Thành viên</span>, children: membersTab },
-        { key: '3', label: <span><SettingOutlined /> Cài đặt</span>, children: <p>Nội dung cài đặt workspace sẽ được bổ sung sau.</p> },
+        { key: '3', label: <span><SettingOutlined /> Thống kê</span>, children: <p>Nội dung cài đặt workspace sẽ được bổ sung sau.</p> },
     ];
 
     if (loadingWorkspace) {

@@ -5,6 +5,7 @@
 package com.ccq.service;
 
 import com.ccq.pojo.response.ResAttachmentDTO;
+import java.util.List;
 import java.util.Map;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,4 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface AttachmentService {
     ResAttachmentDTO addFile(int cardId, Map<String, String> params, MultipartFile file);
     void deleteFile(int id);
+    List<ResAttachmentDTO> getAttachments();
+    List<ResAttachmentDTO> getAttachments(int cardId);
+    
 }

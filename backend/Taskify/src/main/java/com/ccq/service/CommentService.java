@@ -5,6 +5,8 @@
 package com.ccq.service;
 
 import com.ccq.pojo.Comment;
+import com.ccq.pojo.response.ResCommentDTO;
+import java.util.List;
 
 /**
  *
@@ -15,4 +17,6 @@ public interface CommentService {
     Comment addComment(Comment c, int userId, int cardId);
 
     void deleteComment(int id);
+    
+    List<ResCommentDTO> getComments(int cardId);
 }
