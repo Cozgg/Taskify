@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
 
 import com.ccq.pojo.Boardlist;
 import com.ccq.service.ListService;
@@ -50,7 +51,7 @@ public class ListController {
     @PostMapping("/boards/{boardId}/lists")
     public ResponseEntity<?> createList(
             @PathVariable("boardId") int boardId,
-            @RequestBody Boardlist list) {
+            @Valid @RequestBody Boardlist list) {
 
         try {
             this.listSer.createListInBoard(boardId, list);
@@ -63,7 +64,7 @@ public class ListController {
     @PutMapping("/lists/{listId}")
     public ResponseEntity<?> updateList(
             @PathVariable("listId") int listId,
-            @RequestBody Boardlist list) {
+            @Valid @RequestBody Boardlist list) {
 
         try {
             list.setId(listId);

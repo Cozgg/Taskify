@@ -14,6 +14,9 @@ export let endpoints = {
     'admin-workspace-detail': (id) => `/api/admin/workspaces/${id}`,
     'admin-workspace-users': (id) => `/api/admin/workspaces/${id}/users`,
 
+    // board api
+    'joined-boards': '/api/boards',
+
     // card api
     'cards': listId => `/api/lists/${listId}/cards`,
     'create-card': listId => `/api/lists/${listId}/cards`,
