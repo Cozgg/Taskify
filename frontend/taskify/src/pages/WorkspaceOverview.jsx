@@ -52,6 +52,7 @@ const WorkspaceOverview = () => {
     const [inviteValue, setInviteValue] = useState('');
     const [isBoardModalVisible, setIsBoardModalVisible] = useState(false);
     const [newBoardName, setNewBoardName] = useState('');
+    const [isCreatingBoard, setIsCreatingBoard] = useState(false);
     const loadWorkspaceContext = useCallback(async () => {
         try {
             setLoadingWorkspace(true);
@@ -138,6 +139,7 @@ const WorkspaceOverview = () => {
         }
 
         try {
+            setIsCreatingBoard(true);
             const token = cookies.load('token');
             const api = authApis(token);
             const payload = { name: boardName };
@@ -149,10 +151,10 @@ const WorkspaceOverview = () => {
                 loadBoards(boardPage, committedBoardKw);
             }
         } catch (err) {
-            message.error(
-                'Lỗi tạo board: ' +
-                (err.response?.data?.error || err.response?.data?.message || err.message)
-            );
+            const errorMsg = err.response?.data?.name || err.response?.data?.error || err.response?.data?.message || err.message;
+            message.error('Lỗi tạo board: ' + errorMsg);
+        } finally {
+            setIsCreatingBoard(false);
         }
     };
 
@@ -350,7 +352,7 @@ const WorkspaceOverview = () => {
                     <div>
                         <Title level={2} style={{ margin: 0 }}>{workspace?.name || 'Workspace'}</Title>
                         <Text type="secondary">
-                            Workspace ID: {workspaceId} • {boardTotalItems} boards • {members.length} members
+                            {boardTotalItems} boards • {members.length} members
                         </Text>
                     </div>
                 </div>
@@ -399,12 +401,14 @@ const WorkspaceOverview = () => {
                 onCancel={() => setIsBoardModalVisible(false)}
                 okText="Tạo"
                 cancelText="Hủy"
+                okButtonProps={{ loading: isCreatingBoard }}
             >
                 <Input
                     placeholder="Tên board"
                     value={newBoardName}
                     onChange={(e) => setNewBoardName(e.target.value)}
                     size="large"
+                    maxLength={255}
                 />
             </Modal>
         </div>

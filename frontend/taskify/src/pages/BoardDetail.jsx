@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Button, Card, Typography, Select, Input, Modal, Tag, Spin, message, Dropdown, Popconfirm } from 'antd';
-import { PlusOutlined, MoreOutlined, ArrowLeftOutlined, CloseOutlined, BarChartOutlined } from '@ant-design/icons';
+import { Button, Card, Typography, Select, Input, Modal, Tag, Spin, message, Dropdown, Popconfirm, Tooltip } from 'antd';
+import { PlusOutlined, MoreOutlined, ArrowLeftOutlined, CloseOutlined, CalendarOutlined, ClockCircleOutlined, BarChartOutlined, AlignLeftOutlined } from '@ant-design/icons';
+
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { CardDetailModal } from './CardDetailModal';
 import cookies from 'react-cookies';
@@ -74,6 +75,8 @@ const BoardDetail = () => {
                                     title: card.name,
                                     description: card.description || '',
                                     user: card.user,
+                                    dueDate: card.dueDate,
+                                    reminderDate: card.reminderDate,
                                 }))
                                 : [],
                         };
@@ -225,6 +228,12 @@ const BoardDetail = () => {
             const token = cookies.load('token');
             const api = authApis(token);
 
+            if (!listNameEdit.trim()) {
+                message.warning("Tên danh sách không được để trống!");
+                setEditingListId(null);
+                return;
+            }
+
             const payload = {
                 name: listNameEdit,
                 status: currentList.status,
@@ -259,9 +268,11 @@ const BoardDetail = () => {
             const api = authApis(token);
             const payload = {
                 name: newData.title,
-                description: newData.description
+                description: newData.description,
+                dueDate: newData.dueDate,
+                reminderDate: newData.reminderDate
             };
-            await api.put(endpoints['update-card'](cardId), payload);
+            await api.patch(endpoints['update-card'](cardId), payload);
 
             setColumns(columns.map(col => ({
                 ...col,
@@ -270,7 +281,8 @@ const BoardDetail = () => {
             setIsCardDetailModalOpen(false);
             message.success("Cập nhật thẻ thành công!");
         } catch (err) {
-            message.error("Lỗi cập nhật thẻ: " + (err.response?.data?.error || err.message));
+            const errorMsg = err.response?.data?.name || err.response?.data?.error || err.message;
+            message.error("Lỗi cập nhật thẻ: " + errorMsg);
         }
     };
 
@@ -395,12 +407,28 @@ const BoardDetail = () => {
                                                                         setIsCardDetailModalOpen(true);
                                                                     }}
                                                                 >
-                                                                    {card.description && (
-                                                                        <Tag color="blue" style={{ marginBottom: 8 }}>
-                                                                            {card.description}
-                                                                        </Tag>
-                                                                    )}
                                                                     <div className="card-title">{card.title}</div>
+                                                                    <div style={{ marginTop: 8, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                                                                        {card.description && (
+                                                                            <Tooltip title="Thẻ này có mô tả.">
+                                                                                <AlignLeftOutlined style={{ color: '#5e6c84', fontSize: 14 }} />
+                                                                            </Tooltip>
+                                                                        )}
+                                                                        {card.dueDate && (
+                                                                            <Tag 
+                                                                                icon={<CalendarOutlined />} 
+                                                                                color={new Date(card.dueDate) < new Date() ? "error" : "orange"}
+                                                                                style={{ margin: 0 }}
+                                                                            >
+                                                                                {new Date(card.dueDate).toLocaleDateString('vi-VN')}
+                                                                            </Tag>
+                                                                        )}
+                                                                        {card.reminderDate && (
+                                                                            <Tag icon={<ClockCircleOutlined />} color="cyan" style={{ margin: 0 }}>
+                                                                                {new Date(card.reminderDate).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                                                                            </Tag>
+                                                                        )}
+                                                                    </div>
                                                                 </Card>
                                                             </div>
                                                         )}
@@ -412,18 +440,42 @@ const BoardDetail = () => {
                                     </Droppable>
 
                                     <div className="kanban-column-footer">
-                                        <Button
-                                            type="text"
-                                            icon={<PlusOutlined />}
-                                            block
-                                            style={{ textAlign: 'left', color: '#5e6c84' }}
-                                            onClick={() => {
-                                                setActiveColId(col.id);
-                                                setIsCardModalOpen(true);
-                                            }}
-                                        >
-                                            Thêm thẻ
-                                        </Button>
+                                        {activeColId === col.id && isCardModalOpen ? (
+                                            <div className="inline-add-card">
+                                                <Input.TextArea
+                                                    autoFocus
+                                                    placeholder="Nhập tiêu đề cho thẻ này..."
+                                                    autoSize={{ minRows: 2, maxRows: 4 }}
+                                                    value={newCardTitle}
+                                                    onChange={(e) => setNewCardTitle(e.target.value)}
+                                                    maxLength={255}
+                                                    onPressEnter={(e) => {
+                                                        if (!e.shiftKey) {
+                                                            e.preventDefault();
+                                                            handleAddCard();
+                                                        }
+                                                    }}
+                                                />
+                                                <div style={{ marginTop: '8px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                                    <Button type="primary" onClick={handleAddCard}>Thêm thẻ</Button>
+                                                    <Button icon={<CloseOutlined />} type="text" onClick={() => { setIsCardModalOpen(false); setActiveColId(null); setNewCardTitle(''); }} />
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <Button
+                                                type="text"
+                                                icon={<PlusOutlined />}
+                                                block
+                                                style={{ textAlign: 'left', color: '#5e6c84' }}
+                                                onClick={() => {
+                                                    setActiveColId(col.id);
+                                                    setIsCardModalOpen(true);
+                                                    setNewCardTitle('');
+                                                }}
+                                            >
+                                                Thêm thẻ
+                                            </Button>
+                                        )}
                                     </div>
                                 </div>
                             ))}
@@ -437,6 +489,7 @@ const BoardDetail = () => {
                                             value={newListName}
                                             onChange={(e) => setNewListName(e.target.value)}
                                             onPressEnter={handleAddColumn}
+                                            maxLength={255}
                                         />
                                         <div style={{ marginTop: '8px', display: 'flex', gap: '8px', alignItems: 'center' }}>
                                             <Button type="primary" onClick={handleAddColumn}>Thêm danh sách</Button>
@@ -460,14 +513,7 @@ const BoardDetail = () => {
 
 
 
-            <Modal title="Thêm thẻ mới" open={isCardModalOpen} onOk={handleAddCard} onCancel={() => setIsCardModalOpen(false)} okText="Thêm thẻ" cancelText="Hủy">
-                <Input.TextArea
-                    placeholder="Nhập tiêu đề cho thẻ này..."
-                    autoSize={{ minRows: 2, maxRows: 6 }}
-                    value={newCardTitle}
-                    onChange={(e) => setNewCardTitle(e.target.value)}
-                />
-            </Modal>
+            {/* Removed Modal for card creation - now inline */}
 
             <CardDetailModal
                 open={isCardDetailModalOpen}

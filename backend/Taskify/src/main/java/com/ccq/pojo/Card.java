@@ -54,8 +54,7 @@ public class Card implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "name")
     private String name;
-    @Size(max = 255)
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "LONGTEXT")
     private String description;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
