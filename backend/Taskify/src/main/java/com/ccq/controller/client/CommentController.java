@@ -26,6 +26,7 @@ import com.ccq.service.UserService;
 import com.ccq.utils.DTOMapper;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -43,7 +44,7 @@ public class CommentController {
     private UserService userSer;
     
     @GetMapping("/cards/{cardId}/comments")
-    public ResponseEntity<List<ResCommentDTO>> getComments(@PathVariable("cardId") int cardId, @RequestBody Map<String, String> params){
+    public ResponseEntity<List<ResCommentDTO>> getComments(@PathVariable("cardId") int cardId, @RequestParam Map<String, String> params){
         return new ResponseEntity<>(this.commSer.getComments(cardId, params), HttpStatus.OK);
     }
 
