@@ -18,12 +18,9 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
     const [newComment, setNewComment] = useState('');
     const [members, setMembers] = useState([]);
     const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
-<<<<<<< HEAD
     const [page, setPage] = useState(1);
-=======
     const [dueDate, setDueDate] = useState(null);
     const [reminderDate, setReminderDate] = useState(null);
->>>>>>> origin/main
 
     const fileInputRef = useRef(null);
 
@@ -34,9 +31,9 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
             setDueDate(card.dueDate ? dayjs(card.dueDate) : null);
             setReminderDate(card.reminderDate ? dayjs(card.reminderDate) : null);
             loadAttachments();
-            loadComments();
             setPage(1);
-            loadMembers();
+            console.log(card.id)
+            setComments([]); loadMembers();
         } else {
             setAttachments([]);
             setDueDate(null);
@@ -172,6 +169,7 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
 
 
     const loadComments = async () => {
+        if (!card || !card.id) return;
         try {
             const token = cookies.load('token');
             let url = `${endpoints['comments'](card.id)}?page=${page}`;
@@ -183,13 +181,13 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
             }
         } catch (error) {
             console.log(error);
-            message.warning("Đã hết comments, không thể tải thêm");
+            // message.warning("Đã hết comments, không thể tải thêm");
         }
 
     }
     useEffect(() => {
         loadComments();
-    }, [page]);
+    }, [page, card]);
 
     const loadMore = () => {
         setPage(page + 1);
