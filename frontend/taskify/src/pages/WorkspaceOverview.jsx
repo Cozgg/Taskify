@@ -187,7 +187,8 @@ const WorkspaceOverview = () => {
             }
 
         } catch (err) {
-            message.error('Lỗi khi mời thành viên: ' + err.message);
+            console.error('Error inviting member:', err);
+            message.error("Thành viên chưa tạo tài khoản. Vui lòng tạo tài khoản trên trang chủ.");
         }
         setIsModalVisible(false);
         setInviteValue('');

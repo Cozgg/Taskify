@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.ccq.pojo.Boardlist;
 import com.ccq.pojo.response.ResCommentDTO;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -80,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<ResCommentDTO> getComments(int cardId) {
-        return this.commRepo.getComments(cardId);
+    public List<ResCommentDTO> getComments(int cardId, Map<String, String> params) {
+        return this.commRepo.getComments(cardId, params);
     }
 }

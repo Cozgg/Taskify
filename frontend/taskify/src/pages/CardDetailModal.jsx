@@ -16,6 +16,7 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
     const [newComment, setNewComment] = useState('');
     const [members, setMembers] = useState([]);
     const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+    const [page, setPage] = useState(1);
 
     // Dùng useRef để "giấu" thẻ input file mặc định xấu xí
     const fileInputRef = useRef(null);
@@ -26,6 +27,7 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
             setDescription(card.description || '');
             loadAttachments();
             loadComments();
+            setPage(1);
             loadMembers();
         } else {
             setAttachments([]);
@@ -153,13 +155,25 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
     const loadComments = async () => {
         try {
             const token = cookies.load('token');
-            let res = await authApis(token).get(endpoints['comments'](card.id));
-            setComments(res.data.data || res.data || []);
+            let url = `${endpoints['comments'](card.id)}?page=${page}`;
+            let res = await authApis(token).get(url);
+            if (page === 1)
+                setComments(res.data.data || res.data || []);
+            else {
+                setComments(prev => [...prev, ...res.data.data || res.data || []]);
+            }
         } catch (error) {
             console.log(error);
-            message.warning("Lỗi comments");
+            message.warning("Đã hết comments, không thể tải thêm");
         }
 
+    }
+    useEffect(() => {
+        loadComments();
+    }, [page]);
+
+    const loadMore = () => {
+        setPage(page + 1);
     }
 
     const handleAddComment = async () => {
@@ -350,8 +364,16 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
                         </div>
                     </div>
 
-                    {/* Danh sách bình luận */}
-                    <div style={{ marginLeft: 8, display: 'flex', flexDirection: 'column', gap: 20 }}>
+                    {/* Vùng cuộn danh sách bình luận */}
+                    <div style={{
+                        marginLeft: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 20,
+                        maxHeight: '300px', // Giới hạn chiều cao để tạo scroll
+                        overflowY: 'auto',  // Kích hoạt thanh cuộn dọc
+                        paddingRight: '8px' // Tránh chữ bị sát vào thanh cuộn
+                    }}>
                         {comments.map(c => (
                             <div key={c.id} style={{ display: 'flex', gap: 12 }}>
                                 <Avatar src={c.user?.avatar} icon={!c.user?.avatar && <UserOutlined />} />
@@ -363,7 +385,8 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
                                     <div style={{ backgroundColor: '#fff', padding: '8px 12px', borderRadius: 8, border: '1px solid #dfe1e6', fontSize: 14 }}>
                                         {c.comment}
                                     </div>
-                                    {currentUser && currentUser.data.userId === c.user?.id && (
+                                    {/* Thêm optional chaining (?.) để tránh lỗi crash nếu currentUser.data bị undefined */}
+                                    {currentUser && currentUser?.data?.userId === c.user?.id && (
                                         <Popconfirm title="Xóa bình luận?" onConfirm={() => deleteComment(c.id)}>
                                             <Button type="link" size="small" style={{ padding: 0, fontSize: 12, color: '#5e6c84' }}>Xóa</Button>
                                         </Popconfirm>
@@ -371,6 +394,15 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
                                 </div>
                             </div>
                         ))}
+
+                        {/* Nút gọi hàm phân trang */}
+                        {comments.length > 0 && (
+                            <div style={{ textAlign: 'center', marginTop: 10 }}>
+                                <Button type="link" size="small" onClick={loadMore}>
+                                    Tải thêm bình luận...
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
 
