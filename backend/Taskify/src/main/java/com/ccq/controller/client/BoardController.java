@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
 
 import com.ccq.pojo.Board;
 import com.ccq.pojo.response.ResBoardDTO;
@@ -67,7 +68,7 @@ public class BoardController {
     @PostMapping("/workspaces/{workspaceId}/boards")
     public ResponseEntity<?> createBoard(
             @PathVariable("workspaceId") int workspaceId,
-            @RequestBody Board board) {
+            @Valid @RequestBody Board board) {
         try {
             this.boardService.createBoardInWorkspace(workspaceId, board);
             return new ResponseEntity<>(board, HttpStatus.CREATED); // 201
@@ -79,7 +80,7 @@ public class BoardController {
     @PutMapping("/boards/{boardId}")
     public ResponseEntity<?> updateBoard(
             @PathVariable("boardId") int boardId,
-            @RequestBody Board board) {
+            @Valid @RequestBody Board board) {
         try {
             board.setId(boardId);
             this.boardService.addOrUpdate(board);

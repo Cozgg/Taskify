@@ -37,6 +37,7 @@ import com.ccq.utils.DTOMapper;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
@@ -66,8 +67,14 @@ public class CardController {
     @PostMapping("/lists/{listId}/cards")
     public ResponseEntity<?> createCard(
             @PathVariable("listId") int listId,
-            @RequestBody Card c) {
+            @Valid @RequestBody Card c) {
         try {
+            String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+            User currentUser = this.userService.getUserByUsername(currentUsername);
+            c.setUserId(currentUser);
+            c.setCreatedDate(new java.util.Date());
+            c.setIsActive(true);
+            
             this.cardService.createCardInList(listId, c);
 
             ResCardDTO dto = DTOMapper.toCardDTO(c);
@@ -78,15 +85,24 @@ public class CardController {
         }
     }
 
-    @PutMapping("/cards/{cardId}")
-    public ResponseEntity<?> updateCard(@PathVariable("cardId") int cardId, @RequestBody Card c) {
+    @PatchMapping("/cards/{cardId}")
+    public ResponseEntity<?> updateCard(@PathVariable("cardId") int cardId, @Valid @RequestBody Card c) {
         try {
-            c.setId(cardId);
-            this.cardService.addOrUpdate(c);
+            Card existingCard = this.cardService.getById(cardId);
+            if (existingCard == null) {
+                return new ResponseEntity<>("Không tìm thấy thẻ!", HttpStatus.NOT_FOUND);
+            }
 
-            Card updatedCard = this.cardService.getById(cardId);
+            if (c.getName() != null) existingCard.setName(c.getName());
+            if (c.getDescription() != null) existingCard.setDescription(c.getDescription());
+            if (c.getDueDate() != null) existingCard.setDueDate(c.getDueDate());
+            if (c.getReminderDate() != null) existingCard.setReminderDate(c.getReminderDate());
+            if (c.getIsActive() != null) existingCard.setIsActive(c.getIsActive());
+            if (c.getPosition() != null) existingCard.setPosition(c.getPosition());
 
-            ResCardDTO dto = DTOMapper.toCardDTO(updatedCard);
+            this.cardService.addOrUpdate(existingCard);
+
+            ResCardDTO dto = DTOMapper.toCardDTO(existingCard);
             return new ResponseEntity<>(dto, HttpStatus.OK);
 
         } catch (Exception e) {
