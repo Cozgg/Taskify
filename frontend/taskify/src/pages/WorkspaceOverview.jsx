@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { MyContext } from '../utils/context/MyContext';
 import {
     Typography,
     Button,
@@ -51,7 +52,13 @@ const WorkspaceOverview = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [inviteValue, setInviteValue] = useState('');
     const [isBoardModalVisible, setIsBoardModalVisible] = useState(false);
+    const [isCreatingBoard, setIsCreatingBoard] = useState(false);
     const [newBoardName, setNewBoardName] = useState('');
+
+    const [user] = useContext(MyContext);
+    const currentUserId = user?.userdata?.data?.userId || user?.userdata?.userId || user?.userdata?.data?.id;
+    const isOwner = Number(workspace?.owner?.id) === Number(currentUserId) || user?.userdata?.data?.role === 'ADMIN';
+
     const loadWorkspaceContext = useCallback(async () => {
         try {
             setLoadingWorkspace(true);
@@ -138,6 +145,7 @@ const WorkspaceOverview = () => {
         }
 
         try {
+            setIsCreatingBoard(true);
             const token = cookies.load('token');
             const api = authApis(token);
             const payload = { name: boardName };
@@ -149,10 +157,10 @@ const WorkspaceOverview = () => {
                 loadBoards(boardPage, committedBoardKw);
             }
         } catch (err) {
-            message.error(
-                'Lỗi tạo board: ' +
-                (err.response?.data?.error || err.response?.data?.message || err.message)
-            );
+            const errorMsg = err.response?.data?.name || err.response?.data?.error || err.response?.data?.message || err.message;
+            message.error('Lỗi tạo board: ' + errorMsg);
+        } finally {
+            setIsCreatingBoard(false);
         }
     };
 
@@ -183,7 +191,7 @@ const WorkspaceOverview = () => {
                 setMembers([...members, res.data.user]);
 
             } else {
-                message.error('Không thể gửi lời mời: ' + (res.data?.message || 'Lỗi không xác định'));
+                message.error(res.data?.message || 'Unable to invite member');
             }
 
         } catch (err) {
@@ -240,7 +248,7 @@ const WorkspaceOverview = () => {
                                 : 'Workspace này chưa có board nào.'
                         }
                     />
-                    {!committedBoardKw && (
+                    {!committedBoardKw && isOwner && (
                         <Button
                             type="primary"
                             icon={<PlusOutlined />}
@@ -267,7 +275,7 @@ const WorkspaceOverview = () => {
                         </Col>
                     ))}
 
-                    {!committedBoardKw && (
+                    {!committedBoardKw && isOwner && (
                         <Col xs={24} sm={12} md={8} lg={6}>
                             <Card hoverable className="board-card create-board-card" onClick={openBoardModal}>
                                 <div className="create-board-content">
@@ -328,7 +336,7 @@ const WorkspaceOverview = () => {
     const tabItems = [
         { key: '1', label: <span><TableOutlined /> Bảng</span>, children: boardsTab },
         { key: '2', label: <span><TeamOutlined /> Thành viên</span>, children: membersTab },
-        { key: '3', label: <span><SettingOutlined /> Cài đặt</span>, children: <p>Nội dung cài đặt workspace sẽ được bổ sung sau.</p> },
+        ...(isOwner ? [{ key: '3', label: <span><SettingOutlined /> Cài đặt</span>, children: <p>Nội dung cài đặt workspace sẽ được bổ sung sau.</p> }] : []),
     ];
 
     if (loadingWorkspace) {
@@ -351,7 +359,7 @@ const WorkspaceOverview = () => {
                     <div>
                         <Title level={2} style={{ margin: 0 }}>{workspace?.name || 'Workspace'}</Title>
                         <Text type="secondary">
-                            Workspace ID: {workspaceId} • {boardTotalItems} boards • {members.length} members
+                            {boardTotalItems} boards • {members.length} members
                         </Text>
                     </div>
                 </div>
@@ -362,15 +370,17 @@ const WorkspaceOverview = () => {
                             <Avatar key={member.id}>{member.username?.charAt(0)?.toUpperCase() || 'U'}</Avatar>
                         ))}
                     </Avatar.Group>
-                    <Button
-                        type="primary"
-                        icon={<UserAddOutlined />}
-                        onClick={() => setIsModalVisible(true)}
-                        className="trello-btn"
-                        style={{ marginLeft: '16px' }}
-                    >
-                        Mời thành viên
-                    </Button>
+                    {isOwner && (
+                        <Button
+                            type="primary"
+                            icon={<UserAddOutlined />}
+                            onClick={() => setIsModalVisible(true)}
+                            className="trello-btn"
+                            style={{ marginLeft: '16px' }}
+                        >
+                            Mời thành viên
+                        </Button>
+                    )}
                 </div>
             </div>
 
@@ -400,12 +410,14 @@ const WorkspaceOverview = () => {
                 onCancel={() => setIsBoardModalVisible(false)}
                 okText="Tạo"
                 cancelText="Hủy"
+                okButtonProps={{ loading: isCreatingBoard }}
             >
                 <Input
                     placeholder="Tên board"
                     value={newBoardName}
                     onChange={(e) => setNewBoardName(e.target.value)}
                     size="large"
+                    maxLength={255}
                 />
             </Modal>
         </div>

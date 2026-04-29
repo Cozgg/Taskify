@@ -1,6 +1,8 @@
 import axios from 'axios'
 import cookies from 'react-cookies'
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+
 export let endpoints = {
     'login': '/api/auth/login',
     'register': '/api/auth/register',
@@ -13,6 +15,9 @@ export let endpoints = {
     'admin-workspaces': '/api/admin/workspaces',
     'admin-workspace-detail': (id) => `/api/admin/workspaces/${id}`,
     'admin-workspace-users': (id) => `/api/admin/workspaces/${id}/users`,
+
+    // board api
+    'joined-boards': '/api/boards',
 
     // card api
     'cards': listId => `/api/lists/${listId}/cards`,
@@ -38,7 +43,7 @@ export let endpoints = {
     'delete-list': listId => `/api/lists/${listId}`,
     // workspace api
     'create-workspace': '/api/workspaces',
-    'workspaces': '/api/workspaces/owner',
+    'workspaces': '/api/workspaces',
     'workspace-detail': workspaceId => `/api/workspaces/${workspaceId}`,
     'workspace-member': workspaceId => `/api/workspaces/${workspaceId}/members`,
     'workspace-board': workspaceId => `/api/workspaces/${workspaceId}/boards`,
@@ -57,12 +62,12 @@ export let endpoints = {
 
 
 export default axios.create({
-    baseURL: 'http://localhost:8080',
+    baseURL: API_BASE_URL,
 })
 
 export const authApis = (token) => {
     const instance = axios.create({
-        baseURL: 'http://localhost:8080',
+        baseURL: API_BASE_URL,
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -79,7 +84,7 @@ export const authApis = (token) => {
                 try {
                     const refreshToken = cookies.load('refreshToken');
                     if (refreshToken) {
-                        const res = await axios.post('http://localhost:8080/api/auth/refresh-token', { refreshToken });
+                        const res = await axios.post(API_BASE_URL + '/api/auth/refresh-token', { refreshToken });
                         if (res.status === 200 && res.data.data.accessToken) {
                             const newToken = res.data.data.accessToken;
                             cookies.save('token', newToken);

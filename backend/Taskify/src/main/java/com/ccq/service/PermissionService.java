@@ -119,9 +119,15 @@ public class PermissionService {
         requireWorkspaceAccess(getWorkspaceId(card));
     }
 
-    // được chỉnh sửa tài nguyên nếu có quyền truy cập + là ADMIN hoặc owner workspace
+    // được chỉnh sửa tài nguyên nếu là ADMIN hoặc owner workspace
     public void requireBoardWritePermission(int boardId) {
-        requireBoardAccess(boardId);
+        Board board = getBoardOrThrow(boardId);
+        requireWorkspaceOwnerPermission(getWorkspaceId(board));
+    }
+
+    public void requireBoardOwnerPermission(int boardId) {
+        Board board = getBoardOrThrow(boardId);
+        requireWorkspaceOwnerPermission(getWorkspaceId(board));
     }
 
     public void requireListWritePermission(int listId) {

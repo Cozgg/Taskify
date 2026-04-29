@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Pagination, Spin, Modal, Form, Input, message, Dropdown } from 'antd';
+import { Button, Pagination, Spin, Modal, Form, Input, message, Dropdown, Divider } from 'antd';
 import {
     PlusOutlined,
     AppstoreOutlined,
@@ -26,7 +26,9 @@ const getInitials = (name = '') =>
 const Home = () => {
     const [user] = useContext(MyContext);
     const [workspaces, setWorkspaces] = useState([]);
+    const [boards, setBoards] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [loadingBoards, setLoadingBoards] = useState(false);
 
     const [searchText, setSearchText] = useState('');
     const [committedQ, setCommittedQ] = useState('');
@@ -75,6 +77,22 @@ const Home = () => {
         }
     }, [user]);
 
+    const loadJoinedBoards = useCallback(async () => {
+        if (!user) return;
+        try {
+            setLoadingBoards(true);
+            const token = cookies.load('token');
+            const res = await authApis(token).get(endpoints['joined-boards']);
+            if (res.status === 200) {
+                setBoards(res.data || []);
+            }
+        } catch (err) {
+            console.error("Lỗi tải boards:", err);
+        } finally {
+            setLoadingBoards(false);
+        }
+    }, [user]);
+
     useEffect(() => {
         console.log(workspaces);
     }, [workspaces]);
@@ -95,7 +113,8 @@ const Home = () => {
     useEffect(() => {
         if (!user) return;
         loadWorkspaces(committedQ, page);
-    }, [committedQ, page, user, loadWorkspaces]);
+        loadJoinedBoards();
+    }, [committedQ, page, user, loadWorkspaces, loadJoinedBoards]);
 
     const openCreateModal = () => {
         setModalMode('create');
@@ -138,7 +157,14 @@ const Home = () => {
             }
         } catch (err) {
             if (!err.errorFields) {
-                message.error('Có lỗi xảy ra, vui lòng thử lại!');
+                const backendError = err.response?.data;
+                let errorMsg = 'Có lỗi xảy ra, vui lòng thử lại!';
+                if (typeof backendError === 'object') {
+                    errorMsg = Object.values(backendError).join(', ');
+                } else if (typeof backendError === 'string') {
+                    errorMsg = backendError;
+                }
+                message.error(errorMsg);
                 console.error(err);
             }
         }
@@ -202,7 +228,7 @@ const Home = () => {
                     <div>
                         <h1 className="home-section-title">Workspaces</h1>
                         <p className="home-section-sub">
-                            Select a workspace to start managing your projects.
+                            Manage your boards and workspaces here.
                         </p>
                     </div>
 
@@ -227,10 +253,58 @@ const Home = () => {
                     </div>
                 </div>
 
-                {loading ? (
+                {loading || loadingBoards ? (
                     <div className="home-loading"><Spin size="large" /></div>
                 ) : (
                     <>
+                        {/* PHẦN BOARDS */}
+                        {!committedQ && boards.length > 0 && (
+                            <div className="home-boards-section" style={{ marginBottom: 40 }}>
+                                <div className="home-section-head">
+                                    <div>
+                                        <h2 className="home-section-title" style={{ fontSize: 20 }}>
+                                            <AppstoreOutlined style={{ marginRight: 8 }} />
+                                            Your Boards
+                                        </h2>
+                                        <p className="home-section-sub">Quick access to all boards you are part of.</p>
+                                    </div>
+                                </div>
+                                <div className="workspace-grid">
+                                    {boards.map((board) => (
+                                        <div 
+                                            key={board.id} 
+                                            className="ws-card board-item-card" 
+                                            style={{ 
+                                                background: '#0079BF', // Default blue, or use a function for colors
+                                                height: 100,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: 'pointer',
+                                                borderRadius: 8,
+                                                padding: 16
+                                            }}
+                                            onClick={() => nav(`/board/${board.id}`)}
+                                        >
+                                            <p style={{ color: '#fff', fontWeight: 700, fontSize: 16, margin: 0, textAlign: 'center' }}>
+                                                {board.name}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                                <Divider style={{ margin: '32px 0' }} />
+                            </div>
+                        )}
+
+                        <div className="home-section-head">
+                            <div>
+                                <h1 className="home-section-title">Workspaces</h1>
+                                <p className="home-section-sub">
+                                    Select a workspace to start managing your projects.
+                                </p>
+                            </div>
+                        </div>
+
                         {workspaces.length === 0 && (
                             <div className="home-empty">
                                 {committedQ
@@ -254,17 +328,19 @@ const Home = () => {
                                         >
                                             {getInitials(ws.name)}
                                         </div>
-                                        <Dropdown
-                                            menu={cardMenu(ws)}
-                                            trigger={['click']}
-                                            placement="bottomRight"
-                                        >
-                                            <Button
-                                                className="ws-menu-btn"
-                                                icon={<EllipsisOutlined style={{ fontSize: 18 }} />}
-                                                onClick={(e) => e.stopPropagation()}
-                                            />
-                                        </Dropdown>
+                                        {ws.owner?.id === user?.userdata?.data?.id && (
+                                            <Dropdown
+                                                menu={cardMenu(ws)}
+                                                trigger={['click']}
+                                                placement="bottomRight"
+                                            >
+                                                <Button
+                                                    className="ws-menu-btn"
+                                                    icon={<EllipsisOutlined style={{ fontSize: 18 }} />}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                />
+                                            </Dropdown>
+                                        )}
                                     </div>
 
                                     <p className="ws-card-name">{ws.name}</p>
@@ -320,7 +396,7 @@ const Home = () => {
                         label="Tên Không gian làm việc"
                         rules={[{ required: true, message: 'Vui lòng nhập tên Workspace!' }]}
                     >
-                        <Input placeholder="Ví dụ: Công ty TNHH Bách Khoa" size="large" />
+                        <Input placeholder="Ví dụ: Công ty TNHH Bách Khoa" size="large" maxLength={255} />
                     </Form.Item>
                 </Form>
             </Modal>
