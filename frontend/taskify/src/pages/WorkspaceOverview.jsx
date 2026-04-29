@@ -52,6 +52,7 @@ const WorkspaceOverview = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [inviteValue, setInviteValue] = useState('');
     const [isBoardModalVisible, setIsBoardModalVisible] = useState(false);
+    const [isCreatingBoard, setIsCreatingBoard] = useState(false);
     const [newBoardName, setNewBoardName] = useState('');
     
     const [user] = useContext(MyContext);
