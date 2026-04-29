@@ -43,8 +43,8 @@ public class CommentController {
     private UserService userSer;
     
     @GetMapping("/cards/{cardId}/comments")
-    public ResponseEntity<List<ResCommentDTO>> getComments(@PathVariable("cardId") int cardId){
-        return new ResponseEntity<>(this.commSer.getComments(cardId), HttpStatus.OK);
+    public ResponseEntity<List<ResCommentDTO>> getComments(@PathVariable("cardId") int cardId, @RequestBody Map<String, String> params){
+        return new ResponseEntity<>(this.commSer.getComments(cardId, params), HttpStatus.OK);
     }
 
     @PostMapping("/cards/{cardId}/comments")

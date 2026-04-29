@@ -54,7 +54,7 @@ const WorkspaceOverview = () => {
     const [isBoardModalVisible, setIsBoardModalVisible] = useState(false);
     const [isCreatingBoard, setIsCreatingBoard] = useState(false);
     const [newBoardName, setNewBoardName] = useState('');
-    
+
     const [user] = useContext(MyContext);
     const currentUserId = user?.userdata?.data?.userId || user?.userdata?.userId || user?.userdata?.data?.id;
     const isOwner = Number(workspace?.owner?.id) === Number(currentUserId) || user?.userdata?.data?.role === 'ADMIN';
@@ -195,7 +195,8 @@ const WorkspaceOverview = () => {
             }
 
         } catch (err) {
-            message.error(err.response?.data?.message || err.response?.data?.error || err.message);
+            console.error('Error inviting member:', err);
+            message.error("Thành viên chưa tạo tài khoản. Vui lòng tạo tài khoản trên trang chủ.");
         }
         setIsModalVisible(false);
         setInviteValue('');

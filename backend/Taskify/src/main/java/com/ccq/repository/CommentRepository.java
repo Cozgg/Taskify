@@ -7,6 +7,7 @@ package com.ccq.repository;
 import com.ccq.pojo.Comment;
 import com.ccq.pojo.response.ResCommentDTO;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -20,7 +21,7 @@ public interface CommentRepository {
 
     Comment getCommentById(int id);
     
-    List<ResCommentDTO> getComments(int cardId);
+    List<ResCommentDTO> getComments(int cardId, Map<String, String> params);
 
     // boolean isCommentOwner(int commentId, String username);
 
