@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Button, Card, Typography, Select, Input, Modal, Tag, Spin, message, Dropdown, Popconfirm, Tooltip } from 'antd';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { Button, Card, Typography, Input, Modal, Tag, Spin, message, Dropdown, Popconfirm, Tooltip } from 'antd';
 import { PlusOutlined, MoreOutlined, ArrowLeftOutlined, CloseOutlined, CalendarOutlined, ClockCircleOutlined, BarChartOutlined, AlignLeftOutlined } from '@ant-design/icons';
 import { MyContext } from '../utils/context/MyContext';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -8,7 +8,6 @@ import { CardDetailModal } from './CardDetailModal';
 import cookies from 'react-cookies';
 import { authApis, endpoints } from '../utils/Apis';
 import './BoardDetail.css';
-import { useSearchParams } from 'react-router-dom';
 import { BoardStatistics } from './BoardStatistics';
 const { Title, Text } = Typography;
 const BoardDetail = () => {
@@ -31,13 +30,8 @@ const BoardDetail = () => {
     const [searchParams] = useSearchParams();
     const workspaceId = searchParams.get('workspaceId');
     const [isStatModalOpen, setIsStatModalOpen] = useState(false);
-    const statusColors = {
-        "To do": "#ebecf0",
-        "Doing": "#0079bf",
-        "Done": "#61bd4f"
-    };
     const [user] = useContext(MyContext);
-    
+
     const currentUserId = user?.userdata?.data?.userId || user?.userdata?.userId || user?.userdata?.data?.id;
     const isOwner = workspace && (Number(workspace?.owner?.id) === Number(currentUserId) || user?.userdata?.data?.role === 'ADMIN');
 
@@ -107,7 +101,7 @@ const BoardDetail = () => {
         } finally {
             setLoading(false);
         }
-    }, [boardId]);
+    }, [boardId, workspaceId]);
 
     useEffect(() => {
         if (boardId) {
@@ -426,8 +420,8 @@ const BoardDetail = () => {
                                                                             </Tooltip>
                                                                         )}
                                                                         {card.dueDate && (
-                                                                            <Tag 
-                                                                                icon={<CalendarOutlined />} 
+                                                                            <Tag
+                                                                                icon={<CalendarOutlined />}
                                                                                 color={new Date(card.dueDate) < new Date() ? "error" : "orange"}
                                                                                 style={{ margin: 0 }}
                                                                             >
