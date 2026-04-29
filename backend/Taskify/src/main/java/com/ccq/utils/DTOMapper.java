@@ -56,8 +56,8 @@ public class DTOMapper {
         dto.setId(workspace.getId());
         dto.setName(workspace.getName());
         dto.setOwner(toUserDTO(workspace.getOwnerId()));
-        dto.setBoardCount(0);
-        dto.setMemberCount(0);
+        dto.setBoardCount(workspace.getBoardSet() != null ? workspace.getBoardSet().size() : 0);
+        dto.setMemberCount(workspace.getUserWorkspaceSet() != null ? workspace.getUserWorkspaceSet().size() : 0);
         return dto;
     }
 
@@ -75,7 +75,6 @@ public class DTOMapper {
         dto.setPageSize(pageSize);
         return dto;
     }
-
 
     public static ResAttachmentDTO toAttachmentDTO(Attachment attachment) {
         if (attachment == null) {
@@ -177,10 +176,21 @@ public class DTOMapper {
             return null;
         }
         ResUserDTO userDto = DTOMapper.toUserDTO(uw.getUserId());
-        
-        ResWorkspaceDTO workspaceDto = DTOMapper.toWorkspaceDTO(uw.getWorkspaceId());
-        
+
+        ResWorkspaceDTO workspaceDto = DTOMapper.toWorkspaceSummaryDTO(uw.getWorkspaceId());
+
         ResUserWorkspaceDTO dto = new ResUserWorkspaceDTO(userDto, workspaceDto);
+        return dto;
+    }
+
+    public static ResWorkspaceDTO toWorkspaceSummaryDTO(Workspace workspace) {
+        if (workspace == null) {
+            return null;
+        }
+        ResWorkspaceDTO dto = new ResWorkspaceDTO();
+        dto.setId(workspace.getId());
+        dto.setName(workspace.getName());
+        dto.setOwner(toUserDTO(workspace.getOwnerId()));
         return dto;
     }
 }

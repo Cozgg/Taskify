@@ -10,6 +10,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ccq.service.PermissionService;
+
 /**
  *
  * @author Admin
@@ -17,17 +19,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class StatServiceImpl implements StatService {
-    
     @Autowired
     private StatRepository statRepo;
+
+    @Autowired
+    private PermissionService permissionService;
     
     @Override
     public List<Object[]> getBoardProgressStats(int id) {
+        this.permissionService.requireBoardOwnerPermission(id);
         return this.statRepo.getBoardProgressStats(id);
     }
 
     @Override
     public List<Object[]> getMemberProgress(int id) {
+        this.permissionService.requireBoardOwnerPermission(id);
         return this.statRepo.getMemberProgress(id);
     }
     

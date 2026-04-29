@@ -91,7 +91,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public Board createBoardInWorkspace(int workspaceId, Board board) {
-        permissionService.requireWorkspaceAccess(workspaceId);
+        permissionService.requireWorkspaceOwnerPermission(workspaceId);
         Workspace ws = this.wsRepo.getWorkspaceById(workspaceId);
         if (ws == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,

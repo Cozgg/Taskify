@@ -28,11 +28,11 @@ public interface WorkspaceRepository {
 
     Workspace getWorkspaceById(int workspaceId);
     
-    List<Workspace> getWorkspacesByOwner(int id);
+    List<Workspace> getAccessibleWorkspaces(int id);
     
-    List<Workspace> getWorkspacesByOwner(int id, Map<String, String> params);
+    List<Workspace> getAccessibleWorkspaces(int id, Map<String, String> params);
 
-    Long countWorkspacesByOwnerId(int ownerId);
+    Long countAccessibleWorkspaces(int userId);
 
     List<User> getMembersByWorkspaceId(int workspaceId);
 

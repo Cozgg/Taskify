@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Button, Card, Typography, Select, Input, Modal, Tag, Spin, message, Dropdown, Popconfirm, Tooltip } from 'antd';
 import { PlusOutlined, MoreOutlined, ArrowLeftOutlined, CloseOutlined, CalendarOutlined, ClockCircleOutlined, BarChartOutlined, AlignLeftOutlined } from '@ant-design/icons';
-
+import { MyContext } from '../utils/context/MyContext';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { CardDetailModal } from './CardDetailModal';
 import cookies from 'react-cookies';
@@ -16,6 +16,7 @@ const BoardDetail = () => {
     const nav = useNavigate();
 
     const [board, setBoard] = useState(null);
+    const [workspace, setWorkspace] = useState(null);
     const [columns, setColumns] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isAddingList, setIsAddingList] = useState(false);
@@ -35,21 +36,29 @@ const BoardDetail = () => {
         "Doing": "#0079bf",
         "Done": "#61bd4f"
     };
+    const [user] = useContext(MyContext);
+    
+    const currentUserId = user?.userdata?.data?.userId || user?.userdata?.userId || user?.userdata?.data?.id;
+    const isOwner = workspace && (Number(workspace?.owner?.id) === Number(currentUserId) || user?.userdata?.data?.role === 'ADMIN');
+
     const loadBoardAndLists = useCallback(async () => {
         try {
             setLoading(true);
             const token = cookies.load('token');
             const api = authApis(token);
 
-            const [boardRes, listsRes] = await Promise.all([
+            const [boardRes, listsRes, workspaceRes] = await Promise.all([
                 api.get(endpoints['board-detail'](boardId)),
                 api.get(endpoints['lists'](boardId)),
+                api.get(endpoints['workspace-detail'](workspaceId)),
             ]);
 
             const boardData = boardRes.data?.data ?? boardRes.data;
             const listsData = listsRes.data?.data ?? listsRes.data;
+            const wsData = workspaceRes.data?.data ?? workspaceRes.data;
 
             setBoard(boardData);
+            setWorkspace(wsData);
 
             const listColumns = Array.isArray(listsData)
                 ? listsData.map((list) => ({
@@ -316,13 +325,15 @@ const BoardDetail = () => {
                         {board?.name || `Kanban Board (ID: ${boardId})`}
                     </Title>
                 </div>
-                <Button
-                    type="primary"
-                    icon={<BarChartOutlined />}
-                    onClick={() => setIsStatModalOpen(true)}
-                >
-                    Thống kê
-                </Button>
+                {isOwner && (
+                    <Button
+                        type="primary"
+                        icon={<BarChartOutlined />}
+                        onClick={() => setIsStatModalOpen(true)}
+                    >
+                        Thống kê
+                    </Button>
+                )}
             </div>
 
             <div className="board-canvas">

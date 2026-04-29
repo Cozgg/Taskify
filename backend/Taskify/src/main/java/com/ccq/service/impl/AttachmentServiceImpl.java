@@ -4,26 +4,31 @@
  */
 package com.ccq.service.impl;
 
-import com.ccq.pojo.Attachment;
-import com.ccq.pojo.Card;
-import com.ccq.pojo.response.ResAttachmentDTO;
-import com.ccq.repository.AttachmentRepository;
-import com.ccq.repository.CardRepository;
-import com.ccq.service.AttachmentService;
-import com.ccq.utils.DTOMapper;
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.ccq.pojo.Attachment;
+import com.ccq.pojo.Card;
+import com.ccq.pojo.User;
+import com.ccq.pojo.message.NotificationMessage;
+import com.ccq.pojo.response.ResAttachmentDTO;
+import com.ccq.repository.AttachmentRepository;
+import com.ccq.repository.CardRepository;
+import com.ccq.service.AttachmentService;
+import com.ccq.service.NotificationProducer;
+import com.ccq.utils.DTOMapper;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 
 /**
  *
@@ -40,6 +45,15 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     private Cloudinary cloudinary;
+
+    @Autowired
+    private NotificationProducer notificationProducer;
+
+    private String getCurrentActorName() {
+        return SecurityContextHolder.getContext().getAuthentication() != null
+                ? SecurityContextHolder.getContext().getAuthentication().getName()
+                : "System";
+    }
 
     @Override
     public ResAttachmentDTO addFile(int cardId, Map<String, String> params, MultipartFile file) {
@@ -69,9 +83,16 @@ public class AttachmentServiceImpl implements AttachmentService {
         String filename = file.getOriginalFilename();
         String fileNameWithoutExtension = filename.substring(0, filename.lastIndexOf("."));
         try {
+            String contentType = file.getContentType();
+
+            boolean isImage = contentType != null && contentType.startsWith("image/")
+                    || List.of("jpg", "jpeg", "png", "gif").contains(fileExtension);
+
+            String resourceType = isImage ? "image" : "raw";
+
             Map res = this.cloudinary.uploader().upload(file.getBytes(),
                     ObjectUtils.asMap(
-                            "resource_type", "auto",
+                            "resource_type", resourceType,
                             "public_id", "kanban/" + fileNameWithoutExtension + "_" + System.currentTimeMillis(), // Tạo folder và giữ tên file
                             "use_filename", true
                     ));
@@ -82,6 +103,22 @@ public class AttachmentServiceImpl implements AttachmentService {
         }
 
         this.attachRepo.addFile(a);
+        List<String> recipientEmails = this.cardRepo.getMemberInCard(cardId).stream()
+                .map(User::getEmail)
+                .filter(email -> email != null && !email.isBlank())
+                .distinct()
+                .collect(Collectors.toList());
+        this.notificationProducer.sendEmailNotification(new NotificationMessage(
+                "CARD_ATTACHMENT_ADDED",
+                recipientEmails,
+                "Có attachment mới trong thẻ: " + c.getName(),
+                "Một attachment mới vừa được thêm vào thẻ \"" + c.getName() + "\" trên Taskify.\n\n"
+                + "Tên file: " + a.getFilename() + "\n"
+                + "URL: " + a.getUrl(),
+                c.getId(),
+                null,
+                getCurrentActorName()
+        ));
         return DTOMapper.toAttachmentDTO(a);
     }
 
