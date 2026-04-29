@@ -50,12 +50,12 @@ public class WorkspaceController {
     @Autowired
     private Environment env;
 
-    @GetMapping("/workspaces/owner")
-    public ResponseEntity<RestResponse<ResWorkspacePageDTO>> getWorkspaceByOwner(
+    @GetMapping("/workspaces")
+    public ResponseEntity<RestResponse<ResWorkspacePageDTO>> getAccessibleWorkspaces(
             @RequestParam(required = false) Map<String, String> params) {
 
-        List<Workspace> workspaces = this.workspaceService.getWorkspacesByOwner(params);
-        Long totalItems = this.workspaceService.countWorkspacesByOwnerId();
+        List<Workspace> workspaces = this.workspaceService.getAccessibleWorkspaces(params);
+        Long totalItems = this.workspaceService.countAccessibleWorkspaces();
 
         int page = 1;
         int pageSize = Integer.parseInt(this.env.getProperty("workspace.page_size", "10"));
@@ -191,8 +191,16 @@ public class WorkspaceController {
     
     
     @PostMapping("/workspaces/{workspaceId}/users")
-    public ResponseEntity<ResUserWorkspaceDTO> inviteUser(@PathVariable("workspaceId") int workspaceId, @RequestBody Map<String, String> params) {
+    public ResponseEntity<?> inviteUser(@PathVariable("workspaceId") int workspaceId, @RequestBody Map<String, String> params) {
         User u = this.userService.getUserByEmail(params.get("email"));
+        if (u == null) {
+            RestResponse<Object> err = new RestResponse<>();
+            err.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            err.setError("Bad Request");
+            err.setMessage("User has not created an account yet");
+            return ResponseEntity.badRequest().body(err);
+        }
+
         UserWorkspace uw = this.workspaceService.addUserIntoWorkspace(workspaceId, u.getId());
         ResUserWorkspaceDTO dto = DTOMapper.toUserWorkspaceDTO(uw);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);

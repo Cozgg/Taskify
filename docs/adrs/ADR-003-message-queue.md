@@ -13,7 +13,7 @@
 
 ## Ngữ cảnh
 
-**Vấn đề kỹ thuật**: Hệ thống cần thực hiện các tác vụ tốn thời gian như gửi email thông báo khi thành viên được gán vào task hoặc khi cập nhật trạng thái thẻ công việc.
+**Vấn đề kỹ thuật**: Hệ thống cần xử lý các tác vụ tốn thời gian như gửi email thông báo khi người dùng được thêm vào workspace, được gán vào thẻ công việc, hoặc khi có tệp đính kèm mới trong thẻ.
 
 **Hạn chế hiện tại**: Nếu xử lý các tác vụ này đồng bộ trong luồng request-response của API, người dùng sẽ gặp tình trạng treo ứng dụng hoặc phản hồi chậm, làm giảm trải nghiệm người dùng.
 

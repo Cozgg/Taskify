@@ -5,11 +5,13 @@ import com.ccq.pojo.Card;
 import com.ccq.pojo.CardUser;
 import com.ccq.pojo.User;
 import com.ccq.pojo.Workspace;
+import com.ccq.pojo.message.NotificationMessage;
 import com.ccq.pojo.response.ResUserDTO;
 import com.ccq.repository.CardRepository;
 import com.ccq.repository.ListRepository;
 import com.ccq.repository.UserRepository;
 import com.ccq.service.CardService;
+import com.ccq.service.NotificationProducer;
 import com.ccq.service.PermissionService;
 import com.ccq.state.CardState;
 import com.ccq.state.DoneState;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +46,15 @@ public class CardServiceImpl implements CardService {
 
     @Autowired
     private PermissionService permissionService;
+
+    @Autowired
+    private NotificationProducer notificationProducer;
+
+    private String getCurrentActorName() {
+        return SecurityContextHolder.getContext().getAuthentication() != null
+                ? SecurityContextHolder.getContext().getAuthentication().getName()
+                : "System";
+    }
 
     @Override
     public Card getById(int id) {
@@ -91,7 +103,7 @@ public class CardServiceImpl implements CardService {
     @Override
     @Transactional
     public String moveCard(int cardId, int newListId, int newPosition) {
-        permissionService.requireCardWritePermission(cardId);
+        permissionService.requireListAccess(newListId);
 
         Card card = this.cardRepo.getById(cardId);
         if (card == null) {
@@ -132,6 +144,17 @@ public class CardServiceImpl implements CardService {
         ac.setUserId(u);
         ac.setAssignedDate(new Date());
         this.cardRepo.assignUserForCard(ac);
+        this.notificationProducer.sendEmailNotification(new NotificationMessage(
+                "CARD_ASSIGNED",
+                u.getEmail() == null || u.getEmail().isBlank() ? List.of() : List.of(u.getEmail()),
+                "Bạn được gán vào thẻ: " + c.getName(),
+                "Xin chào " + u.getUsername() + ",\n\n"
+                + "Bạn vừa được gán vào thẻ \"" + c.getName() + "\" trên Taskify.\n"
+                + "Vui lòng đăng nhập hệ thống để xem chi tiết.",
+                c.getId(),
+                null,
+                getCurrentActorName()
+        ));
         return ac;
     }
 

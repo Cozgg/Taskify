@@ -75,6 +75,7 @@ const Home = () => {
         }
     }, [user]);
 
+    console.log(workspaces);
     useEffect(() => {
         console.log(workspaces);
     }, [workspaces]);
