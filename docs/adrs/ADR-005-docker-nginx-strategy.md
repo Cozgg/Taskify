@@ -32,5 +32,14 @@ Sử dụng **Docker Compose** để quản lý đa container và tích hợp **
 - Cần kiến thức về cấu hình Nginx (`nginx.conf`) khi muốn thay đổi quy tắc điều hướng API.
 - Thời gian build image Frontend lâu hơn một chút do phải trải qua giai đoạn build mã nguồn React.
 
+## Các lựa chọn khác
+- **Tách Nginx thành một Service riêng:**
+    1. Ưu điểm: Dễ dàng cân bằng tải (Load Balancing) cho nhiều instance; tách biệt hoàn toàn trách nhiệm.
+    2. Nhược điểm: Phức tạp trong cấu hình `docker-compose.yml`; khó đóng gói Frontend thành image độc lập.
+
+- **Triển khai trực tiếp (Không dùng Docker):**
+    1. Ưu điểm: Hiệu năng cao nhất do không qua lớp ảo hóa.
+    2. Nhược điểm: Khó đảm bảo tính đồng nhất môi trường; cài đặt thủ công phức tạp.
+
 ## Ngày quyết định
 2026-04-20
