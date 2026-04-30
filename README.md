@@ -16,19 +16,69 @@ Hệ thống Quản lý công việc (Trello Clone) là nền tảng cộng tác
 ## Kiến trúc
 ![Architecture](docs/architecture/c4-container.png)
 ## Cài đặt và chạy
-### Yêu cầu
-- Docker Desktop
-- Git
-### Chạy với Docker Compose
-- git clone https://github.com/quyendzvcb/Taskify.git
+### Yêu cầu hệ thống
+- **Docker & Docker Compose** (Khuyến khích)
+- **Git**
+- **Java JDK 17+** (Nếu chạy local)
+- **Node.js 18+ & NPM** (Nếu chạy local)
+- **Maven 3.8+** (Nếu chạy local)
 
-- cd Taskify
+---
 
-- docker-compose up -d
-### Truy cập
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- RabbitMQ Management: http://localhost:15672
+### Cách 1: Chạy bằng Docker Compose (Nhanh nhất)
+1. **Clone project:**
+   ```bash
+   git clone https://github.com/Cozgg/Taskify.git
+   cd Taskify
+   ```
+2. **Cấu hình môi trường:**
+   Tạo file `.env` từ `.env.example` (nếu cần chỉnh sửa):
+   ```bash
+   cp .env.example .env
+   ```
+3. **Khởi chạy hệ thống:**
+   ```bash
+   docker-compose up -d
+   ```
+4. **Truy cập:**
+   - **Frontend:** http://localhost (Port 80)
+   - **Backend API:** http://localhost:8080
+   - **RabbitMQ Management:** http://localhost:15672 (User: `admin` / Pass: `admin`)
+
+---
+
+### Cách 2: Chạy Local (Cho mục đích phát triển)
+
+#### 1. Cơ sở dữ liệu & Middleware
+- Cài đặt và khởi chạy **MySQL** (tạo database `taskifydb`).
+- Cài đặt và khởi chạy **RabbitMQ**.
+
+#### 2. Chạy Backend (Spring Boot)
+1. Di chuyển vào thư mục backend:
+   ```bash
+   cd backend/Taskify
+   ```
+2. Cập nhật cấu hình database trong `src/main/resources/META-INF/persistence.xml` hoặc truyền biến môi trường.
+3. Build và chạy ứng dụng:
+   ```bash
+   mvn clean compile spring-boot:run
+   ```
+   *Backend sẽ chạy tại: http://localhost:8080*
+
+#### 3. Chạy Frontend (React)
+1. Di chuyển vào thư mục frontend:
+   ```bash
+   cd frontend/taskify
+   ```
+2. Cài đặt dependencies:
+   ```bash
+   npm install
+   ```
+3. Khởi chạy server phát triển:
+   ```bash
+   npm run dev
+   ```
+   *Frontend sẽ chạy tại: http://localhost:5173 (hoặc port hiển thị trên console)*
 ## Demo
 Dưới đây là một số hình ảnh và video thực tế demo các chức năng cốt lõi của **Taskify**.
 ### 1. Quản lý Workspace & Bảng (Workspaces & Boards)
