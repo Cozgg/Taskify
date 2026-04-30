@@ -35,5 +35,14 @@ Sử dụng **GitHub Actions** làm nền tảng CI/CD và **GitHub Container Re
 - Phụ thuộc vào hạ tầng của GitHub (nếu GitHub Actions gặp sự cố, quy trình build sẽ bị gián đoạn).
 - Cần quản lý dung lượng lưu trữ của Packages nếu project phát triển quá lớn.
 
+## Các lựa chọn khác
+- **Jenkins:**
+    1. Ưu điểm: Khả năng tùy biến cực cao, tự host (không phụ thuộc cloud).
+    2. Nhược điểm: Tốn tài nguyên duy trì server; cấu hình phức tạp hơn GitHub Actions.
+
+- **Triển khai thủ công (Manual):**
+    1. Ưu điểm: Không tốn thời gian viết script CI/CD ban đầu.
+    2. Nhược điểm: Dễ sai sót; tốn thời gian lặp lại; không kiểm tra được code liên tục.
+
 ## Ngày quyết định
 2026-04-20
