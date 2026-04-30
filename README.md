@@ -14,7 +14,7 @@ Hệ thống Quản lý công việc (Trello Clone) là nền tảng cộng tác
 - Message Queue: RabbitMQ
 - Container: Docker + Docker Compose
 ## Kiến trúc
-![Architecture](docs/architecture/c4-container.png)
+![Architecture](https://github.com/user-attachments/assets/3c906746-a972-443a-8a2b-11e24af9e9fc)
 ## Cài đặt và chạy
 ### Yêu cầu
 - Docker Desktop
