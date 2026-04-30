@@ -45,7 +45,7 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Áp dụng cho mọi URL
-                .allowedOrigins("http://localhost:3000") // Chỉ cho phép React gọi
+                .allowedOrigins("http://localhost:3000", "http://localhost") // Cho phép React gọi từ cổng 3000 (dev) và cổng 80 (docker)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
 
                 .allowedHeaders("*")

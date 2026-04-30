@@ -6,6 +6,7 @@ package com.ccq.controller.client;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,15 @@ public class BoardController {
 
     @Autowired
     private BoardService boardService;
+
+    @GetMapping("/boards")
+    public ResponseEntity<List<ResBoardDTO>> getBoards(@RequestParam Map<String, String> params) {
+        List<Board> boards = this.boardService.getBoards(params);
+        List<ResBoardDTO> dtos = boards.stream()
+                .map(DTOMapper::toBoardDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
 
 //    @GetMapping("/workspaces/{workspaceId}/boards")
 //    public ResponseEntity<?> getBoardsByWorkspace(

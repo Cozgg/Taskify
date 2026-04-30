@@ -145,11 +145,6 @@ const BoardDetail = () => {
         const currentList = columns.find((col) => col.id === activeColId);
         if (!currentList) return;
 
-        if (currentList.cards.some((card) => card.title.trim().toLowerCase() === newCardTitle.trim().toLowerCase())) {
-            message.warning('Thẻ này đã tồn tại trong danh sách.');
-            return;
-        }
-
         try {
             const token = cookies.load('token');
             const api = authApis(token);

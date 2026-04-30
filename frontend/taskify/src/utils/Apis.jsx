@@ -60,12 +60,12 @@ export let endpoints = {
 
 
 export default axios.create({
-    baseURL: 'http://localhost:8080',
+    baseURL: '',
 })
 
 export const authApis = (token) => {
     const instance = axios.create({
-        baseURL: 'http://localhost:8080',
+        baseURL: '',
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -82,7 +82,7 @@ export const authApis = (token) => {
                 try {
                     const refreshToken = cookies.load('refreshToken');
                     if (refreshToken) {
-                        const res = await axios.post('http://localhost:8080/api/auth/refresh-token', { refreshToken });
+                        const res = await axios.post('/api/auth/refresh-token', { refreshToken });
                         if (res.status === 200 && res.data.data.accessToken) {
                             const newToken = res.data.data.accessToken;
                             cookies.save('token', newToken);
