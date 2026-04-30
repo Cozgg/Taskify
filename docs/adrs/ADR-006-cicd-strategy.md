@@ -1,9 +1,9 @@
-# ADR-005: Chiến lược CI/CD với GitHub Actions và GHCR
+# ADR-006: Chiến lược CI/CD với GitHub Actions và GHCR
 ## Trạng thái
 Accepted
 
 ## Bối cảnh
-Với việc đã container hóa ứng dụng (ADR-004), chúng tôi cần một quy trình tự động để kiểm tra mã nguồn (Continuous Integration) và đóng gói/phát hành ứng dụng (Continuous Deployment). 
+Với việc đã container hóa ứng dụng (ADR-005), chúng tôi cần một quy trình tự động để kiểm tra mã nguồn (Continuous Integration) và đóng gói/phát hành ứng dụng (Continuous Deployment). 
 
 Mục tiêu là giảm thiểu lỗi con người khi build thủ công và đảm bảo rằng mọi phiên bản code được đẩy lên nhánh chính đều sẵn sàng để triển khai.
 
