@@ -207,9 +207,11 @@ const WorkspaceOverview = () => {
         try {
             const token = cookies.load('token');
             const res = await authApis(token).delete(endpoints['remove-member'](workspaceId, memberId));
-            if (res === 204) {
+            if (res.status === 204) {
                 message.success("Đã xóa thành công")
-                setMembers(members.filter(member => member.id !== memberId));
+                setMembers(prev =>
+                    prev.filter(member => member.id !== memberId)
+                );
             }
         } catch (error) {
             message.error("Bạn không có quyền xóa thành viên khỏi workspace")
