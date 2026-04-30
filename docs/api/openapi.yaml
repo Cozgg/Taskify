@@ -1,0 +1,1323 @@
+openapi: 3.0.1
+info:
+  title: API Tài Liệu cho dự án Taskify
+  description: Tài liệu hướng dẫn sử dụng các REST API của Taskify Backend.
+  contact:
+    name: Phạm Anh Quyền
+    email: paqvippro@gmail.com
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+paths:
+  /api/workspaces/{id}:
+    get:
+      tags:
+        - workspace-controller
+      operationId: getWorkspaceById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RestResponseResWorkspaceDTO'
+    put:
+      tags:
+        - workspace-controller
+      operationId: updateWorkspace
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Workspace'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RestResponseResWorkspaceDTO'
+    delete:
+      tags:
+        - workspace-controller
+      operationId: deleteWorkspace
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/lists/{listId}:
+    put:
+      tags:
+        - list-controller
+      operationId: updateList
+      parameters:
+        - name: listId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Boardlist'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    delete:
+      tags:
+        - list-controller
+      operationId: deleteList
+      parameters:
+        - name: listId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/boards/{boardId}:
+    get:
+      tags:
+        - board-controller
+      operationId: getBoardById
+      parameters:
+        - name: boardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    put:
+      tags:
+        - board-controller
+      operationId: updateBoard
+      parameters:
+        - name: boardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Board'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    delete:
+      tags:
+        - board-controller
+      operationId: deleteBoard
+      parameters:
+        - name: boardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/workspaces:
+    get:
+      tags:
+        - workspace-controller
+      operationId: getAccessibleWorkspaces
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RestResponseResWorkspacePageDTO'
+    post:
+      tags:
+        - workspace-controller
+      operationId: createWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Workspace'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RestResponseResWorkspaceDTO'
+  /api/workspaces/{workspaceId}/users:
+    post:
+      tags:
+        - workspace-controller
+      operationId: inviteUser
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/workspaces/{workspaceId}/boards:
+    post:
+      tags:
+        - board-controller
+      operationId: createBoard
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Board'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/lists/{listId}/cards:
+    get:
+      tags:
+        - card-controller
+      operationId: getCards
+      parameters:
+        - name: listId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: arg1
+          in: query
+          required: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    post:
+      tags:
+        - card-controller
+      operationId: createCard
+      parameters:
+        - name: listId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Card'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/cards/{cardId}/comments:
+    get:
+      tags:
+        - comment-controller
+      operationId: getComments
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: arg1
+          in: query
+          required: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResCommentDTO'
+    post:
+      tags:
+        - comment-controller
+      operationId: addComment
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/cards/{cardId}/attach:
+    post:
+      tags:
+        - card-controller
+      operationId: attachFile
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: arg1
+          in: query
+          required: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResAttachmentDTO'
+  /api/cards/{cardId}/assign:
+    post:
+      tags:
+        - card-controller
+      operationId: assignUserToCard
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: integer
+                format: int32
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/boards/{boardId}/lists:
+    get:
+      tags:
+        - list-controller
+      operationId: getLists
+      parameters:
+        - name: boardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: arg1
+          in: query
+          required: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    post:
+      tags:
+        - list-controller
+      operationId: createList
+      parameters:
+        - name: boardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Boardlist'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/auth/register:
+    post:
+      tags:
+        - auth-controller
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReqRegisterDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RestResponseResRegisterDTO'
+  /api/auth/refresh-token:
+    post:
+      tags:
+        - auth-controller
+      operationId: refreshToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RestResponseMapStringString'
+  /api/auth/login:
+    post:
+      tags:
+        - auth-controller
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReqLoginDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RestResponseResLoginDTO'
+  /api/admin/workspaces:
+    get:
+      tags:
+        - admin-workspace-controller
+      operationId: getAllWorkspaces
+      parameters:
+        - name: arg0
+          in: query
+          required: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RestResponseResWorkspacePageDTO'
+    post:
+      tags:
+        - admin-workspace-controller
+      operationId: addWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReqAdminWorkspaceDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/admin/users:
+    get:
+      tags:
+        - admin-user-controller
+      operationId: getUsers
+      parameters:
+        - name: arg0
+          in: query
+          required: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RestResponseResUserPageDTO'
+    post:
+      tags:
+        - admin-user-controller
+      operationId: addOrUpdateUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReqAdminUserDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/cards/{cardId}:
+    delete:
+      tags:
+        - card-controller
+      operationId: deleteCard
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    patch:
+      tags:
+        - card-controller
+      operationId: updateCard
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Card'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/cards/{cardId}/move:
+    patch:
+      tags:
+        - card-controller
+      operationId: moveCard
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: integer
+                format: int32
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/workspaces/{id}/members:
+    get:
+      tags:
+        - workspace-controller
+      operationId: getMembers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/workspaces/{id}/boards:
+    get:
+      tags:
+        - workspace-controller
+      operationId: getBoardsInWorkspace
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/stat-member-progress/{boardId}:
+    get:
+      tags:
+        - stat-controller
+      operationId: statMemberProgress
+      parameters:
+        - name: arg0
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: object
+  /api/stat-board-progress/{boardId}:
+    get:
+      tags:
+        - stat-controller
+      operationId: statBoardProgress
+      parameters:
+        - name: arg0
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: object
+  /api/cards/{cardId}/members:
+    get:
+      tags:
+        - card-controller
+      operationId: getMembersInCard
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResUserDTO'
+  /api/cards/{cardId}/attachments:
+    get:
+      tags:
+        - card-controller
+      operationId: getAttachments
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResAttachmentDTO'
+  /api/admin/workspaces/{id}:
+    get:
+      tags:
+        - admin-workspace-controller
+      operationId: getWorkspaceDetail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    delete:
+      tags:
+        - admin-workspace-controller
+      operationId: deleteWorkspace_1
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/admin/workspaces/{id}/users:
+    get:
+      tags:
+        - admin-workspace-controller
+      operationId: getMembersByWorkspace
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/admin/users/{id}:
+    get:
+      tags:
+        - admin-user-controller
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResUserDTO'
+    delete:
+      tags:
+        - admin-user-controller
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+  /api/admin/dashboard:
+    get:
+      tags:
+        - dashboard-controller
+      operationId: getDashBoard
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+  /api/comments/{commentId}:
+    delete:
+      tags:
+        - comment-controller
+      operationId: deleteComment
+      parameters:
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/cards/{cardId}/unassign:
+    delete:
+      tags:
+        - card-controller
+      operationId: removeUserCard
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: integer
+                format: int32
+        required: true
+      responses:
+        '204':
+          description: No Content
+  /api/attachments/{attachId}:
+    delete:
+      tags:
+        - card-controller
+      operationId: deleteAttach
+      parameters:
+        - name: attachId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '204':
+          description: No Content
+components:
+  schemas:
+    User:
+      required:
+        - email
+        - password
+        - role
+        - username
+      type: object
+      properties:
+        username:
+          maxLength: 255
+          minLength: 1
+          type: string
+        password:
+          maxLength: 255
+          minLength: 1
+          type: string
+        email:
+          maxLength: 255
+          minLength: 1
+          type: string
+        avatar:
+          maxLength: 255
+          minLength: 0
+          type: string
+        role:
+          maxLength: 5
+          minLength: 1
+          type: string
+        id:
+          type: integer
+          format: int32
+        createdDate:
+          type: string
+          format: date-time
+    Workspace:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          maxLength: 255
+          minLength: 1
+          type: string
+        id:
+          type: integer
+          format: int32
+        ownerId:
+          $ref: '#/components/schemas/User'
+    ResUserDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        username:
+          type: string
+        email:
+          type: string
+        avatar:
+          type: string
+        role:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+    ResWorkspaceDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        owner:
+          $ref: '#/components/schemas/ResUserDTO'
+        boardCount:
+          type: integer
+          format: int32
+        memberCount:
+          type: integer
+          format: int32
+    RestResponseResWorkspaceDTO:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: object
+        data:
+          $ref: '#/components/schemas/ResWorkspaceDTO'
+    Board:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          maxLength: 255
+          minLength: 1
+          type: string
+        id:
+          type: integer
+          format: int32
+        createdDate:
+          type: string
+          format: date-time
+        isPublic:
+          type: boolean
+        workspaceId:
+          $ref: '#/components/schemas/Workspace'
+    Boardlist:
+      required:
+        - name
+        - status
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          maxLength: 255
+          minLength: 1
+          type: string
+        position:
+          type: integer
+          format: int32
+        status:
+          maxLength: 11
+          minLength: 1
+          type: string
+        boardId:
+          $ref: '#/components/schemas/Board'
+    Card:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          maxLength: 255
+          minLength: 1
+          type: string
+        description:
+          type: string
+        userId:
+          $ref: '#/components/schemas/User'
+        id:
+          type: integer
+          format: int32
+        createdDate:
+          type: string
+          format: date-time
+        isActive:
+          type: boolean
+        dueDate:
+          type: string
+          format: date-time
+        reminderDate:
+          type: string
+          format: date-time
+        position:
+          type: integer
+          format: int32
+        listId:
+          $ref: '#/components/schemas/Boardlist'
+    ResAttachmentDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        filename:
+          type: string
+        url:
+          type: string
+        updateDate:
+          type: string
+          format: date-time
+    ReqRegisterDTO:
+      required:
+        - email
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          maxLength: 2147483647
+          minLength: 6
+          type: string
+        email:
+          type: string
+    ResRegisterDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int32
+        username:
+          type: string
+        role:
+          type: string
+    RestResponseResRegisterDTO:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: object
+        data:
+          $ref: '#/components/schemas/ResRegisterDTO'
+    RestResponseMapStringString:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: object
+        data:
+          type: object
+          additionalProperties:
+            type: string
+    ReqLoginDTO:
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    ResLoginDTO:
+      type: object
+      properties:
+        token:
+          type: string
+        refreshToken:
+          type: string
+        userId:
+          type: integer
+          format: int32
+        username:
+          type: string
+        role:
+          type: string
+    RestResponseResLoginDTO:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: object
+        data:
+          $ref: '#/components/schemas/ResLoginDTO'
+    ReqAdminWorkspaceDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        ownerId:
+          type: integer
+          format: int32
+    ReqAdminUserDTO:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        avatar:
+          type: string
+        role:
+          type: string
+    ResWorkspacePageDTO:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResWorkspaceDTO'
+        totalItems:
+          type: integer
+          format: int64
+        page:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    RestResponseResWorkspacePageDTO:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: object
+        data:
+          $ref: '#/components/schemas/ResWorkspacePageDTO'
+    ResCommentDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        comment:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+        user:
+          $ref: '#/components/schemas/ResUserDTO'
+    ResUserPageDTO:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResUserDTO'
+        totalItems:
+          type: integer
+          format: int64
+        page:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    RestResponseResUserPageDTO:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: object
+        data:
+          $ref: '#/components/schemas/ResUserPageDTO'

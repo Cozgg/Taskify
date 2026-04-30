@@ -33,6 +33,9 @@ backend/Taskify/response.txt
 # --- Frontend (Node / React) ---
 **/node_modules/
 **/build/
+.env
+.env.*
+!.env.example
 frontend/taskify/.env
 frontend/taskify/.env.local
 npm-debug.log*

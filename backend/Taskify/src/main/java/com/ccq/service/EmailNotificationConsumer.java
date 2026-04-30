@@ -128,18 +128,10 @@ public class EmailNotificationConsumer {
     }
 
     private String getMailToAddress() {
-        String value = System.getenv("MAIL_TO_ADDRESS");
-        if (value != null && !value.isBlank()) {
-            return value;
-        }
         return env.getProperty("mail.to-address");
     }
 
     private String getMailUsername() {
-        String value = System.getenv("MAIL_USERNAME");
-        if (value != null && !value.isBlank()) {
-            return value;
-        }
         return env.getProperty("mail.username");
     }
 }
