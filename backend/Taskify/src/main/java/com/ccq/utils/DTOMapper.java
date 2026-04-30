@@ -148,7 +148,6 @@ public class DTOMapper {
         dto.setId(board.getId());
         dto.setName(board.getName());
         dto.setCreatedDate(board.getCreatedDate());
-        dto.setIsPublic(board.getIsPublic());
 
         if (board.getBoardlistSet() != null) {
             dto.setLists(board.getBoardlistSet().stream()

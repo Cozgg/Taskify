@@ -10,7 +10,6 @@ public class ResBoardDTO {
     private String name;
     @JsonFormat(pattern="yyyy-MM-dd", timezone="Asia/Ho_Chi_Minh")
     private Date createdDate;
-    private Boolean isPublic;
     private List<ResListDTO> lists;
 
     public ResBoardDTO() {}
@@ -21,8 +20,7 @@ public class ResBoardDTO {
     public void setName(String name) { this.name = name; }
     public Date getCreatedDate() { return createdDate; }
     public void setCreatedDate(Date createdDate) { this.createdDate = createdDate; }
-    public Boolean getIsPublic() { return isPublic; }
-    public void setIsPublic(Boolean isPublic) { this.isPublic = isPublic; }
+
     public List<ResListDTO> getLists() { return lists; }
     public void setLists(List<ResListDTO> lists) { this.lists = lists; }
 }
