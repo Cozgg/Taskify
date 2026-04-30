@@ -34,22 +34,22 @@ Sử dụng JWT (JSON Web Token) để xác thực người dùng.
 -Không quá phức tạp như OAuth2
 
 ## Hệ quả
-Ưu điểm
+1. Ưu điểm
 -Giảm tải server do không dùng session
 -Dễ mở rộng (microservices, mobile app)
 -Frontend và backend tách biệt rõ ràng
 -Triển khai nhanh, phù hợp deadline
-Nhược điểm
+2. Nhược điểm
 -Khó revoke token (không logout ngay lập tức)
 -Token có thể bị lộ nếu lưu không an toàn
 -Cần xử lý thêm refresh token nếu muốn bảo mật cao
 
 ## Các lựa chọn khác
 -OAuth2
-Ưu điểm:
+1. Ưu điểm:
 -Bảo mật cao
 -Hỗ trợ đăng nhập qua Google, Facebook
-Nhược điểm:
+2. Nhược điểm:
 -Phức tạp
 -Overkill cho project nhỏ
 -Tốn thời gian implement
