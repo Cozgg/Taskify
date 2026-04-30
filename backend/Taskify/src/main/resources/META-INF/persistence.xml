@@ -6,7 +6,6 @@
     <class>com.ccq.pojo.Card</class>
     <class>com.ccq.pojo.Board</class>
     <class>com.ccq.pojo.Workspace</class>
-    <class>com.ccq.pojo.ChecklistItem</class>
     <class>com.ccq.pojo.Activity</class>
     <class>com.ccq.pojo.User</class>
     <class>com.ccq.pojo.Comment</class>

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ccq.pojo.Board;
 import com.ccq.pojo.Boardlist;
@@ -17,25 +18,23 @@ import com.ccq.repository.ListRepository;
 import com.ccq.service.ListService;
 import com.ccq.service.PermissionService;
 
-import org.springframework.transaction.annotation.Transactional;
-
 /**
  *
  * @author nguye
  */
 @Service
 @Transactional
-public class ListServiceImpl implements ListService{
+public class ListServiceImpl implements ListService {
 
     @Autowired
     private ListRepository listRepo;
-    
+
     @Autowired
     private BoardRepository boardRepo;
 
     @Autowired
     private PermissionService permissionService;
-    
+
     @Override
     public Boardlist getById(int id) {
         Boardlist list = this.listRepo.getById(id);
@@ -74,7 +73,7 @@ public class ListServiceImpl implements ListService{
         permissionService.requireBoardWritePermission(boardId);
         Board board = this.boardRepo.getById(boardId);
 
-        if(board == null){
+        if (board == null) {
             throw new RuntimeException("Không tìm thấy bảng với id: " + boardId);
         }
 

@@ -63,12 +63,13 @@ export let endpoints = {
 
 
 export default axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: '',
 })
 
 export const authApis = (token) => {
     const instance = axios.create({
-        baseURL: API_BASE_URL,
+        baseURL: '',
+
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -85,7 +86,7 @@ export const authApis = (token) => {
                 try {
                     const refreshToken = cookies.load('refreshToken');
                     if (refreshToken) {
-                        const res = await axios.post(API_BASE_URL + '/api/auth/refresh-token', { refreshToken });
+                        const res = await axios.post('/api/auth/refresh-token', { refreshToken });
                         if (res.status === 200 && res.data.data.accessToken) {
                             const newToken = res.data.data.accessToken;
                             cookies.save('token', newToken);

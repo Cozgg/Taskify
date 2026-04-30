@@ -59,13 +59,6 @@ const AdminWorkspaceDetail = () => {
     const boardColumns = [
         { title: 'ID', dataIndex: 'id', key: 'id', width: 80 },
         { title: 'Name', dataIndex: 'name', key: 'name' },
-        {
-            title: 'Public',
-            dataIndex: 'isPublic',
-            key: 'isPublic',
-            width: 110,
-            render: (v) => (v ? <Tag color="green">Public</Tag> : <Tag>Private</Tag>),
-        },
         { title: 'Created', dataIndex: 'createdDate', key: 'createdDate', width: 140 },
     ];
 
