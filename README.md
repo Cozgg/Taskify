@@ -34,7 +34,7 @@ Dưới đây là một số hình ảnh và video thực tế demo các chức 
 ### 1. Quản lý Workspace & Bảng (Workspaces & Boards)
 Người dùng có thể tạo không gian làm việc chung, mời thành viên tham gia,tạo các Bảng (Boards) bên trong từng không gian.
 * **Video Demo / GIF:**
-  [![Quản lý Workspace và mời thành viên tham gia]](https://github.com/user-attachments/assets/59187b51-d6c2-424f-b842-c0af506d6b77)
+  ![Quản lý Workspace và mời thành viên tham gia](https://github.com/user-attachments/assets/59187b51-d6c2-424f-b842-c0af506d6b77)
 
 ### 2. Bảng Kanban & Kéo Thả Trực Quan (Drag & Drop)
 Hỗ trợ kéo thả (Drag & Drop) mượt mà các Thẻ (Cards) giữa các Cột (Lists) và thay đổi vị trí các Cột một cách dễ dàng, giúp cập nhật tiến độ công việc ngay lập tức.
