@@ -35,6 +35,7 @@ import com.ccq.service.WorkspaceService;
 import com.ccq.utils.DTOMapper;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestController
 @RequestMapping("/api")
@@ -204,5 +205,11 @@ public class WorkspaceController {
         UserWorkspace uw = this.workspaceService.addUserIntoWorkspace(workspaceId, u.getId());
         ResUserWorkspaceDTO dto = DTOMapper.toUserWorkspaceDTO(uw);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
+    }
+    
+    @DeleteMapping("workspaces/{workspaceId}/users/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeUser(@PathVariable("workspaceId") int workspaceId, @PathVariable("userId") int userId){
+        this.workspaceService.removeUserFromWorkspace(workspaceId, userId);
     }
 }

@@ -17,6 +17,7 @@ import {
     Pagination,
     Empty,
     message,
+    Popconfirm,
 } from 'antd';
 import {
     UserAddOutlined,
@@ -202,6 +203,20 @@ const WorkspaceOverview = () => {
         setInviteValue('');
     };
 
+    const handleRemoveMember = async (memberId) => {
+        try {
+            const token = cookies.load('token');
+            const res = await authApis(token).delete(endpoints['remove-member'](workspaceId, memberId));
+            if (res === 204) {
+                message.success("Đã xóa thành công")
+                setMembers(members.filter(member => member.id !== memberId));
+            }
+        } catch (error) {
+            message.error("Bạn không có quyền xóa thành viên khỏi workspace")
+            console.log(error);
+        }
+    }
+
     const boardsTab = (
         <div className="workspace-section">
             <div className="workspace-section-toolbar">
@@ -314,7 +329,18 @@ const WorkspaceOverview = () => {
                 dataSource={members}
                 locale={{ emptyText: 'Chưa có thành viên nào.' }}
                 renderItem={(item) => (
-                    <List.Item>
+                    <List.Item
+                        actions={[
+                            <Popconfirm
+                                title="Xóa thành viên này?"
+                                onConfirm={() => handleRemoveMember(item.id)}
+                                okText="Xóa"
+                                cancelText="Hủy"
+                            >
+                                <Button danger size="small">Xóa</Button>
+                            </Popconfirm>
+                        ]}>
+
                         <List.Item.Meta
                             avatar={<Avatar>{item.username?.charAt(0)?.toUpperCase() || 'U'}</Avatar>}
                             title={<b>{item.username}</b>}

@@ -53,6 +53,7 @@ export let endpoints = {
     'update-board': boardId => `/api/boards/${boardId}`,
     'delete-board': boardId => `/api/boards/${boardId}`,
     'invite-member': workspaceId => `/api/workspaces/${workspaceId}/users`,
+    'remove-member': (workspaceId, userId) => `/api/workspaces/${workspaceId}/users/${userId}`,
 
     //stat api
     'stat-board': boardId => `/api/stat-board-progress/${boardId}`,
