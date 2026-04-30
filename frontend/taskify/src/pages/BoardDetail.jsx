@@ -534,6 +534,7 @@ const BoardDetail = () => {
                 onCancel={() => setIsStatModalOpen(false)}
                 footer={null}
                 width={700}
+                destroyOnClose={true}
             >
                 <BoardStatistics boardId={boardId} />
             </Modal>
