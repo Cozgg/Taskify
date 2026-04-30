@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,14 +13,12 @@ import com.ccq.pojo.Board;
 import com.ccq.pojo.User;
 import com.ccq.pojo.UserWorkspace;
 import com.ccq.pojo.Workspace;
+import com.ccq.pojo.message.NotificationMessage;
 import com.ccq.repository.UserRepository;
 import com.ccq.repository.WorkspaceRepository;
+import com.ccq.service.NotificationProducer;
 import com.ccq.service.PermissionService;
 import com.ccq.service.WorkspaceService;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-
 
 @Service
 public class WorkspaceServiceImpl implements WorkspaceService {
@@ -31,6 +31,15 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Autowired
     private PermissionService permissionService;
+
+    @Autowired
+    private NotificationProducer notificationProducer;
+
+    private String getCurrentActorName() {
+        return SecurityContextHolder.getContext().getAuthentication() != null
+                ? SecurityContextHolder.getContext().getAuthentication().getName()
+                : "System";
+    }
 
     private void initializeWorkspaceCollections(Workspace workspace) {
         if (workspace == null) {
@@ -74,13 +83,13 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Workspace> getWorkspacesByOwner() {
+    public List<Workspace> getAccessibleWorkspaces() {
         User u = this.userRepo.getUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         if (u.getId() <= 0) {
-            throw new IllegalArgumentException("Owner ID phải là số dương");
+            throw new IllegalArgumentException("User ID phải là số dương");
         }
         permissionService.requireUserSelfOrAdmin(u.getId());
-        List<Workspace> workspaces = this.workspaceRepo.getWorkspacesByOwner(u.getId());
+        List<Workspace> workspaces = this.workspaceRepo.getAccessibleWorkspaces(u.getId());
         if (workspaces != null) {
             workspaces.forEach(this::initializeWorkspaceCollections);
         }
@@ -89,13 +98,13 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Workspace> getWorkspacesByOwner(Map<String, String> params) {
+    public List<Workspace> getAccessibleWorkspaces(Map<String, String> params) {
         User u = this.userRepo.getUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         if (u.getId() <= 0) {
-            throw new IllegalArgumentException("Owner ID phải là số dương");
+            throw new IllegalArgumentException("User ID phải là số dương");
         }
         permissionService.requireUserSelfOrAdmin(u.getId());
-        List<Workspace> workspaces = this.workspaceRepo.getWorkspacesByOwner(u.getId(), params);
+        List<Workspace> workspaces = this.workspaceRepo.getAccessibleWorkspaces(u.getId(), params);
         if (workspaces != null) {
             workspaces.forEach(this::initializeWorkspaceCollections);
         }
@@ -104,22 +113,22 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     @Transactional(readOnly = true)
-    public Long countWorkspacesByOwnerId() {
+    public Long countAccessibleWorkspaces() {
         User u = this.userRepo.getUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         if (u.getId() <= 0) {
-            throw new IllegalArgumentException("Owner ID phải là số dương");
+            throw new IllegalArgumentException("User ID phải là số dương");
         }
         permissionService.requireUserSelfOrAdmin(u.getId());
-        return this.workspaceRepo.countWorkspacesByOwnerId(u.getId());
+        return this.workspaceRepo.countAccessibleWorkspaces(u.getId());
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean hasWorkspace(int ownerId) {
         if (ownerId <= 0) {
-            throw new IllegalArgumentException("Owner ID phải là số dương");
+            throw new IllegalArgumentException("User ID phải là số dương");
         }
-        return !this.workspaceRepo.getWorkspacesByOwner(ownerId).isEmpty();
+        return !this.workspaceRepo.getAccessibleWorkspaces(ownerId).isEmpty();
     }
 
     @Override
@@ -235,23 +244,34 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
         UserWorkspace uw = new UserWorkspace();
         Workspace w = workspaceRepo.getWorkspaceById(workspaceId);
-        if (w == null){
+        if (w == null) {
             throw new IllegalArgumentException("Workspace ko tồn tại");
         }
         User u = userRepo.findUserById(userId);
 
-        if(u == null){
+        if (u == null) {
             throw new UsernameNotFoundException("User ko tìm thấy");
         }
-        
-        if(this.workspaceRepo.isUserExistInWorkspace(workspaceId, userId)){
+
+        if (this.workspaceRepo.isUserExistInWorkspace(workspaceId, userId)) {
             throw new IllegalArgumentException("User đã tồn tại");
         }
-        
+
         uw.setUserId(u);
         uw.setWorkspaceId(w);
 
         this.workspaceRepo.addUserIntoWorkspace(uw);
+        this.notificationProducer.sendEmailNotification(new NotificationMessage(
+                "WORKSPACE_MEMBER_ADDED",
+                u.getEmail() == null || u.getEmail().isBlank() ? List.of() : List.of(u.getEmail()),
+                "Bạn được thêm vào workspace: " + w.getName(),
+                "Xin chào " + u.getUsername() + ",\n\n"
+                + "Bạn vừa được thêm vào workspace \"" + w.getName() + "\" trên Taskify.\n"
+                + "Vui lòng đăng nhập hệ thống để xem chi tiết.",
+                null,
+                w.getId(),
+                getCurrentActorName()
+        ));
         return uw;
     }
 
@@ -259,5 +279,11 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     @Transactional(readOnly = true)
     public Long countWorkspaces(Map<String, String> params) {
         return this.workspaceRepo.countWorkspaces(params);
+    }
+
+    @Override
+    public void removeUserFromWorkspace(int workspaceId, int userId) {
+        permissionService.requireWorkspaceOwnerPermission(workspaceId);
+        this.workspaceRepo.removeUserFromWorkspace(workspaceId, userId);
     }
 }

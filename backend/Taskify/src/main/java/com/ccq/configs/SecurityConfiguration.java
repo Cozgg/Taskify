@@ -2,9 +2,12 @@ package com.ccq.configs;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,16 +17,23 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@PropertySource("classpath:configs.properties")
 public class SecurityConfiguration {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Autowired
+    private Environment env;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -60,15 +70,25 @@ public class SecurityConfiguration {
 
         return http.build();
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:3001"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
     
     @Bean
     public Cloudinary cloudinary() {
-        Cloudinary cloudinary
-                = new Cloudinary(ObjectUtils.asMap(
-                        "cloud_name", "dpl8syyb9",
-                        "api_key", "423338349327346",
-                        "api_secret", "zfwveRcXlclSOKM7mqSU2j0421c",
-                        "secure", true));
-        return cloudinary;
+        return new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", EnvConfig.get("CLOUDINARY_CLOUD_NAME"),
+                "api_key", EnvConfig.get("CLOUDINARY_API_KEY"),
+                "api_secret", EnvConfig.get("CLOUDINARY_API_SECRET"),
+                "secure", Boolean.parseBoolean(env.getProperty("cloudinary.secure", "true"))));
     }
 }

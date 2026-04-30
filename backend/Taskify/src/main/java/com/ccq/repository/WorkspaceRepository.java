@@ -27,12 +27,12 @@ public interface WorkspaceRepository {
     Long countWorkspaces(Map<String, String> params);
 
     Workspace getWorkspaceById(int workspaceId);
-    
-    List<Workspace> getWorkspacesByOwner(int id);
-    
-    List<Workspace> getWorkspacesByOwner(int id, Map<String, String> params);
 
-    Long countWorkspacesByOwnerId(int ownerId);
+    List<Workspace> getAccessibleWorkspaces(int id);
+
+    List<Workspace> getAccessibleWorkspaces(int id, Map<String, String> params);
+
+    Long countAccessibleWorkspaces(int userId);
 
     List<User> getMembersByWorkspaceId(int workspaceId);
 
@@ -43,7 +43,9 @@ public interface WorkspaceRepository {
     Long countMembersByWorkspaceId(int workspaceId);
 
     void addUserIntoWorkspace(UserWorkspace uw);
-        
+
+    void removeUserFromWorkspace(int workspaceId, int userId);
+
     boolean isUserExistInWorkspace(int workspaceId, int userId);
 
 }

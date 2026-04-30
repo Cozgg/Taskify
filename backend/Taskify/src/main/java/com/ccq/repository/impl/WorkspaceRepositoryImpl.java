@@ -28,7 +28,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import org.springframework.security.core.context.SecurityContextHolder;
+import jakarta.persistence.criteria.Subquery;
 
 @Repository
 @PropertySource("classpath:configs.properties")
@@ -40,7 +40,7 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     @Autowired
     private LocalSessionFactoryBean factory;
-    
+
     @Autowired
     private UserRepository userRepo;
 
@@ -68,28 +68,42 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
             s.remove(w);
         }
     }
-    
-    
+
     @Override
-    public List<Workspace> getWorkspacesByOwner(int ownerId) {
+    public List<Workspace> getAccessibleWorkspaces(int userId) {
         Session s = this.factory.getObject().getCurrentSession();
         Query<Workspace> q = s.createQuery(
-                "FROM Workspace w WHERE w.ownerId.id = :ownerId", Workspace.class);
-        q.setParameter("ownerId", ownerId);
+                "FROM Workspace w "
+                + "WHERE w.ownerId.id = :userId "
+                + "OR EXISTS ("
+                + "SELECT 1 FROM UserWorkspace uw "
+                + "WHERE uw.workspaceId.id = w.id AND uw.userId.id = :userId"
+                + ") "
+                + "ORDER BY w.id DESC",
+                Workspace.class);
+        q.setParameter("userId", userId);
         return q.getResultList();
     }
 
-
     @Override
-    public List<Workspace> getWorkspacesByOwner(int ownerId, Map<String, String> params) {
+    public List<Workspace> getAccessibleWorkspaces(int userId, Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = s.getCriteriaBuilder();
         CriteriaQuery<Workspace> q = b.createQuery(Workspace.class);
         Root<Workspace> root = q.from(Workspace.class);
         q.select(root);
-        
+
         List<Predicate> predicates = new ArrayList<>();
-        predicates.add(b.equal(root.get("ownerId").get("id"), ownerId));
+        Subquery<Integer> memberSubquery = q.subquery(Integer.class);
+        Root<UserWorkspace> userWorkspaceRoot = memberSubquery.from(UserWorkspace.class);
+        memberSubquery.select(b.literal(1));
+        memberSubquery.where(
+                b.equal(userWorkspaceRoot.get("workspaceId").get("id"), root.get("id")),
+                b.equal(userWorkspaceRoot.get("userId").get("id"), userId));
+
+        predicates.add(b.or(
+                b.equal(root.get("ownerId").get("id"), userId),
+                b.exists(memberSubquery)));
 
         if (params != null) {
             String kw = params.get("kw");
@@ -136,7 +150,7 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
 
     @Override
-    public Long countWorkspacesByOwnerId(int ownerId) {
+    public Long countAccessibleWorkspaces(int userId) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = s.getCriteriaBuilder();
         CriteriaQuery<Long> q = b.createQuery(Long.class);
@@ -145,7 +159,16 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
         q.select(b.count(root));
 
         List<Predicate> predicates = new ArrayList<>();
-        predicates.add(b.equal(root.get("ownerId").get("id"), ownerId));
+        Subquery<Integer> memberSubquery = q.subquery(Integer.class);
+        Root<UserWorkspace> userWorkspaceRoot = memberSubquery.from(UserWorkspace.class);
+        memberSubquery.select(b.literal(1));
+        memberSubquery.where(
+                b.equal(userWorkspaceRoot.get("workspaceId").get("id"), root.get("id")),
+                b.equal(userWorkspaceRoot.get("userId").get("id"), userId));
+
+        predicates.add(b.or(
+                b.equal(root.get("ownerId").get("id"), userId),
+                b.exists(memberSubquery)));
 
         if (!predicates.isEmpty()) {
             q.where(predicates.toArray(new Predicate[0]));
@@ -278,6 +301,29 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
         q.setParameter("wsId", workspaceId);
         q.setParameter("userId", userId);
         return q.uniqueResult() > 0;
+    }
+
+    @Override
+    public void removeUserFromWorkspace(int workspaceId, int userId) {
+        Session s = this.factory.getObject().getCurrentSession();
+
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<UserWorkspace> q = b.createQuery(UserWorkspace.class);
+
+        Root<UserWorkspace> root = q.from(UserWorkspace.class);
+
+        q.select(root).where(
+                b.and(
+                        b.equal(root.get("workspaceId").get("id"), workspaceId),
+                        b.equal(root.get("userId").get("id"), userId)
+                )
+        );
+
+        UserWorkspace uw = s.createQuery(q).uniqueResult();
+
+        if (uw != null) {
+            s.remove(uw);
+        }
     }
 
 }

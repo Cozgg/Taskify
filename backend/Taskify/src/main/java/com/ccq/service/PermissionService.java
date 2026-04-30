@@ -22,7 +22,6 @@ import com.ccq.repository.ListRepository;
 import com.ccq.repository.UserRepository;
 import com.ccq.repository.WorkspaceRepository;
 
-
 @Service
 public class PermissionService {
 
@@ -119,9 +118,15 @@ public class PermissionService {
         requireWorkspaceAccess(getWorkspaceId(card));
     }
 
-    // được chỉnh sửa tài nguyên nếu có quyền truy cập + là ADMIN hoặc owner workspace
+    // được chỉnh sửa tài nguyên nếu là ADMIN hoặc owner workspace
     public void requireBoardWritePermission(int boardId) {
-        requireBoardAccess(boardId);
+        Board board = getBoardOrThrow(boardId);
+        requireWorkspaceOwnerPermission(getWorkspaceId(board));
+    }
+
+    public void requireBoardOwnerPermission(int boardId) {
+        Board board = getBoardOrThrow(boardId);
+        requireWorkspaceOwnerPermission(getWorkspaceId(board));
     }
 
     public void requireListWritePermission(int listId) {
@@ -140,6 +145,7 @@ public class PermissionService {
 
         Workspace workspace = getWorkspaceOrThrow(workspaceId);
         User me = getCurrentUser();
+        System.out.println("User đang login ID: " + me.getId());
         if (!isWorkspaceOwner(workspace, me)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Chỉ owner workspace mới được thực hiện thao tác này");
         }

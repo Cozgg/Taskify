@@ -1,6 +1,8 @@
 import axios from 'axios'
 import cookies from 'react-cookies'
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+
 export let endpoints = {
     'login': '/api/auth/login',
     'register': '/api/auth/register',
@@ -41,7 +43,7 @@ export let endpoints = {
     'delete-list': listId => `/api/lists/${listId}`,
     // workspace api
     'create-workspace': '/api/workspaces',
-    'workspaces': '/api/workspaces/owner',
+    'workspaces': '/api/workspaces',
     'workspace-detail': workspaceId => `/api/workspaces/${workspaceId}`,
     'workspace-member': workspaceId => `/api/workspaces/${workspaceId}/members`,
     'workspace-board': workspaceId => `/api/workspaces/${workspaceId}/boards`,
@@ -51,6 +53,7 @@ export let endpoints = {
     'update-board': boardId => `/api/boards/${boardId}`,
     'delete-board': boardId => `/api/boards/${boardId}`,
     'invite-member': workspaceId => `/api/workspaces/${workspaceId}/users`,
+    'remove-member': (workspaceId, userId) => `/api/workspaces/${workspaceId}/users/${userId}`,
 
     //stat api
     'stat-board': boardId => `/api/stat-board-progress/${boardId}`,
@@ -66,6 +69,7 @@ export default axios.create({
 export const authApis = (token) => {
     const instance = axios.create({
         baseURL: '',
+
         headers: {
             Authorization: `Bearer ${token}`,
         },

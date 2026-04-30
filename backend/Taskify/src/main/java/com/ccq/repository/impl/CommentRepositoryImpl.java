@@ -18,6 +18,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.hibernate.query.Query;
 
@@ -52,7 +53,7 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public List<ResCommentDTO> getComments(int cardId) {
+    public List<ResCommentDTO> getComments(int cardId, Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = s.getCriteriaBuilder();
         CriteriaQuery<Comment> q = b.createQuery(Comment.class);
@@ -63,6 +64,14 @@ public class CommentRepositoryImpl implements CommentRepository {
         q.where(b.equal(root.get("cardId").get("id"), cardId));
 
         Query<Comment> query = s.createQuery(q);
+        if (params != null) {
+            int pageSize = 10;
+            int page = Integer.parseInt(params.getOrDefault("page", "1"));
+            int start = (page - 1) * pageSize;
+
+            query.setMaxResults(pageSize);
+            query.setFirstResult(start);
+        }
 
         return query.getResultList()
                 .stream()

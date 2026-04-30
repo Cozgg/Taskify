@@ -43,19 +43,38 @@ public class HibernateConfigs {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(env.getProperty("hibernate.connection.driverClass"));
-        dataSource.setUrl(env.getProperty("hibernate.connection.url"));
-        dataSource.setUsername(env.getProperty("hibernate.connection.username"));
-        dataSource.setPassword(env.getProperty("hibernate.connection.password"));
+        dataSource.setDriverClassName(getProperty("hibernate.connection.driverClass", "com.mysql.cj.jdbc.Driver"));
+        dataSource.setUrl(getProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/taskifydb"));
+        dataSource.setUsername(getProperty("hibernate.connection.username", ""));
+        dataSource.setPassword(getSecret("DB_PASSWORD", ""));
         return dataSource;
     }
 
     private Properties hibernateProperties() {
         Properties props = new Properties();
-        props.put(DIALECT, env.getProperty("hibernate.dialect"));
-        props.put(SHOW_SQL, env.getProperty("hibernate.showSql"));
-        props.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto", "update"));
+        props.put(DIALECT, getProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect"));
+        props.put(SHOW_SQL, getProperty("hibernate.showSql", "true"));
+        props.put("hibernate.hbm2ddl.auto", getProperty("hibernate.hbm2ddl.auto", "update"));
         return props;
+    }
+
+    private String getProperty(String key, String defaultValue) {
+        try {
+            String value = env.getProperty(key);
+            if (value != null && !value.isBlank() && !value.contains("${")) {
+                return value;
+            }
+        } catch (IllegalArgumentException ex) {
+        }
+        return defaultValue;
+    }
+
+    private String getSecret(String key, String defaultValue) {
+        String value = EnvConfig.get(key);
+        if (value != null && !value.isBlank()) {
+            return value;
+        }
+        return defaultValue;
     }
 
     @Bean

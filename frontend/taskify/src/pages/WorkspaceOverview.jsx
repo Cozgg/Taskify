@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { MyContext } from '../utils/context/MyContext';
 import {
     Typography,
     Button,
@@ -16,6 +17,7 @@ import {
     Pagination,
     Empty,
     message,
+    Popconfirm,
 } from 'antd';
 import {
     UserAddOutlined,
@@ -51,8 +53,13 @@ const WorkspaceOverview = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [inviteValue, setInviteValue] = useState('');
     const [isBoardModalVisible, setIsBoardModalVisible] = useState(false);
-    const [newBoardName, setNewBoardName] = useState('');
     const [isCreatingBoard, setIsCreatingBoard] = useState(false);
+    const [newBoardName, setNewBoardName] = useState('');
+
+    const [user] = useContext(MyContext);
+    const currentUserId = user?.userdata?.data?.userId || user?.userdata?.userId || user?.userdata?.data?.id;
+    const isOwner = Number(workspace?.owner?.id) === Number(currentUserId) || user?.userdata?.data?.role === 'ADMIN';
+
     const loadWorkspaceContext = useCallback(async () => {
         try {
             setLoadingWorkspace(true);
@@ -184,15 +191,30 @@ const WorkspaceOverview = () => {
                 setMembers([...members, res.data.user]);
 
             } else {
-                message.error('Không thể gửi lời mời: ' + (res.data?.message || 'Lỗi không xác định'));
+                message.error(res.data?.message || 'Unable to invite member');
             }
 
         } catch (err) {
-            message.error('Lỗi khi mời thành viên: ' + err.message);
+            console.error('Error inviting member:', err);
+            message.error("Thành viên chưa tạo tài khoản. Vui lòng tạo tài khoản trên trang chủ.");
         }
         setIsModalVisible(false);
         setInviteValue('');
     };
+
+    const handleRemoveMember = async (memberId) => {
+        try {
+            const token = cookies.load('token');
+            const res = await authApis(token).delete(endpoints['remove-member'](workspaceId, memberId));
+            if (res === 204) {
+                message.success("Đã xóa thành công")
+                setMembers(members.filter(member => member.id !== memberId));
+            }
+        } catch (error) {
+            message.error("Bạn không có quyền xóa thành viên khỏi workspace")
+            console.log(error);
+        }
+    }
 
     const boardsTab = (
         <div className="workspace-section">
@@ -240,7 +262,7 @@ const WorkspaceOverview = () => {
                                 : 'Workspace này chưa có board nào.'
                         }
                     />
-                    {!committedBoardKw && (
+                    {!committedBoardKw && isOwner && (
                         <Button
                             type="primary"
                             icon={<PlusOutlined />}
@@ -267,7 +289,7 @@ const WorkspaceOverview = () => {
                         </Col>
                     ))}
 
-                    {!committedBoardKw && (
+                    {!committedBoardKw && isOwner && (
                         <Col xs={24} sm={12} md={8} lg={6}>
                             <Card hoverable className="board-card create-board-card" onClick={openBoardModal}>
                                 <div className="create-board-content">
@@ -306,7 +328,18 @@ const WorkspaceOverview = () => {
                 dataSource={members}
                 locale={{ emptyText: 'Chưa có thành viên nào.' }}
                 renderItem={(item) => (
-                    <List.Item>
+                    <List.Item
+                        actions={[
+                            <Popconfirm
+                                title="Xóa thành viên này?"
+                                onConfirm={() => handleRemoveMember(item.id)}
+                                okText="Xóa"
+                                cancelText="Hủy"
+                            >
+                                <Button danger size="small">Xóa</Button>
+                            </Popconfirm>
+                        ]}>
+
                         <List.Item.Meta
                             avatar={<Avatar>{item.username?.charAt(0)?.toUpperCase() || 'U'}</Avatar>}
                             title={<b>{item.username}</b>}
@@ -328,7 +361,7 @@ const WorkspaceOverview = () => {
     const tabItems = [
         { key: '1', label: <span><TableOutlined /> Bảng</span>, children: boardsTab },
         { key: '2', label: <span><TeamOutlined /> Thành viên</span>, children: membersTab },
-        { key: '3', label: <span><SettingOutlined /> Cài đặt</span>, children: <p>Nội dung cài đặt workspace sẽ được bổ sung sau.</p> },
+        ...(isOwner ? [{ key: '3', label: <span><SettingOutlined /> Cài đặt</span>, children: <p>Nội dung cài đặt workspace sẽ được bổ sung sau.</p> }] : []),
     ];
 
     if (loadingWorkspace) {
@@ -362,15 +395,17 @@ const WorkspaceOverview = () => {
                             <Avatar key={member.id}>{member.username?.charAt(0)?.toUpperCase() || 'U'}</Avatar>
                         ))}
                     </Avatar.Group>
-                    <Button
-                        type="primary"
-                        icon={<UserAddOutlined />}
-                        onClick={() => setIsModalVisible(true)}
-                        className="trello-btn"
-                        style={{ marginLeft: '16px' }}
-                    >
-                        Mời thành viên
-                    </Button>
+                    {isOwner && (
+                        <Button
+                            type="primary"
+                            icon={<UserAddOutlined />}
+                            onClick={() => setIsModalVisible(true)}
+                            className="trello-btn"
+                            style={{ marginLeft: '16px' }}
+                        >
+                            Mời thành viên
+                        </Button>
+                    )}
                 </div>
             </div>
 
