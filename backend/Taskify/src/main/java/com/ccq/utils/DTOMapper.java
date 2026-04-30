@@ -6,16 +6,13 @@ import com.ccq.pojo.Attachment;
 import com.ccq.pojo.Board;
 import com.ccq.pojo.Boardlist;
 import com.ccq.pojo.Card;
-import com.ccq.pojo.ChecklistItem;
 import com.ccq.pojo.Comment;
-import com.ccq.pojo.ListStatus;
 import com.ccq.pojo.User;
 import com.ccq.pojo.UserWorkspace;
 import com.ccq.pojo.Workspace;
 import com.ccq.pojo.response.ResAttachmentDTO;
 import com.ccq.pojo.response.ResBoardDTO;
 import com.ccq.pojo.response.ResCardDTO;
-import com.ccq.pojo.response.ResChecklistItemDTO;
 import com.ccq.pojo.response.ResCommentDTO;
 import com.ccq.pojo.response.ResListDTO;
 import com.ccq.pojo.response.ResUserDTO;
@@ -88,17 +85,7 @@ public class DTOMapper {
         );
     }
 
-    public static ResChecklistItemDTO toChecklistItemDTO(ChecklistItem item) {
-        if (item == null) {
-            return null;
-        }
-        return new ResChecklistItemDTO(
-                item.getId(),
-                item.getName(),
-                item.getIsChecked(),
-                item.getPosition()
-        );
-    }
+
 
     public static ResCommentDTO toCommentDTO(Comment comment) {
         if (comment == null) {
@@ -145,7 +132,6 @@ public class DTOMapper {
         dto.setId(boardlist.getId());
         dto.setName(boardlist.getName());
         dto.setPosition(boardlist.getPosition());
-        dto.setStatus(boardlist.getStatus() != null ? ListStatus.valueOf(boardlist.getStatus()) : null);
 
         if (boardlist.getCardSet() != null) {
             dto.setCards(boardlist.getCardSet().stream()
