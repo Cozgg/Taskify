@@ -1,2 +1,2 @@
+<img width="1178" height="928" alt="image" src="https://github.com/user-attachments/assets/7d9f54eb-fc3d-4b42-870d-9405c057f489" />
 
-![TaskifyDatabase](https://res.cloudinary.com/dp6npbtxz/image/upload/v1774196968/trello_db_gv3zuj.png)
