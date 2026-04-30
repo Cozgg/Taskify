@@ -25,7 +25,7 @@ Hệ thống Quản lý công việc (Trello Clone) là nền tảng cộng tác
 
 ---
 
-### Cách 1: Chạy bằng Docker Compose (Nhanh nhất)
+### Cách 1: Chạy bằng Docker Compose
 1. **Clone project:**
    ```bash
    git clone https://github.com/Cozgg/Taskify.git
@@ -47,7 +47,7 @@ Hệ thống Quản lý công việc (Trello Clone) là nền tảng cộng tác
 
 ---
 
-### Cách 2: Chạy Local (Cho mục đích phát triển)
+### Cách 2: Chạy Local
 
 #### 1. Cơ sở dữ liệu & Middleware
 - Cài đặt và khởi chạy **MySQL** (tạo database `taskifydb`).
@@ -79,6 +79,12 @@ Hệ thống Quản lý công việc (Trello Clone) là nền tảng cộng tác
    npm run dev
    ```
    *Frontend sẽ chạy tại: http://localhost:5173 (hoặc port hiển thị trên console)*
+### Cách 3: Chạy Docker Image
+1. **Copy file** [docker-compose.yml](https://github.com/Cozgg/Taskify/blob/main/docker-compose.yml)
+2. **Khởi chạy hệ thống:**
+   ```bash
+   docker-compose up -d
+   ```
 ## Demo
 Dưới đây là một số hình ảnh và video thực tế demo các chức năng cốt lõi của **Taskify**.
 ### 1. Quản lý Workspace & Bảng (Workspaces & Boards)
