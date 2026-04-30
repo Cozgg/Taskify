@@ -22,7 +22,7 @@ public class MailConfig {
         sender.setHost(getProperty("mail.host", "smtp.gmail.com"));
         sender.setPort(Integer.parseInt(getProperty("mail.port", "587")));
         sender.setUsername(getProperty("mail.username", ""));
-        sender.setPassword(getProperty("mail.password", ""));
+        sender.setPassword(getSecret("MAIL_PASSWORD", ""));
 
         Properties props = sender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
@@ -36,11 +36,21 @@ public class MailConfig {
     }
 
     private String getProperty(String key, String defaultValue) {
-        String envKey = key.toUpperCase().replace('.', '_').replace('-', '_');
-        String value = System.getenv(envKey);
+        try {
+            String value = env.getProperty(key);
+            if (value != null && !value.isBlank() && !value.contains("${")) {
+                return value;
+            }
+        } catch (IllegalArgumentException ex) {
+        }
+        return defaultValue;
+    }
+
+    private String getSecret(String key, String defaultValue) {
+        String value = EnvConfig.get(key);
         if (value != null && !value.isBlank()) {
             return value;
         }
-        return env.getProperty(key, defaultValue);
+        return defaultValue;
     }
 }

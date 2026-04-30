@@ -36,7 +36,7 @@ public class RabbitMQConfig {
                 Integer.parseInt(getProperty("rabbitmq.port", "5672"))
         );
         factory.setUsername(getProperty("rabbitmq.username", "admin"));
-        factory.setPassword(getProperty("rabbitmq.password", "admin"));
+        factory.setPassword(getSecret("RABBITMQ_PASSWORD", "admin"));
         return factory;
     }
 
@@ -89,11 +89,21 @@ public class RabbitMQConfig {
     }
 
     private String getProperty(String key, String defaultValue) {
-        String envKey = key.toUpperCase().replace('.', '_').replace('-', '_');
-        String value = System.getenv(envKey);
+        try {
+            String value = env.getProperty(key);
+            if (value != null && !value.isBlank() && !value.contains("${")) {
+                return value;
+            }
+        } catch (IllegalArgumentException ex) {
+        }
+        return defaultValue;
+    }
+
+    private String getSecret(String key, String defaultValue) {
+        String value = EnvConfig.get(key);
         if (value != null && !value.isBlank()) {
             return value;
         }
-        return env.getProperty(key, defaultValue);
+        return defaultValue;
     }
 }
