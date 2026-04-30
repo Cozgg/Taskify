@@ -1,33 +1,28 @@
 services:
   db:
-    image: mysql:8.4
+    image: cozg/taskify-db:v1
     container_name: taskify-db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: taskifydb
     ports:
       - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
 
   backend:
-    build:
-      context: ./backend/Taskify
-      dockerfile: Dockerfile
+    image: cozg/taskify-backend:v1
     container_name: taskify-backend
     restart: always
     ports:
       - "8080:8080"
     environment:
-      CATALINA_OPTS: "-Dhibernate.connection.url=jdbc:mysql://db:3306/taskifydb -Dhibernate.connection.username=root -Dhibernate.connection.password=root -Dhibernate.hbm2ddl.auto=update"
+      CATALINA_OPTS: "-Dhibernate.connection.url=jdbc:mysql://db:3306/taskifydb -Dhibernate.connection.username=root -Dhibernate.connection.password=root -Dhibernate.hbm2ddl.auto=none"
     depends_on:
       - db
 
   frontend:
-    build:
-      context: ./frontend/taskify
-      dockerfile: Dockerfile
+    image: cozg/taskify-frontend:v1
     container_name: taskify-frontend
     restart: always
     ports:
