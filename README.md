@@ -41,11 +41,13 @@ Người dùng có thể tạo không gian làm việc chung, mời thành viên
 
 ### 2. Bảng Kanban & Kéo Thả Trực Quan (Drag & Drop)
 Hỗ trợ kéo thả (Drag & Drop) mượt mà các Thẻ (Cards) giữa các Cột (Lists) và thay đổi vị trí các Cột một cách dễ dàng, giúp cập nhật tiến độ công việc ngay lập tức.
+
 * **Video Demo / GIF:**
-  [![Kéo thả Kanban]](<img width="1890" height="866" alt="move-card-taskify" src="https://github.com/user-attachments/assets/4c70bc51-3777-419a-9350-ae10d6d8e1b4" />
-)
+  ![Kéo thả Kanban](https://github.com/user-attachments/assets/4c70bc51-3777-419a-9350-ae10d6d8e1b4)
+
 * **Screenshots:**
-  ![Board Detail](<img width="1899" height="871" alt="Screenshot 2026-04-30 111054" src="https://github.com/user-attachments/assets/0b954f84-b8ca-4a33-a346-a850a2ed0350" />)(<img width="1900" height="870" alt="Screenshot 2026-04-30 111010" src="https://github.com/user-attachments/assets/aa757ea6-391b-4713-8c77-d9d79e765f59" />)
+  ![Board Detail 1](https://github.com/user-attachments/assets/0b954f84-b8ca-4a33-a346-a850a2ed0350)
+  ![Board Detail 2](https://github.com/user-attachments/assets/aa757ea6-391b-4713-8c77-d9d79e765f59)
 
 
 
