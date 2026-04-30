@@ -280,4 +280,10 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public Long countWorkspaces(Map<String, String> params) {
         return this.workspaceRepo.countWorkspaces(params);
     }
+
+    @Override
+    public void removeUserFromWorkspace(int workspaceId, int userId) {
+        permissionService.requireWorkspaceOwnerPermission(workspaceId);
+        this.workspaceRepo.removeUserFromWorkspace(workspaceId, userId);
+    }
 }

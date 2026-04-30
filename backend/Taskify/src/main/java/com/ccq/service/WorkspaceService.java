@@ -46,4 +46,6 @@ public interface WorkspaceService {
     Long countBoardInWorkspace(int workspaceId);
 
     UserWorkspace addUserIntoWorkspace(int workspaceId, int userId);
+    
+    void removeUserFromWorkspace(int workspaceId, int userId);
 }

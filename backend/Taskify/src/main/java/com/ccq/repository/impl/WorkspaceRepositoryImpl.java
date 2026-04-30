@@ -303,4 +303,27 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
         return q.uniqueResult() > 0;
     }
 
+    @Override
+    public void removeUserFromWorkspace(int workspaceId, int userId) {
+        Session s = this.factory.getObject().getCurrentSession();
+
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<UserWorkspace> q = b.createQuery(UserWorkspace.class);
+
+        Root<UserWorkspace> root = q.from(UserWorkspace.class);
+
+        q.select(root).where(
+                b.and(
+                        b.equal(root.get("workspaceId").get("id"), workspaceId),
+                        b.equal(root.get("userId").get("id"), userId)
+                )
+        );
+
+        UserWorkspace uw = s.createQuery(q).uniqueResult();
+
+        if (uw != null) {
+            s.remove(uw);
+        }
+    }
+
 }
