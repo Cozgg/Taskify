@@ -85,9 +85,7 @@ const WorkspaceOverview = () => {
 
     const loadBoards = useCallback(async (pageNum = 1, kw = committedBoardKw) => {
         try {
-            if (!kw && pageNum === 1 && boards.length === 0) {
-                setLoadingBoards(true);
-            }
+            setLoadingBoards(true);
             const token = cookies.load('token');
             const api = authApis(token);
 
@@ -118,7 +116,7 @@ const WorkspaceOverview = () => {
         } finally {
             setLoadingBoards(false);
         }
-    }, [workspaceId, committedBoardKw, boards.length]);
+    }, [workspaceId, committedBoardKw]);
 
     useEffect(() => {
         setBoardPage(1);
@@ -155,7 +153,8 @@ const WorkspaceOverview = () => {
                 message.success('Tạo board mới thành công.');
                 setIsBoardModalVisible(false);
                 setNewBoardName('');
-                loadBoards(boardPage, committedBoardKw);
+                setBoardPage(1); // Reset to page 1 to see the new board
+                loadBoards(1, ''); // Reload boards for page 1
             }
         } catch (err) {
             const errorMsg = err.response?.data?.name || err.response?.data?.error || err.response?.data?.message || err.message;

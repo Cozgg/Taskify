@@ -29,6 +29,7 @@ const Home = () => {
     const [boards, setBoards] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadingBoards, setLoadingBoards] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [searchText, setSearchText] = useState('');
     const [committedQ, setCommittedQ] = useState('');
@@ -133,6 +134,7 @@ const Home = () => {
 
     const handleModalSubmit = async () => {
         try {
+            setIsSubmitting(true);
             const values = await form.validateFields();
             const token = cookies.load('token');
             const api = authApis(token);
@@ -167,6 +169,8 @@ const Home = () => {
                 message.error(errorMsg);
                 console.error(err);
             }
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -379,7 +383,10 @@ const Home = () => {
                 onCancel={() => { setIsModalVisible(false); form.resetFields(); }}
                 okText="Xác nhận"
                 cancelText="Hủy"
-                okButtonProps={{ style: { backgroundColor: '#0052cc', borderColor: '#0052cc' } }}
+                okButtonProps={{ 
+                    style: { backgroundColor: '#0052cc', borderColor: '#0052cc' },
+                    loading: isSubmitting 
+                }}
             >
                 <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
                     <Form.Item
