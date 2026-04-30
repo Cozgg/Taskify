@@ -29,6 +29,9 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
+import org.hibernate.query.MutationQuery;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Repository
 @PropertySource("classpath:configs.properties")
@@ -307,22 +310,21 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     public void removeUserFromWorkspace(int workspaceId, int userId) {
         Session s = this.factory.getObject().getCurrentSession();
 
-        CriteriaBuilder b = s.getCriteriaBuilder();
-        CriteriaQuery<UserWorkspace> q = b.createQuery(UserWorkspace.class);
-
-        Root<UserWorkspace> root = q.from(UserWorkspace.class);
-
-        q.select(root).where(
-                b.and(
-                        b.equal(root.get("workspaceId").get("id"), workspaceId),
-                        b.equal(root.get("userId").get("id"), userId)
-                )
+        MutationQuery q = s.createMutationQuery(
+                "delete from UserWorkspace uw "
+                + "where uw.workspaceId.id = :wid and uw.userId.id = :uid"
         );
 
-        UserWorkspace uw = s.createQuery(q).uniqueResult();
+        q.setParameter("wid", workspaceId);
+        q.setParameter("uid", userId);
 
-        if (uw != null) {
-            s.remove(uw);
+        int affectedRows = q.executeUpdate();
+
+        if (affectedRows == 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Không tìm thấy thành viên trong workspace"
+            );
         }
     }
 

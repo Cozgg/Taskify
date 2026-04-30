@@ -19,6 +19,8 @@ import com.ccq.repository.WorkspaceRepository;
 import com.ccq.service.NotificationProducer;
 import com.ccq.service.PermissionService;
 import com.ccq.service.WorkspaceService;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class WorkspaceServiceImpl implements WorkspaceService {
@@ -282,8 +284,16 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     }
 
     @Override
+    @Transactional
     public void removeUserFromWorkspace(int workspaceId, int userId) {
         permissionService.requireWorkspaceOwnerPermission(workspaceId);
+        Workspace w = this.getWorkspaceById(workspaceId);
+        if (w.getOwnerId().getId().equals(userId)) {
+        throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST,
+            "Không thể xóa người sở hữu workspace"
+        );
+    }
         this.workspaceRepo.removeUserFromWorkspace(workspaceId, userId);
     }
 }
