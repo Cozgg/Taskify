@@ -30,6 +30,9 @@ class CardServiceImplTest {
     @Mock
     private PermissionService permissionService;
 
+    @Mock
+    private com.ccq.service.NotificationProducer notificationProducer;
+
     @InjectMocks
     private CardServiceImpl cardService;
 
@@ -75,7 +78,7 @@ class CardServiceImplTest {
 
         assertEquals(newList, card.getListId());
         assertEquals(0, card.getPosition());
-        verify(permissionService).requireCardWritePermission(1);
+        verify(permissionService).requireListAccess(2);
         verify(cardRepo).addOrUpdate(card);
     }
 

@@ -82,7 +82,7 @@ class BoardServiceImplTest {
         Board result = boardService.createBoardInWorkspace(1, board);
 
         assertSame(ws, result.getWorkspaceId());
-        verify(permissionService).requireWorkspaceAccess(1);
+        verify(permissionService).requireWorkspaceOwnerPermission(1);
         verify(boardRepo).addOrUpdate(board);
     }
     @Test

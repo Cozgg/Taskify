@@ -35,8 +35,7 @@ import java.util.Set;
     @NamedQuery(name = "Boardlist.findAll", query = "SELECT b FROM Boardlist b"),
     @NamedQuery(name = "Boardlist.findById", query = "SELECT b FROM Boardlist b WHERE b.id = :id"),
     @NamedQuery(name = "Boardlist.findByName", query = "SELECT b FROM Boardlist b WHERE b.name = :name"),
-    @NamedQuery(name = "Boardlist.findByPosition", query = "SELECT b FROM Boardlist b WHERE b.position = :position"),
-    @NamedQuery(name = "Boardlist.findByStatus", query = "SELECT b FROM Boardlist b WHERE b.status = :status")})
+    @NamedQuery(name = "Boardlist.findByPosition", query = "SELECT b FROM Boardlist b WHERE b.position = :position")})
 public class Boardlist implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -52,11 +51,6 @@ public class Boardlist implements Serializable {
     private String name;
     @Column(name = "position")
     private Integer position;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 11)
-    @Column(name = "status")
-    private String status;
     @JoinColumn(name = "board_id", referencedColumnName = "id")
     @ManyToOne
     private Board boardId;
@@ -71,10 +65,9 @@ public class Boardlist implements Serializable {
         this.id = id;
     }
 
-    public Boardlist(Integer id, String name, String status) {
+    public Boardlist(Integer id, String name) {
         this.id = id;
         this.name = name;
-        this.status = status;
     }
 
     public Integer getId() {
@@ -101,13 +94,6 @@ public class Boardlist implements Serializable {
         this.position = position;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     public Board getBoardId() {
         return boardId;

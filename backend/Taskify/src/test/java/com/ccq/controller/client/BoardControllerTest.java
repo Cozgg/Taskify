@@ -28,7 +28,6 @@ class BoardControllerTest {
         ResBoardDTO dto = new ResBoardDTO();
         dto.setId(1);
         dto.setName("Board Name");
-        dto.setIsPublic(true);
         when(boardService.getBoardDTOById(1)).thenReturn(dto);
 
         ResponseEntity<?> response = boardController.getBoardById(1);

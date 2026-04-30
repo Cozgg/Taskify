@@ -46,7 +46,7 @@ import java.util.Set;
     @NamedQuery(name = "Card.findByDueDate", query = "SELECT c FROM Card c WHERE c.dueDate = :dueDate"),
     @NamedQuery(name = "Card.findByReminderDate", query = "SELECT c FROM Card c WHERE c.reminderDate = :reminderDate"),
     @NamedQuery(name = "Card.findByPosition", query = "SELECT c FROM Card c WHERE c.position = :position")})
-@JsonIgnoreProperties({"checklistItemSet", "activitySet", "attachmentSet", "commentSet", "cardUserSet"})
+@JsonIgnoreProperties({"activitySet", "attachmentSet", "commentSet", "cardUserSet"})
 public class Card implements Serializable {
 
     @Basic(optional = false)
@@ -79,8 +79,7 @@ public class Card implements Serializable {
     private Date reminderDate;
     @Column(name = "position")
     private Integer position;
-    @OneToMany(mappedBy = "cardId")
-    private Set<ChecklistItem> checklistItemSet;
+
     @OneToMany(mappedBy = "cardId")
     private Set<Attachment> attachmentSet;
     @OneToMany(mappedBy = "cardId")
@@ -153,15 +152,7 @@ public class Card implements Serializable {
         this.position = position;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public Set<ChecklistItem> getChecklistItemSet() {
-        return checklistItemSet;
-    }
 
-    public void setChecklistItemSet(Set<ChecklistItem> checklistItemSet) {
-        this.checklistItemSet = checklistItemSet;
-    }
 
     @XmlTransient
     @JsonIgnore

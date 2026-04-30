@@ -39,8 +39,7 @@ import java.util.Set;
     @NamedQuery(name = "Board.findAll", query = "SELECT b FROM Board b"),
     @NamedQuery(name = "Board.findById", query = "SELECT b FROM Board b WHERE b.id = :id"),
     @NamedQuery(name = "Board.findByName", query = "SELECT b FROM Board b WHERE b.name = :name"),
-    @NamedQuery(name = "Board.findByCreatedDate", query = "SELECT b FROM Board b WHERE b.createdDate = :createdDate"),
-    @NamedQuery(name = "Board.findByIsPublic", query = "SELECT b FROM Board b WHERE b.isPublic = :isPublic")})
+    @NamedQuery(name = "Board.findByCreatedDate", query = "SELECT b FROM Board b WHERE b.createdDate = :createdDate")})
 @JsonIgnoreProperties({"boardlistSet"})
 public class Board implements Serializable {
 
@@ -61,8 +60,6 @@ public class Board implements Serializable {
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
-    @Column(name = "is_public")
-    private Boolean isPublic;
     @JoinColumn(name = "workspace_id", referencedColumnName = "id")
     @ManyToOne
     private Workspace workspaceId;
@@ -96,13 +93,6 @@ public class Board implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public Boolean getIsPublic() {
-        return isPublic;
-    }
-
-    public void setIsPublic(Boolean isPublic) {
-        this.isPublic = isPublic;
-    }
 
     @XmlTransient
     @JsonIgnore
