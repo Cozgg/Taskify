@@ -275,10 +275,10 @@ const Home = () => {
                                 </div>
                                 <div className="workspace-grid">
                                     {boards.map((board) => (
-                                        <div 
-                                            key={board.id} 
-                                            className="ws-card board-item-card" 
-                                            style={{ 
+                                        <div
+                                            key={board.id}
+                                            className="ws-card board-item-card"
+                                            style={{
                                                 background: '#0079BF', // Default blue, or use a function for colors
                                                 height: 100,
                                                 display: 'flex',
@@ -299,15 +299,6 @@ const Home = () => {
                                 <Divider style={{ margin: '32px 0' }} />
                             </div>
                         )}
-
-                        <div className="home-section-head">
-                            <div>
-                                <h1 className="home-section-title">Workspaces</h1>
-                                <p className="home-section-sub">
-                                    Select a workspace to start managing your projects.
-                                </p>
-                            </div>
-                        </div>
 
                         {workspaces.length === 0 && (
                             <div className="home-empty">

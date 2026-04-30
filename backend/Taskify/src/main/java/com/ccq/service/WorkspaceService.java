@@ -23,11 +23,11 @@ public interface WorkspaceService {
 
     void delete(int id);
 
-    List<Workspace> getWorkspacesByOwner();
+    List<Workspace> getAccessibleWorkspaces();
 
-    List<Workspace> getWorkspacesByOwner(Map<String, String> params);
+    List<Workspace> getAccessibleWorkspaces(Map<String, String> params);
 
-    Long countWorkspacesByOwnerId();
+    Long countAccessibleWorkspaces();
 
     boolean hasWorkspace(int ownerId);
 
@@ -46,4 +46,6 @@ public interface WorkspaceService {
     Long countBoardInWorkspace(int workspaceId);
 
     UserWorkspace addUserIntoWorkspace(int workspaceId, int userId);
+    
+    void removeUserFromWorkspace(int workspaceId, int userId);
 }

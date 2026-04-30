@@ -6,17 +6,18 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+
+import com.ccq.configs.EnvConfig;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 @Component
+@PropertySource("classpath:configs.properties")
 public class JwtUtil {
-
-    @Value("${jwt.secret}")
-    private String secret;
 
     @Value("${jwt.expiration-ms}")
     private long expirationMs;
@@ -25,7 +26,11 @@ public class JwtUtil {
     private long refreshExpirationMs;
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        String signingSecret = EnvConfig.get("JWT_SECRET");
+        if (signingSecret == null || signingSecret.isBlank()) {
+            throw new IllegalStateException("JWT_SECRET is missing");
+        }
+        return Keys.hmacShaKeyFor(signingSecret.getBytes(StandardCharsets.UTF_8));
     }
 
     // mặc định 24h

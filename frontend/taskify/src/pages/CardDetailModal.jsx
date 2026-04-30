@@ -18,6 +18,7 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
     const [newComment, setNewComment] = useState('');
     const [members, setMembers] = useState([]);
     const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+    const [page, setPage] = useState(1);
     const [dueDate, setDueDate] = useState(null);
     const [reminderDate, setReminderDate] = useState(null);
 
@@ -30,8 +31,9 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
             setDueDate(card.dueDate ? dayjs(card.dueDate) : null);
             setReminderDate(card.reminderDate ? dayjs(card.reminderDate) : null);
             loadAttachments();
-            loadComments();
-            loadMembers();
+            setPage(1);
+            console.log(card.id)
+            setComments([]); loadMembers();
         } else {
             setAttachments([]);
             setDueDate(null);
@@ -167,15 +169,28 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
 
 
     const loadComments = async () => {
+        if (!card || !card.id) return;
         try {
             const token = cookies.load('token');
-            let res = await authApis(token).get(endpoints['comments'](card.id));
-            setComments(res.data.data || res.data || []);
+            let url = `${endpoints['comments'](card.id)}?page=${page}`;
+            let res = await authApis(token).get(url);
+            if (page === 1)
+                setComments(res.data.data || res.data || []);
+            else {
+                setComments(prev => [...prev, ...res.data.data || res.data || []]);
+            }
         } catch (error) {
             console.log(error);
-            message.warning("Lỗi comments");
+            // message.warning("Đã hết comments, không thể tải thêm");
         }
 
+    }
+    useEffect(() => {
+        loadComments();
+    }, [page, card]);
+
+    const loadMore = () => {
+        setPage(page + 1);
     }
 
     const handleAddComment = async () => {
@@ -379,45 +394,62 @@ export const CardDetailModal = ({ open, card, onClose, onUpdate, onDelete, works
                         <CommentOutlined style={{ fontSize: 18 }} />
                         <span style={{ fontWeight: 600, fontSize: 16 }}>Hoạt động</span>
                     </div>
-
-                    <div style={{ marginLeft: 32 }}>
-                        <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
-                            <Avatar src={currentUser?.avatar} icon={!currentUser?.avatar && <UserOutlined />} />
-                            <div style={{ flex: 1 }}>
-                                <Input.TextArea
-                                    placeholder="Viết bình luận..."
-                                    autoSize={{ minRows: 1 }}
-                                    value={newComment}
-                                    onChange={(e) => setNewComment(e.target.value)}
-                                    style={{ boxShadow: '0 1px 1px #091e4240, 0 0 1px #091e424f' }}
-                                />
-                                {newComment && (
-                                    <Button type="primary" size="small" style={{ marginTop: 8 }} onClick={handleAddComment}>Lưu</Button>
-                                )}
-                            </div>
+                    {/* Ô nhập bình luận */}
+                    <div style={{ display: 'flex', gap: 12, marginLeft: 8, marginBottom: 24 }}>
+                        <Avatar src={currentUser?.avatar} icon={!currentUser?.avatar && <UserOutlined />} />
+                        <div style={{ flex: 1 }}>
+                            <Input.TextArea
+                                placeholder="Viết bình luận..."
+                                autoSize={{ minRows: 1 }}
+                                value={newComment}
+                                onChange={(e) => setNewComment(e.target.value)}
+                                style={{ boxShadow: '0 1px 1px #091e4240, 0 0 1px #091e424f' }}
+                            />
+                            {newComment && (
+                                <Button type="primary" size="small" style={{ marginTop: 8 }} onClick={handleAddComment}>Lưu</Button>
+                            )}
                         </div>
+                    </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                            {comments.map(c => (
-                                <div key={c.id} style={{ display: 'flex', gap: 12 }}>
-                                    <Avatar src={c.user?.avatar} icon={!c.user?.avatar && <UserOutlined />} />
-                                    <div style={{ flex: 1 }}>
-                                        <Space style={{ marginBottom: 4 }}>
-                                            <span style={{ fontWeight: 700, fontSize: 14 }}>{c.user?.username}</span>
-                                            <span style={{ color: '#5e6c84', fontSize: 12 }}>{c.createdDate}</span>
-                                        </Space>
-                                        <div style={{ backgroundColor: '#fff', padding: '8px 12px', borderRadius: 8, border: '1px solid #dfe1e6', fontSize: 14 }}>
-                                            {c.comment}
-                                        </div>
-                                        {currentUser && currentUser.data?.userId === c.user?.id && (
-                                            <Popconfirm title="Xóa bình luận?" onConfirm={() => deleteComment(c.id)}>
-                                                <Button type="link" size="small" style={{ padding: 0, fontSize: 12, color: '#5e6c84' }}>Xóa</Button>
-                                            </Popconfirm>
-                                        )}
+                    {/* Vùng cuộn danh sách bình luận */}
+                    <div style={{
+                        marginLeft: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 20,
+                        maxHeight: '300px', // Giới hạn chiều cao để tạo scroll
+                        overflowY: 'auto',  // Kích hoạt thanh cuộn dọc
+                        paddingRight: '8px' // Tránh chữ bị sát vào thanh cuộn
+                    }}>
+                        {comments.map(c => (
+                            <div key={c.id} style={{ display: 'flex', gap: 12 }}>
+                                <Avatar src={c.user?.avatar} icon={!c.user?.avatar && <UserOutlined />} />
+                                <div style={{ flex: 1 }}>
+                                    <Space style={{ marginBottom: 4 }}>
+                                        <span style={{ fontWeight: 700, fontSize: 14 }}>{c.user?.username}</span>
+                                        <span style={{ color: '#5e6c84', fontSize: 12 }}>{c.createdDate}</span>
+                                    </Space>
+                                    <div style={{ backgroundColor: '#fff', padding: '8px 12px', borderRadius: 8, border: '1px solid #dfe1e6', fontSize: 14 }}>
+                                        {c.comment}
                                     </div>
+                                    {/* Thêm optional chaining (?.) để tránh lỗi crash nếu currentUser.data bị undefined */}
+                                    {currentUser && currentUser?.data?.userId === c.user?.id && (
+                                        <Popconfirm title="Xóa bình luận?" onConfirm={() => deleteComment(c.id)}>
+                                            <Button type="link" size="small" style={{ padding: 0, fontSize: 12, color: '#5e6c84' }}>Xóa</Button>
+                                        </Popconfirm>
+                                    )}
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ))}
+
+                        {/* Nút gọi hàm phân trang */}
+                        {comments.length > 0 && (
+                            <div style={{ textAlign: 'center', marginTop: 10 }}>
+                                <Button type="link" size="small" onClick={loadMore}>
+                                    Tải thêm bình luận...
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
 

@@ -7,6 +7,7 @@ package com.ccq.service;
 import com.ccq.pojo.Comment;
 import com.ccq.pojo.response.ResCommentDTO;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -18,5 +19,5 @@ public interface CommentService {
 
     void deleteComment(int id);
     
-    List<ResCommentDTO> getComments(int cardId);
+    List<ResCommentDTO> getComments(int cardId, Map<String, String> params);
 }

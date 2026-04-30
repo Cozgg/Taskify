@@ -18,6 +18,7 @@ import com.ccq.pojo.Workspace;
 import com.ccq.repository.UserRepository;
 import com.ccq.repository.WorkspaceRepository;
 import com.ccq.service.PermissionService;
+import com.ccq.service.NotificationProducer;
 
 @ExtendWith(MockitoExtension.class)
 class WorkspaceServiceImplTest {
@@ -30,6 +31,9 @@ class WorkspaceServiceImplTest {
 
     @Mock
     private PermissionService permissionService;
+
+    @Mock
+    private NotificationProducer notificationProducer;
 
     @InjectMocks
     private WorkspaceServiceImpl workspaceService;
