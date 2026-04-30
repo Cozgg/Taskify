@@ -84,17 +84,7 @@ Hệ thống Quản lý công việc (Trello Clone) là nền tảng cộng tác
 1. **Copy file** [docker-compose.yml](https://github.com/Cozgg/Taskify/blob/main/docker-compose.yml)
 
 2. **Cấu hình môi trường:**
-   Tạo file `.env` cùng cấp với `docker-compose.yml` và khai báo các biến môi trường theo cấu trúc sau:
-   ```env
-   JWT_SECRET="replace-with-at-least-32-characters-secret"
-   RABBITMQ_PASSWORD="admin"
-   MAIL_USERNAME="email-gui-di@gmail.com"
-   MAIL_PASSWORD="replace-with-mail-app-password"
-   DB_PASSWORD="replace-with-database-password"
-   CLOUDINARY_CLOUD_NAME="replace-with-cloudinary-cloud-name"
-   CLOUDINARY_API_KEY="replace-with-cloudinary-api-key"
-   CLOUDINARY_API_SECRET="replace-with-cloudinary-api-secret"
-   ```
+   Tạo file `.env` cùng cấp với `docker-compose.yml` và khai báo các biến môi trường theo cấu trúc file [.env.example](https://github.com/Cozgg/Taskify/blob/main/.env.example)
 3. **Khởi chạy hệ thống:**
    ```bash
    docker-compose up -d
