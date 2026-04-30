@@ -43,7 +43,7 @@ public class SecurityCustom {
             permissionService.requireCardAccess(cardId);
             return true;
         } catch (Exception e) {
-            return false;
+            return false;   
         }
     }
 }
