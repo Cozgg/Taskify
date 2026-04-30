@@ -32,5 +32,18 @@ Tích cực: Dễ bảo trì và viết unit test cho từng tầng riêng biệ
 
 Tiêu cực: Với các tác vụ cực kỳ đơn giản (như lấy tên một nhãn màu), việc phải đi qua cả 3 tầng có thể làm tăng thời gian viết code ban đầu.
 
+## Các lựa chọn khác
+- **Kiến trúc Monolithic không phân tầng rõ ràng:**
+    1. Ưu điểm: Dễ bắt đầu, ít cấu trúc ban đầu, phù hợp cho prototype rất nhỏ.
+    2. Nhược điểm: Khó bảo trì khi tính năng tăng; controller dễ chứa lẫn logic nghiệp vụ và truy cập dữ liệu; khó viết unit test tách biệt.
+
+- **Microservices:**
+    1. Ưu điểm: Tách biệt service theo domain; dễ scale từng thành phần độc lập khi hệ thống lớn.
+    2. Nhược điểm: Quá phức tạp với team 3 người và thời gian 6 tuần; cần thêm hạ tầng service discovery, gateway, logging, monitoring và xử lý giao tiếp liên service.
+
+- **Clean Architecture / Hexagonal Architecture:**
+    1. Ưu điểm: Tách domain khỏi framework rất tốt; dễ thay đổi adapter như database, UI hoặc external service.
+    2. Nhược điểm: Nhiều lớp abstraction hơn Layered Architecture; tăng thời gian setup và có thể vượt quá nhu cầu của dự án quy mô vừa.
+
 ## Ngày quyết định
 2026-03-03

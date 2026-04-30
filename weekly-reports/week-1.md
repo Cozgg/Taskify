@@ -12,9 +12,9 @@
 
 | Thành viên | MSSV | Công việc | Link Commit/PR |
 |------------|------|-----------|----------------|
-| Phạm Anh Quyền | 2351010180 | Khởi tạo dự án | [9b1c43b6e66c6507c7f9f9bb5b0e5818ce3da491](https://github.com/quyendzvcb/Taskify/commit/9b1c43b6e66c6507c7f9f9bb5b0e5818ce3da491) |
-| Nguyễn Hữu Công | 2351010025 | ... | ... |
-| Huỳnh Thế Cảnh | 2351010022 | ... | ... |
+| Phạm Anh Quyền | 2351010180 | Khởi tạo dự án | [9b1c43b6e66c6507c7f9f9bb5b0e5818ce3da491](https://github.com/Cozgg/Taskify/commit/9b1c43b6e66c6507c7f9f9bb5b0e5818ce3da491) |
+| Nguyễn Hữu Công | 2351010025 | ... | []() |
+| Huỳnh Thế Cảnh | 2351010022 | ... | []() |
 ---
 ## 2. Tiến độ tổng thể
 | Hạng mục | Trạng thái | % |

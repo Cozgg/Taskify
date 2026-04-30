@@ -12,9 +12,9 @@
 
 | Thành viên | MSSV | Công việc | Link Commit/PR |
 |------------|------|-----------|----------------|
-| Phạm Anh Quyền | 2351010180 | Phân tích yêu cầu chức năng | [1d9b4f16f875106958524fe47ed95fd7e9e0b29e](https://github.com/quyendzvcb/Taskify/blob/b0cbab151c800de4027353e4afe2e4a24c417639/docs/architecture/Y%C3%AAu%20c%E1%BA%A7u%20ch%E1%BB%A9c%20n%C4%83ng.md) |
-| Nguyễn Hữu Công | 2351010025 | Phân tích yêu cầu phi chức năng | [16374253192ce2bde1f05db18dd7d923968e8597](https://github.com/quyendzvcb/Taskify/blob/16374253192ce2bde1f05db18dd7d923968e8597/docs/architecture/Y%C3%AAu%20c%E1%BA%A7u%20phi%20ch%E1%BB%A9c%20n%C4%83ng.txt) |
-| Huỳnh Thế Cảnh | 2351010022 | Phân tích Actors và Use cases | [193ae89906a69d87b026f0eb64df3914aa39a251](https://github.com/quyendzvcb/Taskify/blob/a9e3cc854e30411aad9516fba76736d2c4483f39/docs/architecture/usecase-diagram.png) |
+| Phạm Anh Quyền | 2351010180 | Phân tích yêu cầu chức năng | [1d9b4f16f875106958524fe47ed95fd7e9e0b29e](https://github.com/Cozgg/Taskify/commit/1d9b4f16f875106958524fe47ed95fd7e9e0b29e) |
+| Nguyễn Hữu Công | 2351010025 | Phân tích yêu cầu phi chức năng | [16374253192ce2bde1f05db18dd7d923968e8597](https://github.com/Cozgg/Taskify/commit/16374253192ce2bde1f05db18dd7d923968e8597) |
+| Huỳnh Thế Cảnh | 2351010022 | Phân tích Actors và Use cases | [193ae89906a69d87b026f0eb64df3914aa39a251](https://github.com/Cozgg/Taskify/commit/193ae89906a69d87b026f0eb64df3914aa39a251) |
 ---
 ## 2. Tiến độ tổng thể
 | Hạng mục | Trạng thái | % |
