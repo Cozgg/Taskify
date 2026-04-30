@@ -12,14 +12,14 @@
 
 | Thành viên | MSSV | Công việc | Link Commit/PR |
 |------------|------|-----------|----------------|
-| Phạm Anh Quyền | 2351010180 | - Thiết kế Database (MySQL) & Setup Server| []() |
+| Phạm Anh Quyền | 2351010180 | - Thiết kế Database (MySQL) & Setup Server| [f0bd47deeab3c6bb8c85ce96bfd06f980669ad49](https://github.com/Cozgg/Taskify/commit/f0bd47deeab3c6bb8c85ce96bfd06f980669ad49) |
 ||| - API Xác thực (Register, Login (JWT), Profile) | []() |
 ||| - API Quản lý (Workspace & Project) | []() |
-| Nguyễn Hữu Công | 2351010025 | - Thiết kế Database (MySQL) | [d72508b4ccb96331bcb4f14ca11fdfc7c7dc691d](https://github.com/phamquyendev03/Taskify/blob/d72508b4ccb96331bcb4f14ca11fdfc7c7dc691d/docs/architecture/Database.md) |
-||| - API Cấu trúc (Board & Column) | [2b14972c55ab4b6c2a1a8900db326e437f6bd113](https://github.com/phamquyendev03/Taskify/blob/2b14972c55ab4b6c2a1a8900db326e437f6bd113/backend/Taskify/src/main/java/com/ccq/controller/ListController.java) |
-||| - API Task (CRUD công việc) | [2b14972c55ab4b6c2a1a8900db326e437f6bd113](https://github.com/phamquyendev03/Taskify/blob/2b14972c55ab4b6c2a1a8900db326e437f6bd113/backend/Taskify/src/main/java/com/ccq/controller/CardController.java) |
-||| - Logic cốt lõi (Xử lý kéo thả/di chuyển Task) |
-| Huỳnh Thế Cảnh | 2351010022 | - API Thành viên (Mời user, Gán người làm task) | [4648072f4b51380ff57178c26253f89c57519c00](https://github.com/phamquyendev03/Taskify/commit/4648072f4b51380ff57178c26253f89c57519c00) |
+| Nguyễn Hữu Công | 2351010025 | - Thiết kế Database (MySQL) | [d72508b4ccb96331bcb4f14ca11fdfc7c7dc691d](https://github.com/Cozgg/Taskify/commit/d72508b4ccb96331bcb4f14ca11fdfc7c7dc691d) |
+||| - API Cấu trúc (Board & Column) | [51e1b87c187a27a808cdca735e6626fa23661a1b](https://github.com/Cozgg/Taskify/commit/51e1b87c187a27a808cdca735e6626fa23661a1b) |
+||| - API Task (CRUD công việc) | [51e1b87c187a27a808cdca735e6626fa23661a1b](https://github.com/Cozgg/Taskify/commit/51e1b87c187a27a808cdca735e6626fa23661a1b) |
+||| - Logic cốt lõi (Xử lý kéo thả/di chuyển Task) | []() |
+| Huỳnh Thế Cảnh | 2351010022 | - API Thành viên (Mời user, Gán người làm task) | [4648072f4b51380ff57178c26253f89c57519c00](https://github.com/Cozgg/Taskify/commit/4648072f4b51380ff57178c26253f89c57519c00) |
 ||| - API Tương tác (Comment, Nhãn màu (Labels)) | []() |
 ||| - API Thống kê (Báo cáo tiến độ & Trạng thái dự án) | []() |
 ---
